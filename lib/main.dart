@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart'; // Import GetX
 import 'pages/loading.dart';
-import 'pages/authpage.dart';
+// import 'pages/authpage.dart';
+import 'pages/auth/auth_page.dart';
 import 'pages/character.dart';
 import 'pages/word.dart';
 import 'pages/note.dart';
