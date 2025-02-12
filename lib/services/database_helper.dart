@@ -41,7 +41,7 @@ class DatabaseHelper {
       logger.i('[DB] Testing database...');
 
       for (var row in result) {
-        logger.i(row.toString());
+        logger.i('[DB] $row');
       }
     } catch (e) {
       logger.e('Error occurred while testing database: $e');
