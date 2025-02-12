@@ -1,1 +1,1 @@
-*HanziStory.sqlite filter=lfs diff=lfs merge=lfs -text
+lib/data/HanziStory.sqlite filter=lfs diff=lfs merge=lfs -text
