@@ -1,24 +1,61 @@
+import 'dart:io';
+import 'package:logger/logger.dart';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:hanjii/models/hintCharacter.dart';  // Import lớp hintCharacter
-import 'package:hanjii/models/word.dart';  // Import lớp word
+import 'package:flutter/services.dart';
+import 'package:hanjii/models/hintCharacter.dart'; // Import lớp hintCharacter
+import 'package:hanjii/models/word.dart'; // Import lớp word
 import 'dart:convert'; // Import for JSON decoding
 
 class DatabaseHelper {
+  static final logger = Logger();
+
+  static Future ensureDatabase() async {
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, 'HanziStory.sqlite');
+
+    // Check if the database already exists
+    final exists = await databaseExists(path);
+    if (!exists) {
+      // Make sure the directory exists
+      await Directory(dirname(path)).create(recursive: true);
+
+      // Load the pre-populated database from assets
+      final data = await rootBundle.load('lib/data/HanziStory.sqlite');
+      final bytes = data.buffer.asUint8List();
+
+      // Write the data to the device
+      await File(path).writeAsBytes(bytes, flush: true);
+      logger.i('[DB] Database copied to $path');
+    } else {
+      logger.i('[DB] Database already exists at $path');
+    }
+  }
+
+  static Future<void> testDatabase() async {
+    try {
+      final db = await getDatabase();
+      final result = await db.rawQuery('SELECT * FROM Words LIMIT 10');
+
+      logger.i('[DB] Testing database...');
+
+      for (var row in result) {
+        logger.i(row.toString());
+      }
+    } catch (e) {
+      logger.e('Error occurred while testing database: $e');
+    }
+  }
+
   // Hàm mở cơ sở dữ liệu
   static Future<Database> getDatabase() async {
-    try {
-      final dbPath = join(await getDatabasesPath(), 'HanziStory.sqlite');
-      final db = await openDatabase(
-        dbPath,
-        version: 1,
-      );
-      print('Connected to the database successfully.');
-      return db;
-    } catch (e) {
-      print('Failed to connect to the database: $e');
-      rethrow; // Re-throw the exception to handle it elsewhere if necessary
-    }
+    // Get the database path
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, 'HanziStory.sqlite');
+
+    // Open and return the database
+    return await openDatabase(path, version: 1);
   }
 
   // Hàm hintSearch nhận vào một chuỗi và trả về danh sách các đối tượng hintCharacter bắt đầu bằng chuỗi đó
@@ -27,7 +64,8 @@ class DatabaseHelper {
       final db = await getDatabase();
 
       // Chuẩn hóa query bằng cách loại bỏ khoảng trắng và dấu gạch ngang
-      String normalizedQuery = query.replaceAll(RegExp(r'[\s-]'), '').toLowerCase();
+      String normalizedQuery =
+          query.replaceAll(RegExp(r'[\s-]'), '').toLowerCase();
 
       List<HintCharacter> hintList = [];
 
@@ -37,8 +75,11 @@ class DatabaseHelper {
         // Tìm các record mà cột pinyinQuery bắt đầu từ normalizedQuery
         final result = await db.query(
           'Words',
-          where: 'REPLACE(REPLACE(LOWER(pinyinQuery), " ", ""), "-", "") LIKE ?',
-          whereArgs: ['$normalizedQuery%'], // Tìm những từ có pinyinQuery bắt đầu với chuỗi normalizedQuery
+          where:
+              'REPLACE(REPLACE(LOWER(pinyinQuery), " ", ""), "-", "") LIKE ?',
+          whereArgs: [
+            '$normalizedQuery%'
+          ], // Tìm những từ có pinyinQuery bắt đầu với chuỗi normalizedQuery
           limit: 15, // Giới hạn số lượng kết quả trả về
         );
 
@@ -119,7 +160,6 @@ class DatabaseHelper {
     }
   }
 
-
   // Hàm getWord nhận vào một chuỗi và trả về đối tượng word
   Future<Word?> getWord(String searchWord) async {
     try {
@@ -154,10 +194,16 @@ class DatabaseHelper {
           id: record['id'] as int,
           word: record['word'] as String,
           pinyin: record['pinyin'] as String?,
-          meaning: record['meaning'] != null ? List<String>.from(jsonDecode(record['meaning'] as String)) : null,
+          meaning: record['meaning'] != null
+              ? List<String>.from(jsonDecode(record['meaning'] as String))
+              : null,
           hanviet: record['hanviet'] as String?,
-          cannghia: record['cannghia'] != null ? List<String>.from(jsonDecode(record['cannghia'] as String)) : null,
-          trainghia: record['trainghia'] != null ? List<String>.from(jsonDecode(record['trainghia'] as String)) : null,
+          cannghia: record['cannghia'] != null
+              ? List<String>.from(jsonDecode(record['cannghia'] as String))
+              : null,
+          trainghia: record['trainghia'] != null
+              ? List<String>.from(jsonDecode(record['trainghia'] as String))
+              : null,
           image: record['image'] as String?,
           shortMeaning: record['shortmeaning'] as String?,
           hskLevel: record['HSK_Level'] as String?,
@@ -171,5 +217,4 @@ class DatabaseHelper {
       return null; // Trả về null nếu có lỗi
     }
   }
-
 }

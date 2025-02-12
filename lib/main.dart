@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart'; // Import GetX
+import 'package:hanjii/services/database_helper.dart';
 import 'pages/loading.dart';
 // import 'pages/authpage.dart';
 import 'pages/auth/auth_page.dart';
@@ -26,8 +27,9 @@ void main() async {
     ),
   );
 
-  // Mở cơ sở dữ liệu
-  // await DatabaseHelper.getDatabase();
+  // Đảm bảo cơ sở dữ liệu tồn tại
+  await DatabaseHelper.ensureDatabase();
+  await DatabaseHelper.testDatabase();
 
   // Khởi chạy ứng dụng
   runApp(const MyApp());
