@@ -36,16 +36,25 @@ class SearchService {
       if (tokens.isEmpty) return [];
 
       // Chuỗi tìm kiếm đầy đủ không có khoảng trắng (ví dụ "ni hao" -> "nihao")
-      final normalizedFull = normalizedQuery.replaceAll(" ", "");
+      // final normalizedFull = normalizedQuery.replaceAll(" ", "");
 
       // 2. Tạo bonus exact match cho từng trường
       // Mỗi trường nếu khớp chính xác với chuỗi tìm kiếm không khoảng trắng sẽ nhận bonus cao
       final String exactBonusClause = """
       (
-        CASE WHEN REPLACE(word, '​', '') = '$normalizedFull' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyinQuery, '​', '') = '$normalizedFull' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(meaning, '​', '') = '$normalizedFull' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(hanviet, '​', '') = '$normalizedFull' THEN 100 ELSE 0 END
+        CASE WHEN REPLACE(word, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
+        CASE WHEN REPLACE(pinyinQuery, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
+        CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
+        CASE WHEN REPLACE(hanviet, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END
+      )
+      """;
+
+      final String partialBonusClause = """
+      (
+        CASE WHEN REPLACE(word, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
+        CASE WHEN REPLACE(pinyinQuery, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
+        CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
+        CASE WHEN REPLACE(hanviet, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END
       )
       """;
 
@@ -89,7 +98,8 @@ class SearchService {
       final String tokenScoreClause = scoreParts.join(" + ");
 
       // Tổng điểm là tổng bonus exact match cộng với điểm từng token
-      final String totalScoreClause = "(\n$exactBonusClause + $tokenScoreClause)";
+      final String totalScoreClause =
+          "(\n$exactBonusClause + $partialBonusClause + $tokenScoreClause\n)";
 
       // 4. Xây dựng WHERE clause chỉ với các trường: word, pinyinQuery, meaning, hanviet
       final List<String> conditions = [];
