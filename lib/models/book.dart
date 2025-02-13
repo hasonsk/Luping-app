@@ -1,4 +1,3 @@
-
 import 'package:hanjii/models/lesson.dart';
 
 class Book {

@@ -24,11 +24,19 @@ class HintCharacter {
     );
   }
 
+  factory HintCharacter.fromMap(Map<String, dynamic> map) {
+    return HintCharacter(
+      hanzi: map['word'] ?? '',
+      pinyin: map['pinyin'] ?? '',
+      hanViet: map['hanviet'] ?? '',
+      shortMeaning: map['meaning'] ?? '',
+    );
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is HintCharacter &&
-        other.hanzi == hanzi;
+    return other is HintCharacter && other.hanzi == hanzi;
   }
 
   @override

@@ -1,15 +1,10 @@
-class UserData {
-  final String email;
-  final String password;
-
-  UserData({required this.email, required this.password});
-}
+import '../models/user.dart';
 
 class AuthService {
-  static final List<UserData> users = [
-    UserData(email: "user1@example.com", password: "password123"),
-    UserData(email: "user2@example.com", password: "securepass"),
-    UserData(email: "test@example.com", password: "testpass"),
+  static final List<User> users = [
+    User(email: "user1@example.com", password: "password123"),
+    User(email: "user2@example.com", password: "securepass"),
+    User(email: "test@example.com", password: "testpass"),
   ];
 
   // Kiểm tra đăng nhập
@@ -25,7 +20,7 @@ class AuthService {
   // Thêm người dùng mới
   static bool registerUser(String email, String password) {
     if (emailExists(email)) return false;
-    users.add(UserData(email: email, password: password));
+    users.add(User(email: email, password: password));
     return true;
   }
 }
