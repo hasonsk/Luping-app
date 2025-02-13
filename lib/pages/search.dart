@@ -1,22 +1,22 @@
 import 'package:flutter/services.dart'; // Required for SystemChannels
 import 'package:flutter/material.dart';
-import 'package:hanjii/models/hintCharacter.dart';
-import 'package:hanjii/services/database_helper.dart';
+import 'package:hanjii/models/hint_character.dart';
+import 'package:hanjii/data/database_helper.dart';
 import 'dart:async';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:hanjii/services/search_service.dart';
 import 'handwriting.dart'; // Import lớp Handwriting
-
 
 class Search extends StatefulWidget {
   final Function onBack; // Hàm callback để thay đổi trang
   final int sharedIndex;
   final int pageIndex;
 
-  const Search({super.key,
-    required this.onBack,
-    required this.sharedIndex,
-    required this.pageIndex
-  });
+  const Search(
+      {super.key,
+      required this.onBack,
+      required this.sharedIndex,
+      required this.pageIndex});
 
   @override
   State<Search> createState() => _SearchState();
@@ -25,19 +25,21 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   static const primaryColor = Color(0xFF96D962);
   static const bodyColor = Color(0xFFF2F2F7); // Màu nền của body
-  final TextEditingController _controller = TextEditingController(); // Điều khiển nội dung của TextField
+  final TextEditingController _controller =
+      TextEditingController(); // Điều khiển nội dung của TextField
   final FocusNode _focusNode = FocusNode();
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  final SearchService _searchService = SearchService();
   List<HintCharacter> wordData = [];
   bool isLoading = false; // Biến trạng thái cho loading
   int _selectedTabIndex = 3;
   late TabController _tabController;
-  late PageController _pageController;  // Thêm PageController
+  late PageController _pageController; // Thêm PageController
   String _previousText = '';
   final Map<String, List<HintCharacter>> _searchCache = {};
   bool _isTabTapped = false; // Biến để theo dõi khi tab được nhấn
   Timer? _debounce;
-  final ScrollController _scrollController = ScrollController(); // Controller cho ScrollView
+  final ScrollController _scrollController =
+      ScrollController(); // Controller cho ScrollView
   bool isFocused = false;
   bool isCardReplaced = false; // Biến để theo dõi trạng thái thay thế thẻ
   Map<int, bool> selectedCards = {};
@@ -64,23 +66,25 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       _pageController.jumpToPage(index); // Cập nhật PageView
     });
   }
+
   @override
   void initState() {
     super.initState();
-    _selectedTabIndex = widget.sharedIndex; // Gán giá trị ban đầu từ sharedIndex
+    _selectedTabIndex =
+        widget.sharedIndex; // Gán giá trị ban đầu từ sharedIndex
     _tabController = TabController(length: 4, vsync: this);
     _pageController = PageController(); // in initState()
 
     // Khi khởi tạo, đồng bộ TabBar và PageView theo _selectedTabIndex
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tabController.animateTo(_selectedTabIndex); // Chọn tab tương ứng index
-      _pageController.jumpToPage(_selectedTabIndex); // Hiển thị trang tương ứng index
+      _pageController
+          .jumpToPage(_selectedTabIndex); // Hiển thị trang tương ứng index
       // Kiểm tra nếu pageIndex = 1 thì focus vào TextField
       if (widget.pageIndex == 1) {
         FocusScope.of(context).requestFocus(_focusNode);
       }
     });
-
 
     _controller.addListener(() {
       if (_debounce?.isActive ?? false) _debounce!.cancel();
@@ -105,7 +109,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       if (_tabController.indexIsChanging) {
         _isTabTapped = true; // Tab được nhấn
         setState(() {
-          _selectedTabIndex = _tabController.index; // Cập nhật tab đang được chọn
+          _selectedTabIndex =
+              _tabController.index; // Cập nhật tab đang được chọn
         });
         _pageController.animateToPage(
           _tabController.index,
@@ -184,7 +189,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       });
     } else {
       try {
-        List<HintCharacter> results = await _databaseHelper.hintSearch(text);
+        List<HintCharacter> results = await _searchService.hintSearch(text);
         setState(() {
           wordData = results;
           _searchCache[text] = results;
@@ -225,7 +230,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     return true;
   }
 
-
   void _clearText() {
     _controller.clear();
   }
@@ -235,9 +239,11 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     return WillPopScope(
       onWillPop: _onWillPop, // Xử lý sự kiện back
       child: Scaffold(
-        resizeToAvoidBottomInset: false, // Ngăn chặn tự động điều chỉnh kích thước khi bàn phím xuất hiện
+        resizeToAvoidBottomInset:
+            false, // Ngăn chặn tự động điều chỉnh kích thước khi bàn phím xuất hiện
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(58), // Chiều cao tùy chỉnh cho AppBar
+          preferredSize:
+              const Size.fromHeight(58), // Chiều cao tùy chỉnh cho AppBar
           child: AppBar(
             automaticallyImplyLeading: false,
             titleSpacing: 0.0,
@@ -249,7 +255,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white, size: 21.0),
+                    icon: const Icon(Icons.arrow_back,
+                        color: Colors.white, size: 21.0),
                     onPressed: () {
                       // Unfocus TextField trước khi gọi hàm callback
                       if (_focusNode.hasFocus) {
@@ -269,35 +276,47 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                               autofocus: false,
                               focusNode: _focusNode,
                               controller: _controller,
-                              style: const TextStyle(fontSize: 15.0), // Kiểu chữ cho text nhập vào
+                              style: const TextStyle(
+                                  fontSize: 15.0), // Kiểu chữ cho text nhập vào
                               cursorColor: Colors.grey,
                               decoration: InputDecoration(
                                 hintText: '哈喽，你好，。。',
-                                hintStyle: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal), // Đặt kiểu chữ cho placeholder
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 22),
+                                hintStyle: const TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight
+                                        .normal), // Đặt kiểu chữ cho placeholder
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 22),
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
                                   borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(18.0), // Bo tròn góc trên bên trái
-                                    bottomLeft: Radius.circular(18.0), // Bo tròn góc dưới bên trái
+                                    topLeft: Radius.circular(
+                                        18.0), // Bo tròn góc trên bên trái
+                                    bottomLeft: Radius.circular(
+                                        18.0), // Bo tròn góc dưới bên trái
                                     topRight: Radius.circular(18.0),
                                     bottomRight: Radius.circular(18.0),
                                   ),
                                   borderSide: BorderSide.none,
                                 ),
-                                prefixIcon: const Icon(Icons.search, size: 20.0, color: Colors.grey), // Thêm icon tìm kiếm
+                                prefixIcon: const Icon(Icons.search,
+                                    size: 20.0,
+                                    color: Colors.grey), // Thêm icon tìm kiếm
                                 suffixIcon: _controller.text.isNotEmpty
                                     ? IconButton(
-                                  icon: Icon(Icons.cancel, size: 18.0, color: Colors.grey[400]),
-                                  onPressed: _clearText,
-                                )
+                                        icon: Icon(Icons.cancel,
+                                            size: 18.0,
+                                            color: Colors.grey[400]),
+                                        onPressed: _clearText,
+                                      )
                                     : null,
                               ),
                               onTap: () {
                                 setState(() {
-                                  isCardReplaced = false; // Đặt biến isCardReplaced thành false khi tap vào TextField
-                                  isFocused  = true;
+                                  isCardReplaced =
+                                      false; // Đặt biến isCardReplaced thành false khi tap vào TextField
+                                  isFocused = true;
                                 });
                                 FocusScope.of(context).requestFocus(_focusNode);
                               },
@@ -307,21 +326,20 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                             children: [
                               const SizedBox(width: 10),
                               InkWell(
-                                  child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 5
-                                      ),
-                                      child: const Icon(Icons.draw_outlined, color: Colors.white, size: 22)
-                                  ),
-                                  onTap: (){
-                                      _focusNode.unfocus();
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return const DrawingBoard();
-                                        },
-                                      );
-                                  },
+                                child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: const Icon(Icons.draw_outlined,
+                                        color: Colors.white, size: 22)),
+                                onTap: () {
+                                  _focusNode.unfocus();
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const DrawingBoard();
+                                    },
+                                  );
+                                },
                               ),
                               const SizedBox(width: 10),
                             ],
@@ -358,14 +376,17 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                     if (_pageController.page != index) {
                       _pageController.animateToPage(
                         index,
-                        duration: const Duration(milliseconds: 120),  // Faster transition
-                        curve: Curves.fastOutSlowIn,  // More dynamic curve
+                        duration: const Duration(
+                            milliseconds: 120), // Faster transition
+                        curve: Curves.fastOutSlowIn, // More dynamic curve
                       );
                     }
                   },
-                  labelPadding: const EdgeInsets.symmetric(vertical: 4), // Adjust vertical padding
+                  labelPadding: const EdgeInsets.symmetric(
+                      vertical: 4), // Adjust vertical padding
                   labelColor: Colors.white, // Color for selected tab text
-                  unselectedLabelColor: Colors.green[100], // Color for unselected tab text
+                  unselectedLabelColor:
+                      Colors.green[100], // Color for unselected tab text
                   indicator: const TriangleIndicator(
                     color: bodyColor, // Set the color of the triangle
                   ),
@@ -380,9 +401,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   Container(
                     height: 8,
                     decoration: const BoxDecoration(
-                      color: bodyColor,  // Màu sắc của container
+                      color: bodyColor, // Màu sắc của container
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),  // Bo góc trái trên
+                        topLeft: Radius.circular(20.0), // Bo góc trái trên
                         topRight: Radius.circular(20.0), // Bo góc phải trên
                       ),
                     ),
@@ -393,18 +414,18 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               // const SizedBox(height: 8),
               Expanded(
                 child: PageView(
-                  controller: _pageController,  // Sử dụng PageController trong PageView
-                    onPageChanged: (index) {
-                      if (!_tabController.indexIsChanging) {
-                        _tabController.animateTo(index);
-                      }
-                    },
-                    children: [
+                  controller:
+                      _pageController, // Sử dụng PageController trong PageView
+                  onPageChanged: (index) {
+                    if (!_tabController.indexIsChanging) {
+                      _tabController.animateTo(index);
+                    }
+                  },
+                  children: [
                     buildWordsView(),
                     buildStoriesView(),
                     buildSentencesView(),
                     buildSentencesView(),
-
                   ],
                 ),
               ),
@@ -421,14 +442,20 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     }
 
     if (isLoading) {
-      if(isFocused){
-        return const Center(child: Image(image: AssetImage('assets/loading_green.gif'), height: 90,));
-      }else {
+      if (isFocused) {
+        return const Center(
+            child: Image(
+          image: AssetImage('assets/loading_green.gif'),
+          height: 90,
+        ));
+      } else {
         return const Padding(
-          padding: EdgeInsets.only(
-            bottom: 150
-          ),
-          child: Center(child: Image(image: AssetImage('assets/loading_green.gif'), height: 100,)),
+          padding: EdgeInsets.only(bottom: 150),
+          child: Center(
+              child: Image(
+            image: AssetImage('assets/loading_green.gif'),
+            height: 100,
+          )),
         );
       }
     }
@@ -462,14 +489,16 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   if (index == 0) {
                     // Xử lý nhấn vào thẻ đầu tiên
                     setState(() {
-                      isCardReplaced = true; // Đánh dấu rằng thẻ đã được thay thế
+                      isCardReplaced =
+                          true; // Đánh dấu rằng thẻ đã được thay thế
                     });
                   } else {
                     // Xử lý nhấn vào các thẻ khác
                     setState(() {
                       isCardReplaced = true; // Trả thẻ về trạng thái ban đầu
                     });
-                    _controller.text = item.hanzi; // Dán Hanzi vào TextField mà không yêu cầu focus
+                    _controller.text = item
+                        .hanzi; // Dán Hanzi vào TextField mà không yêu cầu focus
                   }
                 },
                 child: Card(
@@ -484,11 +513,13 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                           children: [
                             Container(
                               constraints: BoxConstraints(
-                                maxWidth: MediaQuery.of(context).size.width * 0.5,
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.5,
                               ),
                               child: Text(
                                 item.hanzi,
-                                style: const TextStyle(fontSize: 30, color: Colors.red),
+                                style: const TextStyle(
+                                    fontSize: 30, color: Colors.red),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
@@ -502,11 +533,13 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                                     item.hanViet,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
-                                    style: const TextStyle(fontSize: 14, color: Colors.purple),
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.purple),
                                   ),
                                   Text(
                                     item.pinyin,
-                                    style: const TextStyle(fontSize: 14, color: Colors.orange),
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.orange),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -515,14 +548,16 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                             ),
                             const Padding(
                               padding: EdgeInsets.only(bottom: 10),
-                              child: Icon(Icons.volume_up_outlined, size: 20, color: Colors.grey),
+                              child: Icon(Icons.volume_up_outlined,
+                                  size: 20, color: Colors.grey),
                             ),
                             const SizedBox(width: 5),
                           ],
                         ),
                         Text(
                           item.shortMeaning,
-                          style: const TextStyle(fontSize: 14, color: Colors.black),
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.black),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         ),
@@ -540,175 +575,284 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   Card buildCardDetail() {
     return Card(
-        color: Colors.white,
-        margin: const EdgeInsets.fromLTRB(8, 0, 8, 4),
-        child: SizedBox(
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+      color: Colors.white,
+      margin: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    '我们',
+                    style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Text(
+                      '[nǐmen]',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Text(
+                      '[nhĩ môn]'.toUpperCase(),
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                    ),
+                  ),
+                  const Expanded(child: SizedBox()),
+                  const Icon(
+                    Icons.volume_up_outlined,
+                    color: Colors.grey,
+                    size: 20,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              const Divider(),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Cấp độ:',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey[600],
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.grey),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 2.0, horizontal: 4), // Khoảng cách bên trong
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 177, 54, 68), // Màu nền
+                      borderRadius:
+                          BorderRadius.circular(4.0), // Đường viền bo tròn
+                    ),
+                    child: const Text(
+                      'HSK 1',
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Từ loại:',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey[600],
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.grey),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 2.0, horizontal: 4), // Khoảng cách bên trong
+                    decoration: BoxDecoration(
+                      color:
+                          Colors.white, // Màu nền (có thể thay đổi theo ý muốn)
+                      borderRadius:
+                          BorderRadius.circular(4.0), // Đường viền bo tròn
+                      border: Border.all(
+                        // Thêm border
+                        color: Colors.grey, // Màu của border
+                        width: 0.5, // Độ dày của border
+                      ),
+                    ),
+                    child: const Text(
+                      'Đại từ',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 2.0, horizontal: 9.0), // Khoảng cách bên trong
+                decoration: BoxDecoration(
+                  color: Colors.grey[400], // Màu nền
+                ),
+                child: const Text(
+                  'Đại từ',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      '1)',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  const Expanded(
+                    // Sử dụng Expanded để cho phép Text chiếm không gian
+                    child: Text(
+                      'mấy người; các cậu; các bạn; các ông; các bà; anh chị; các anh; các chị',
+                      style: TextStyle(fontSize: 15),
+                      maxLines: null, // Không giới hạn số dòng
+                      overflow: TextOverflow.visible, // Cho phép xuống dòng
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Text(
+                  '代词，称不止一个人的对方或包括对方在内的若干人',
+                  style: TextStyle(color: Colors.blue[700]),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Row(
                   children: [
-                    const Text('我们', style: TextStyle(fontSize: 24, color: Colors.red, fontWeight: FontWeight.bold),),
-                    const SizedBox(width: 10,),
                     Padding(
-                      padding: const EdgeInsets.only(
-                        top: 5
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Icon(
+                        Icons.volume_up_outlined,
+                        size: 18,
+                        color: Colors.grey[500],
                       ),
-                      child: Text('[nǐmen]', style: TextStyle(fontSize: 14, color: Colors.grey[600]),),
                     ),
-                    const SizedBox(width: 10,),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 5
-                      ),
-                      child: Text('[nhĩ môn]'.toUpperCase(), style: TextStyle(fontSize: 13, color: Colors.grey[600]),),
+                    const SizedBox(
+                      width: 10,
                     ),
-                    const Expanded(child: SizedBox()),
-                    const Icon(Icons.volume_up_outlined, color: Colors.grey,size: 20,),
-                    const SizedBox(width: 5,)
-                  ],
-                ),
-                const SizedBox(height: 5,),
-                const Divider(),
-                const SizedBox(height: 5,),
-                Row(
-                  children: [
-                    Text('Cấp độ:', style: TextStyle(fontSize: 13, color: Colors.grey[600], decoration: TextDecoration.underline, decorationColor: Colors.grey),),
-                    const SizedBox(width: 10,),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4), // Khoảng cách bên trong
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 177, 54, 68), // Màu nền
-                        borderRadius: BorderRadius.circular(4.0), // Đường viền bo tròn
-                      ),
-                      child: const Text('HSK 1', style: TextStyle(fontSize: 10, color: Colors.white),),
+                    Text(
+                      '你们歇一会儿，让我们接着干。',
+                      style: TextStyle(fontSize: 15, color: Colors.blue[700]),
                     ),
                   ],
                 ),
-                const SizedBox(height: 5,),
-                Row(
-                  children: [
-                    Text('Từ loại:', style: TextStyle(fontSize: 13, color: Colors.grey[600],decoration: TextDecoration.underline, decorationColor: Colors.grey),),
-                    const SizedBox(width: 10,),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4), // Khoảng cách bên trong
-                      decoration: BoxDecoration(
-                        color: Colors.white, // Màu nền (có thể thay đổi theo ý muốn)
-                        borderRadius: BorderRadius.circular(4.0), // Đường viền bo tròn
-                        border: Border.all( // Thêm border
-                          color: Colors.grey, // Màu của border
-                          width: 0.5, // Độ dày của border
-                        ),
-                      ),
-                      child: const Text('Đại từ', style: TextStyle(fontSize: 11),),
-                    ),
-                  ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Text(
+                  'nǐmen xiē yīhuǐr, ràng wǒmen jiēzhe gàn.',
+                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
-                const SizedBox(height: 20,),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 9.0), // Khoảng cách bên trong
-                  decoration: BoxDecoration(
-                    color: Colors.grey[400], // Màu nền
-                  ),
-                  child: const Text('Đại từ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
-                ),
-                const SizedBox(height: 10,),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 2
-                      ),
-                      child: Text('1)',style: TextStyle(fontSize: 12, color: Colors.grey[600]),),
-                    ),
-                    const SizedBox(width: 5,),
-                    const Expanded( // Sử dụng Expanded để cho phép Text chiếm không gian
-                      child: Text(
-                        'mấy người; các cậu; các bạn; các ông; các bà; anh chị; các anh; các chị',
-                        style: TextStyle(fontSize: 15),
-                        maxLines: null, // Không giới hạn số dòng
-                        overflow: TextOverflow.visible, // Cho phép xuống dòng
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Text('代词，称不止一个人的对方或包括对方在内的若干人', style: TextStyle(color: Colors.blue[700]),),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 2
-                        ),
-                        child: Icon(Icons.volume_up_outlined, size: 18, color: Colors.grey[500],),
-                      ),
-                      const SizedBox(width: 10,),
-                      Text('你们歇一会儿，让我们接着干。', style: TextStyle(fontSize: 15,color: Colors.blue[700]),),
-                    ],
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Text(
+                  'Các anh nghỉ một lát, để chúng tôi làm tiếp.',
+                  style: TextStyle(
+                    fontSize: 14,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Text('nǐmen xiē yīhuǐr, ràng wǒmen jiēzhe gàn.', style: TextStyle(fontSize: 13, color: Colors.grey[600]),),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: Text(
+                  'Từ cận nghĩa:',
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.grey),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: Text('Các anh nghỉ một lát, để chúng tôi làm tiếp.', style: TextStyle(fontSize: 14,),),
+              ),
+              buildCantrairow(1, '他们'),
+              buildCantrairow(2, '我们'),
+              const SizedBox(
+                height: 25,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: Text(
+                  'Hình ảnh:',
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.grey),
                 ),
-                const SizedBox(height: 20,),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 5
-                  ),
-                  child: Text('Từ cận nghĩa:', style: TextStyle(fontSize: 13, color: Colors.grey[600], decoration: TextDecoration.underline, decorationColor: Colors.grey),),
-                ),
-                buildCantrairow(1, '他们'),
-                buildCantrairow(2, '我们'),
-                const SizedBox(height: 25,),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 5
-                  ),
-                  child: Text('Hình ảnh:', style: TextStyle(fontSize: 13, color: Colors.grey[600], decoration: TextDecoration.underline, decorationColor: Colors.grey),),
-                ),
-                const Center(child: Image(image: NetworkImage('https://assets.hanzii.net/img_word/ab4a85fc2ec4cf830e0f84aaacefcb1c_h.jpg'), height: 140,)),
-                const Divider(),
-                Text('Góp ý :', style: TextStyle(fontSize: 13, color: Colors.grey[600]),)
-              ],
-            ),
+              ),
+              const Center(
+                  child: Image(
+                image: NetworkImage(
+                    'https://assets.hanzii.net/img_word/ab4a85fc2ec4cf830e0f84aaacefcb1c_h.jpg'),
+                height: 140,
+              )),
+              const Divider(),
+              Text(
+                'Góp ý :',
+                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+              )
+            ],
           ),
         ),
-      );
+      ),
+    );
   }
 
   Padding buildCantrairow(int idx, String word) {
     return Padding(
-                  padding: const EdgeInsets.only(
-                    left: 5
-                  ),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 5
-                        ),
-                        child: Text('$idx)', style: TextStyle(fontSize : 12, color: Colors.grey[600])),
-                      ),
-                      const SizedBox(width: 7,),
-                      Text(word, style: TextStyle(fontSize : 16, color: Colors.blue[700]),)
-                    ],
-                  ),
-                );
+      padding: const EdgeInsets.only(left: 5),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Text('$idx)',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+          ),
+          const SizedBox(
+            width: 7,
+          ),
+          Text(
+            word,
+            style: TextStyle(fontSize: 16, color: Colors.blue[700]),
+          )
+        ],
+      ),
+    );
   }
-
 
   Widget buildListViewHan(List<HintCharacter> list) {
     return Column(
@@ -745,11 +889,13 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                           children: [
                             Container(
                               constraints: BoxConstraints(
-                                maxWidth: MediaQuery.of(context).size.width * 0.5,
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.5,
                               ),
                               child: Text(
                                 item.hanzi,
-                                style: const TextStyle(fontSize: 30, color: Colors.red),
+                                style: const TextStyle(
+                                    fontSize: 30, color: Colors.red),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
@@ -763,11 +909,13 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                                     item.hanViet,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
-                                    style: const TextStyle(fontSize: 14, color: Colors.purple),
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.purple),
                                   ),
                                   Text(
                                     item.pinyin,
-                                    style: const TextStyle(fontSize: 14, color: Colors.orange),
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.orange),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -776,14 +924,16 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                             ),
                             const Padding(
                               padding: EdgeInsets.only(bottom: 10),
-                              child: Icon(Icons.volume_up_outlined, size: 20, color: Colors.grey),
+                              child: Icon(Icons.volume_up_outlined,
+                                  size: 20, color: Colors.grey),
                             ),
                             const SizedBox(width: 5),
                           ],
                         ),
                         Text(
                           item.shortMeaning,
-                          style: const TextStyle(fontSize: 14, color: Colors.black),
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.black),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         ),
@@ -814,27 +964,67 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                      height: 100,
-                      child: Image.asset('assets/charactertest.png'),
+                    height: 100,
+                    child: Image.asset('assets/charactertest.png'),
                   ),
-                  const SizedBox(width: 20,),
+                  const SizedBox(
+                    width: 20,
+                  ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 5,),
-                        Text('Bộ : nhân 人', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey[700]),),
-                        const SizedBox(height: 5,),
-                        Text('Lục thư : hình thanh & hội ý', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w500, color: Colors.grey[700]),),
-                        const SizedBox(height: 5,),
-                        Text('Bính âm : nǐ ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey[700]),),
-                        const SizedBox(height: 5,),
-                        Text('Số nét : 7 ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey[700]),),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Bộ : nhân 人',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[700]),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Lục thư : hình thanh & hội ý',
+                          style: TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[700]),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Bính âm : nǐ ',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[700]),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Số nét : 7 ',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[700]),
+                        ),
                       ],
                     ),
                   ),
-                  Icon(Icons.volume_up_outlined, color: Colors.grey[500], size: 20,),
-                  const SizedBox(width: 5,)
+                  Icon(
+                    Icons.volume_up_outlined,
+                    color: Colors.grey[500],
+                    size: 20,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  )
                 ],
               ),
               const Divider(),
@@ -843,95 +1033,143 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Bộ thành phần:', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500, color: Colors.grey[600], decoration: TextDecoration.underline, decorationColor: Colors.grey),),
-                      const SizedBox(height: 5,),
-                      buildTProw(1,'thủ 扌'),
-                      buildTProw(2,'qua 戈'),
-                      const SizedBox(height: 15,),
+                      Text(
+                        'Bộ thành phần:',
+                        style: TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[600],
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.grey),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      buildTProw(1, 'thủ 扌'),
+                      buildTProw(2, 'qua 戈'),
+                      const SizedBox(
+                        height: 15,
+                      ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 1
+                            padding: const EdgeInsets.only(bottom: 1),
+                            child: Text(
+                              'Ý nghĩa:',
+                              style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[600],
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.grey),
                             ),
-                            child: Text('Ý nghĩa:', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500, color: Colors.grey[600], decoration: TextDecoration.underline, decorationColor: Colors.grey),),
                           ),
-                          const SizedBox(width: 5,),
-                          buildTProw(1,'Tôi'),
-                          buildTProw(2,'Ta'),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          buildTProw(1, 'Tôi'),
+                          buildTProw(2, 'Ta'),
                         ],
                       ),
                     ],
                   ),
                   Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey, // Màu viền
-                          width: 0.5, // Độ dày viền
-                        ),
-                        borderRadius: BorderRadius.circular(4.0), // Bo góc viền
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0), // Bo góc cho ảnh
-                        child: const Image(
-                          image: NetworkImage(
-                            'https://luping.com.vn/word_media/Luping_minhhoa_webp/%E6%88%91.webp',
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey, // Màu viền
+                            width: 0.5, // Độ dày viền
                           ),
-                          width: 60,
+                          borderRadius:
+                              BorderRadius.circular(4.0), // Bo góc viền
                         ),
-                      ),
-                    )
-                  )
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(8.0), // Bo góc cho ảnh
+                          child: const Image(
+                            image: NetworkImage(
+                              'https://luping.com.vn/word_media/Luping_minhhoa_webp/%E6%88%91.webp',
+                            ),
+                            width: 60,
+                          ),
+                        ),
+                      ))
                 ],
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(
+                height: 5,
+              ),
               const Divider(),
-              Text('Câu chuyện:', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500, color: Colors.grey[600], decoration: TextDecoration.underline, decorationColor: Colors.grey),),
-              const SizedBox(height: 15,),
+              Text(
+                'Câu chuyện:',
+                style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                    decoration: TextDecoration.underline,
+                    decorationColor: Colors.grey),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
               Row(
                 children: [
                   const Text('('),
                   const SizedBox(width: 5),
-                  Text('我', style: TextStyle(color: Colors.blue[600]),),
+                  Text(
+                    '我',
+                    style: TextStyle(color: Colors.blue[600]),
+                  ),
                   const SizedBox(width: 3),
                   const Text('='),
                   const SizedBox(width: 3),
                   Text('丿', style: TextStyle(color: Colors.blue[600])),
-                  const SizedBox(width: 3,),
+                  const SizedBox(
+                    width: 3,
+                  ),
                   const Text('+'),
-                  const SizedBox(width: 3,),
+                  const SizedBox(
+                    width: 3,
+                  ),
                   Text('扌', style: TextStyle(color: Colors.blue[600])),
-                  const SizedBox(width: 3,),
+                  const SizedBox(
+                    width: 3,
+                  ),
                   const Text('+'),
-                  const SizedBox(width: 3,),
+                  const SizedBox(
+                    width: 3,
+                  ),
                   Text('戈', style: TextStyle(color: Colors.blue[600])),
-                  const SizedBox(width: 5,),
+                  const SizedBox(
+                    width: 5,
+                  ),
                   const Text(')'),
                 ],
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               Container(
                   color: Colors.grey[100],
-                  child: const Text('"TÔI" là người đầu đội mũ (丿) tay (扌) cầm giáo (戈).', style: TextStyle(fontSize: 13, color: Colors.black),)
-              ),
+                  child: const Text(
+                    '"TÔI" là người đầu đội mũ (丿) tay (扌) cầm giáo (戈).',
+                    style: TextStyle(fontSize: 13, color: Colors.black),
+                  )),
               SizedBox(
                   height: 130,
-                  child: Image.network('https://luping.com.vn/word_media/Luping_joychinese_gif/joychinese%E6%88%91.gif')
-              ),
+                  child: Image.network(
+                      'https://luping.com.vn/word_media/Luping_joychinese_gif/joychinese%E6%88%91.gif')),
               buildNguonGoc(
-                'Trung',
-                '我 nguyên nghĩa là một loại vũ khí, có tay cầm dài và lưỡi sắc ba cạnh. Nhưng từ thời kỳ cổ, nó đã được mượn để biểu thị đại từ nhân xưng ngôi thứ nhất thường là tự xưng của dân Yin Shang, như "ta thụ niên", "ta phá Quan" và những cái khác. Nguyên nghĩa đã không còn tồn tại từ lâu',
-                ['assets/我_nguongoc.png']
-              ),
+                  'Trung',
+                  '我 nguyên nghĩa là một loại vũ khí, có tay cầm dài và lưỡi sắc ba cạnh. Nhưng từ thời kỳ cổ, nó đã được mượn để biểu thị đại từ nhân xưng ngôi thứ nhất thường là tự xưng của dân Yin Shang, như "ta thụ niên", "ta phá Quan" và những cái khác. Nguyên nghĩa đã không còn tồn tại từ lâu',
+                  ['assets/我_nguongoc.png']),
               buildNguonGoc(
                   'Hàn',
                   'Từ "我" có nghĩa là "ta". Hình ảnh của từ "我" được vẽ giống như một cây giáo có lưỡi dao hình răng cưa. Điều này cũng giống như cây thương ba mũi mà Đường Tăng đã mang theo trong "Tây du ký". Mặc dù từ "我" được vẽ như một cây thương ba mũi, nhưng nó đã được sử dụng từ sớm như một đại từ nhân xưng ngôi thứ nhất có nghĩa là "ta". Ngay cả trong thời kỳ Ân Thương, khi chữ giáp cốt được tạo ra, từ "我" đã được sử dụng với nghĩa "ta", cho thấy ý nghĩa ban đầu của nó đã không được sử dụng từ rất sớm. Tuy nhiên, không có giải thích rõ ràng về lý do tại sao "我" lại có nghĩa là "ta". Chỉ có suy đoán rằng nó có nghĩa là "ta" hoặc "chúng ta" vì đã cùng nhau cầm vũ khí và chiến đấu. Trong chữ Hán, có những chữ như 余 (ta dư), 吾 (ta ngô), 朕 (ta trẫm) vốn không liên quan đến "ta" nhưng theo thời gian đã được sử dụng để chỉ bản thân, vì vậy "我" cũng có thể là một trong những ví dụ như vậy.',
-                  ['assets/我_naver.png']
-              ),
+                  ['assets/我_naver.png']),
               buildNguonGoc(
                   'Anh',
                   '我 ban đầu có ý nghĩa là "rìu chiến có gai", và thường giữ ý nghĩa này '
@@ -944,8 +1182,13 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                       'cán.<br><br>'
                       '<b>Tôi </b>: Khi một người cầm vũ khí trong tay, anh ta thể hiện quyền lực của mình. Điều này truyền đạt cảm giác "Tôi": '
                       'sự quan trọng của một người.',
-                  ['assets/我_column.png','assets/我_nguongoca_1.png','assets/我_nguongoca_2.png','assets/我_nguongoca_4.png','assets/我_nguongoca_3.png']
-              ),
+                  [
+                    'assets/我_column.png',
+                    'assets/我_nguongoca_1.png',
+                    'assets/我_nguongoca_2.png',
+                    'assets/我_nguongoca_4.png',
+                    'assets/我_nguongoca_3.png'
+                  ]),
             ],
           ),
         ),
@@ -953,31 +1196,46 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     );
   }
 
-  Column buildNguonGoc(String country, String content ,List imageUrls ) {
+  Column buildNguonGoc(String country, String content, List imageUrls) {
     return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Nguồn gốc ($country):', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500,color: Colors.grey[600], decoration: TextDecoration.underline, decorationColor: Colors.grey),),
-                const SizedBox(height: 20,),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: imageUrls.map((url) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0), // Add padding between images
-                        child: Image(
-                          image: AssetImage(url),
-                          height: 130,
-                        ),
-                      );
-                    }).toList(),
-                  ),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Nguồn gốc ($country):',
+          style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+              decoration: TextDecoration.underline,
+              decorationColor: Colors.grey),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: imageUrls.map((url) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 2.0), // Add padding between images
+                child: Image(
+                  image: AssetImage(url),
+                  height: 130,
                 ),
-                const SizedBox(height: 20,),
-                MyExpandableContainer(content : content),
-                const SizedBox(height: 20,),
-              ],
-            );
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        MyExpandableContainer(content: content),
+        const SizedBox(
+          height: 20,
+        ),
+      ],
+    );
   }
 
   Padding buildTProw(int idx, String inputString) {
@@ -999,9 +1257,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     } else if (parts.length == 1) {
       // Kiểm tra nếu inputString là tiếng Việt hay tiếng Trung
       if (RegExp(r'^[a-zA-ZÀ-ỹ\s]+$').hasMatch(inputString)) {
-        hanviet = inputString;  // Nếu là tiếng Việt, gán vào hanviet
+        hanviet = inputString; // Nếu là tiếng Việt, gán vào hanviet
       } else {
-        word = inputString;  // Nếu là tiếng Trung, gán vào word
+        word = inputString; // Nếu là tiếng Trung, gán vào word
       }
     }
 
@@ -1012,7 +1270,11 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 2),
-            child: Text('$idx)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey[700])),
+            child: Text('$idx)',
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[700])),
           ),
           const SizedBox(width: 7),
           Text(hanviet, style: const TextStyle(fontSize: 14)),
@@ -1022,11 +1284,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       ),
     );
   }
-
-
-
-
-
 
   Widget buildStoriesView() {
     return buildListViewHan(hanziData);
@@ -1041,46 +1298,60 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 Widget buildLobbyView() {
   return SingleChildScrollView(
     child: Padding(
-      padding: const EdgeInsets.symmetric(
-          vertical: 20.0,
-          horizontal: 15.0
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Row(
             children: [
-              Icon(Icons.history, size: 18,),
-              SizedBox(width: 10,),
-              Text('Lịch sử tra cứu :', style: TextStyle(fontSize: 15),),
+              Icon(
+                Icons.history,
+                size: 18,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                'Lịch sử tra cứu :',
+                style: TextStyle(fontSize: 15),
+              ),
             ],
           ),
-          const SizedBox(height: 5,),
-          Divider(color: Colors.grey[350],),
-          const SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
+          Divider(
+            color: Colors.grey[350],
+          ),
+          const SizedBox(
+            height: 5,
+          ),
           const Text('我们'),
-          Divider(color: Colors.grey[300],),
-          const SizedBox(height: 5,),
+          Divider(
+            color: Colors.grey[300],
+          ),
+          const SizedBox(
+            height: 5,
+          ),
           const Text('你们'),
-          Divider(color: Colors.grey[300],),
-          const SizedBox(height: 5,),
+          Divider(
+            color: Colors.grey[300],
+          ),
+          const SizedBox(
+            height: 5,
+          ),
           const Text('豪门'),
-          const SizedBox(height: 5,),
-          Divider(color: Colors.grey[300],),
-
+          const SizedBox(
+            height: 5,
+          ),
+          Divider(
+            color: Colors.grey[300],
+          ),
         ],
       ),
     ),
   );
 }
-
-
-
-
-
-
-
-
 
 class TriangleIndicator extends Decoration {
   final Color color;
@@ -1112,14 +1383,15 @@ class _TrianglePainter extends BoxPainter {
     final double triangleStartX = rect.left + (rect.width - triangleWidth) / 2;
     final Path path = Path()
       ..moveTo(triangleStartX, rect.bottom) // Bắt đầu từ bên trái của tam giác
-      ..lineTo(triangleStartX + triangleWidth / 2, rect.bottom - triangleHeight) // Đỉnh tam giác ở giữa
-      ..lineTo(triangleStartX + triangleWidth, rect.bottom) // Kết thúc bên phải của tam giác
+      ..lineTo(triangleStartX + triangleWidth / 2,
+          rect.bottom - triangleHeight) // Đỉnh tam giác ở giữa
+      ..lineTo(triangleStartX + triangleWidth,
+          rect.bottom) // Kết thúc bên phải của tam giác
       ..close(); // Đóng tam giác
 
     canvas.drawPath(path, paint);
   }
 }
-
 
 class MyExpandableContainer extends StatefulWidget {
   final String content;
@@ -1231,7 +1503,8 @@ class _DrawingBoardState extends State<DrawingBoard> {
   }
 
   void _recognizeHandwriting() {
-    List<List<List<int>>> rawTrace = _convertPointsToTrace(_points); // Đổi kiểu biến ở đây
+    List<List<List<int>>> rawTrace =
+        _convertPointsToTrace(_points); // Đổi kiểu biến ở đây
     print("Trace: $rawTrace"); // In tọa độ ra console
 
     // Chuyển đổi rawTrace sang định dạng đúng cho phương thức recognize
@@ -1254,7 +1527,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
     _handwriting.recognize(
       trace,
       options,
-          (results, error) {
+      (results, error) {
         if (error != null) {
           setState(() {
             _recognizedResult = "Error: ${error.toString()}";
@@ -1299,7 +1572,6 @@ class _DrawingBoardState extends State<DrawingBoard> {
   }
 }
 
-
 class DrawingPainter extends CustomPainter {
   final List<Offset?> points;
 
@@ -1322,4 +1594,3 @@ class DrawingPainter extends CustomPainter {
   @override
   bool shouldRepaint(DrawingPainter oldDelegate) => true;
 }
-

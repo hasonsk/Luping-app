@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'home.dart';
 import 'profile.dart';
 import 'notebook.dart';
-import 'flashcard.dart';
+import 'flashcard/flashcard_page.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -31,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
         },
       ),
       const Notebook(),
-      const Flashcard(),
+      const FlashcardPage(),
       const Profile(),
     ]);
   }

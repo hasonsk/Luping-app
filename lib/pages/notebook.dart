@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart'; // Import GetX
-import 'book.dart';
+import '../models/book.dart';
+import '../models/lesson.dart';
+import 'book/book_page.dart';
 
 class Notebook extends StatefulWidget {
   const Notebook({super.key});
@@ -314,12 +316,42 @@ class CustomImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Book selectedBook = Book(
+    id: 1,
+    title: 'Giáo trình Hán ngữ chuẩn HSK 1',
+    author: 'Liu Xun',
+    imageUrl: 'assets/chuanhanngu_1.png',
+    lessons: [
+      Lesson(
+        index: 1,
+        title: '你好 - Xin chào',
+        vocabulary: ['你好 (nǐ hǎo) - Xin chào', '我 (wǒ) - Tôi', '你 (nǐ) - Bạn'],
+        kanji: ['你好 - Xin chào', '我 - Tôi', '你 - Bạn'],
+        audioFiles: [
+          AudioFile(title: 'Hội thoại', filePath: 'audio/hsk1_lesson2_1.mp3'),
+          AudioFile(title: 'Từ vựng 1', filePath: 'audio/hsk1_lesson2_2.mp3'),
+          AudioFile(title: 'Bài tập 1', filePath: 'audio/hsk1_lesson2_3.mp3'),
+        ],
+      ),
+      Lesson(
+        index: 2,
+        title: '谢谢你 - Cảm ơn bạn',
+        vocabulary: ['谢谢 (xièxiè) - Cảm ơn', '不客气 (bú kèqì) - Không có gì'],
+        kanji: ['谢谢 - Cảm ơn', '不客气 - Không có gì'],
+        audioFiles: [
+          AudioFile(title: 'Hội thoại', filePath: 'audio/hsk1_lesson2_1.mp3'),
+          AudioFile(title: 'Từ vựng 1', filePath: 'audio/hsk1_lesson2_2.mp3'),
+          AudioFile(title: 'Bài tập 1', filePath: 'audio/hsk1_lesson2_3.mp3'),
+        ],
+      ),
+    ],
+  );
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 1200),
-            pageBuilder: (context, animation, secondaryAnimation) => const Book(),
+            pageBuilder: (context, animation, secondaryAnimation) => BookPage(book: selectedBook),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               // Define the slide transition for forward navigation
               var tween = Tween<Offset>(
@@ -782,4 +814,7 @@ class MySeparator extends StatelessWidget {
     );
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/get-data-hint-word

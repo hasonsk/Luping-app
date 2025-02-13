@@ -4,9 +4,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart'; // Import GetX
-import 'package:hanjii/services/database_helper.dart';
-import 'package:hanjii/models/word.dart';  // Import lớp hintCharacter
-
+import 'package:hanjii/data/database_helper.dart';
+import 'package:hanjii/models/word.dart';
+import 'package:hanjii/services/search_service.dart';  // Import lớp hintCharacter
 
 
 class WordInfo extends StatefulWidget {
@@ -20,6 +20,8 @@ class _WordInfoState extends State<WordInfo> {
   static const primaryColor = Color(0xFF96D962);
   static const noteColor = Color(0xFFE8FED4);
   final hanzi = Get.arguments as String; // Cast tham số thành String
+
+  final SearchService _searchService = SearchService();
 
   final List<String> imageUrls = [
     'https://www.tanghuaku.com/wp-content/uploads/2021/04/TK-1174.jpg',
@@ -55,7 +57,7 @@ class _WordInfoState extends State<WordInfo> {
         ),
       ),
       body: FutureBuilder<Word?>(
-        future: DatabaseHelper().getWord(hanzi), // Sử dụng hàm getWord để lấy dữ liệu
+        future: _searchService.getWord(hanzi), // Sử dụng hàm getWord để lấy dữ liệu
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
