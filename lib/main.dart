@@ -11,8 +11,10 @@ import 'pages/gamescreen.dart';
 import 'pages/mainscreen.dart';
 import 'package:flutter/services.dart';
 // Import lớp quản lý cơ sở dữ liệu
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
 
   // Khởi tạo Firebase
