@@ -14,7 +14,7 @@ class DatabaseService {
     List<Query> queries = [
       characterCollection
           .where('Hanzi', isGreaterThanOrEqualTo: characters.join(''))
-          .where('Hanzi', isLessThan: characters.join('') + '\uf8ff')
+          .where('Hanzi', isLessThan: '${characters.join('')}\uf8ff')
           .limit(10)  // Limit the number of documents returned
     ];
 
