@@ -814,7 +814,3 @@ class MySeparator extends StatelessWidget {
     );
   }
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> feature/get-data-hint-word
