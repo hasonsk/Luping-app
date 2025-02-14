@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      maxlength: 50,
+      maxlength: 100,
     },
     fullname: {
       type: String,
@@ -29,7 +29,6 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    _id: false,
   }
 );
 

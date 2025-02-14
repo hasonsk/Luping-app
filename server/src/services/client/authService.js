@@ -1,31 +1,34 @@
 const bcrypt = require('bcryptjs');
 const User = require('../../models/client/User');
 const jwt = require('jsonwebtoken');
-require('dotenv').config;
+require('dotenv').config();
+
+const accessKey = process.env.ACCESS_TOKEN_SALT;
+const refreshKey = process.env.REFRESH_TOKEN_SALT;
+const saltRounds = process.env.SALT_ROUNDS || 10;
 
 class authService {
-  accessKey = process.env.ACCESS_TOKEN_SALT;
-  refreshKey = process.env.REFRESH_TOKEN_SALT;
-  saltRounds = process.env.SALT_ROUNDS || 10;
-  static authenticateUser = async (username, password) => {
+  static authenticateUser = async (email, password) => {
     try {
-      const user = await User.findOne({ username });
+      const user = await User.findOne({ email });
+      console.log(user);
       if (!user) {
         return { success: false, message: 'User not found' };
       }
-
-      const isMatch = bcrypt.compare(password, user.password);
+      console.log('running');
+      console.log(password + '   ------    ' + user.password);
+      const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
         const accessToken = jwt.sign(
-          { username: user.username, id: user.id },
+          { email: user.email, id: user.id },
           accessKey,
           {
             expiresIn: '30m',
           }
         );
         const refreshToken = jwt.sign(
-          { username: user.username, id: user.id },
-          this.refreshToken,
+          { email: user.email, id: user.id },
+          refreshKey,
           {
             expiresIn: '30d',
           }
@@ -38,18 +41,13 @@ class authService {
         };
       }
     } catch (err) {
+      console.error(err);
       return { success: false, message: 'Internal server error' };
     }
   };
 
-  static newUserSignUp = async (username, password, email, fullname) => {
+  static newUserSignUp = async (email, password, fullname) => {
     try {
-      const checkIfUsernameExist = await User.findOne({ username });
-      if (checkIfUsernameExist)
-        return {
-          success: false,
-          message: 'User already exist,please choose another username',
-        };
       const checkIfEmailUsed = await User.findOne({ email });
       if (checkIfEmailUsed)
         return {
@@ -58,12 +56,15 @@ class authService {
             'This Email has already been registered,please use another email address',
         };
       const hashedPassword = await bcrypt.hash(password, saltRounds);
+      console.log(
+        'Creating new user:' + email + ' ' + hashedPassword + ' ' + fullname
+      );
       const newUser = await User.create({
-        username,
-        hashedPassword,
-        email,
-        fullname,
+        email: email,
+        password: hashedPassword,
+        fullname: fullname,
       });
+      console.log(newUser);
       if (newUser) return { success: true, message: 'Signed up successfully' };
     } catch (err) {
       return { success: false, message: 'Internal server error' };

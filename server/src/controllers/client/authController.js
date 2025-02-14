@@ -2,14 +2,20 @@ const authService = require('../../services/client/authService');
 
 class authController {
   static login = async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     try {
-      const result = await authService.authenticateUser(username, password);
-
+      const result = await authService.authenticateUser(email, password);
+      console.log(result);
       if (!result.success)
         return res.status(401).json({ message: 'Authentication failed' });
 
-      return res.status(200).json({ message: 'ok', token: result.token });
+      return res
+        .status(200)
+        .json({
+          message: 'Logged in successfully',
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        });
     } catch (err) {
       return res.status(500).json({ message: 'Internal server error' });
     }
@@ -18,14 +24,9 @@ class authController {
   static logout = (req, res) => {};
 
   static signup = async (req, res) => {
-    const { username, password, email, fullname } = req.body;
+    const { email, password, fullname } = req.body;
     try {
-      const result = await authService.newUserSignUp(
-        username,
-        password,
-        email,
-        fullname
-      );
+      const result = await authService.newUserSignUp(email, password, fullname);
       if (result.success)
         return res.status(200).json({ message: result.message });
     } catch (err) {
