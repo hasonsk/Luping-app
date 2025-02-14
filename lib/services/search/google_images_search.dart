@@ -3,6 +3,14 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> fetchData(String input, int offset) async {
+  /*
+      Fetch images from Google Image via Google Custom Search API
+    :param: input: search query
+    :param: offset: starting search index
+    ;return: list of results
+  *
+  */
+
   // JSON object to send as query parameters
   final Map<String, dynamic> queryParams = {
     "q": input,
@@ -21,7 +29,7 @@ Future<void> fetchData(String input, int offset) async {
 
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);
-    return data;
+    return data.items;
   } else {
     throw Exception('Failed to load data: ${response.statusCode}');
   }
