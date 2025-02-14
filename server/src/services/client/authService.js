@@ -4,8 +4,9 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config;
 
 class authService {
-  key = process.env.TOKEN_SALT;
-
+  accessKey = process.env.ACCESS_TOKEN_SALT;
+  refreshKey = process.env.REFRESH_TOKEN_SALT;
+  saltRounds = process.env.SALT_ROUNDS || 10;
   static authenticateUser = async (username, password) => {
     try {
       const user = await User.findOne({ username });
@@ -15,10 +16,26 @@ class authService {
 
       const isMatch = bcrypt.compare(password, user.password);
       if (isMatch) {
-        const token = jwt.sign({ username: user.username }, key, {
-          expiresIn: '1d',
-        });
-        return { success: true, message: 'Login successfully', token: token };
+        const accessToken = jwt.sign(
+          { username: user.username, id: user.id },
+          accessKey,
+          {
+            expiresIn: '30m',
+          }
+        );
+        const refreshToken = jwt.sign(
+          { username: user.username, id: user.id },
+          this.refreshToken,
+          {
+            expiresIn: '30d',
+          }
+        );
+        return {
+          success: true,
+          message: 'Login successfully',
+          accessToken,
+          refreshToken,
+        };
       }
     } catch (err) {
       return { success: false, message: 'Internal server error' };
@@ -40,15 +57,32 @@ class authService {
           message:
             'This Email has already been registered,please use another email address',
         };
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
       const newUser = await User.create({
         username,
-        password,
+        hashedPassword,
         email,
         fullname,
       });
       if (newUser) return { success: true, message: 'Signed up successfully' };
     } catch (err) {
       return { success: false, message: 'Internal server error' };
+    }
+  };
+
+  static refreshToken = async (refreshToken) => {
+    try {
+      const { username, id } = jwt.verify(refreshToken, refreshKey);
+      const accessToken = jwt.sign({ username, id }, accessKey, {
+        expiresIn: '30m',
+      });
+      return { success: true, accessToken };
+    } catch (err) {
+      console.error('Token verification failed:', err.message);
+      return {
+        success: false,
+        message: 'Your session has been expired, please re-login again.',
+      };
     }
   };
 }
