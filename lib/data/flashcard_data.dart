@@ -12,15 +12,15 @@ final List<Flashcard> flashcards = [
     isPublic: true,
     items: [
       FlashcardItem(
-        question: "谢谢 (xièxiè)",
+        question: "谢谢",
         answer: "Cảm ơn",
       ),
       FlashcardItem(
-        question: "不客气 (bú kèqì)",
+        question: "不客气",
         answer: "Không có gì",
       ),
       FlashcardItem(
-        question: "你好 (nǐ hǎo)",
+        question: "你好",
         answer: "Xin chào",
       ),
     ],

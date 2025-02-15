@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:flutter/services.dart';
+
 class KanjivocabLearnScreen extends StatefulWidget {
   @override
   _KanjivocabLearnScreenState createState() => _KanjivocabLearnScreenState();
@@ -12,9 +14,9 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
 
 
   final List<Map<String, dynamic>> flashcards = [
-    {"front": "你好", "back": "Xin chào", "status": true},
-    {"front": "谢谢", "back": "Cảm ơn", "status": false},
-    {"front": "再见", "back": "Tạm biệt", "status": false},
+    {"word": "你好", "meaning": "Xin chào", "status": true},
+    {"word": "谢谢", "meaning": "Cảm ơn", "status": false},
+    {"word": "再见", "meaning": "Tạm biệt", "status": false},
   ];
 
   void updateStatus(int index) {
@@ -42,6 +44,10 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
         elevation: 6,
         shadowColor: Colors.black54,
         backgroundColor: Colors.white,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarBrightness: Brightness.light, // Cho iOS: (biểu tượng sáng)
+            statusBarIconBrightness: Brightness.dark, // Cho Android: (biểu tượng tối)
+          )
       ),
       body: Column(
         children: [
@@ -57,8 +63,8 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
               itemBuilder: (context, index) {
                 return FlashCard(
                   key: PageStorageKey(index),
-                  frontText: flashcards[index]["front"]!,
-                  backText: flashcards[index]["back"]!,
+                  frontText: flashcards[index]["word"]!,
+                  backText: flashcards[index]["meaning"]!,
                   isLearned: flashcards[index]["status"],
                   onLearned: () => updateStatus(index),
                 );
