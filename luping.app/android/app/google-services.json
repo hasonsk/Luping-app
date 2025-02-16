@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1041014738919",
+    "project_id": "hanziforest-3137d",
+    "storage_bucket": "hanziforest-3137d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041014738919:android:40653e3f765a2d2e3f7742",
+        "android_client_info": {
+          "package_name": "com.example.hanjii"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzH0xZuKdzWOmtB6VKr2h8lAu98dQvCQI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
