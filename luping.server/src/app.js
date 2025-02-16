@@ -11,6 +11,7 @@ import logger from './configs/logger.js';
 
 import userRoutes from './routes/userRoutes.js'
 import chatBotRoutes from './routes/chatBotRoutes.js';
+import pronunciationAssessmentRoutes from './routes/pronunciationAssessmentRoutes.js';
 
 // Swagger setup
 import swaggerUi from 'swagger-ui-express';
@@ -42,6 +43,7 @@ app.get('/swagger.json', (req, res) => {
 // Mount routes 
 app.use('/api/users', userRoutes);
 app.use('/api/chatbot', chatBotRoutes);
+app.use('/api/pronunciation-assessment', pronunciationAssessmentRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
