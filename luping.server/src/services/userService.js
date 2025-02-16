@@ -1,13 +1,8 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
-import multer from 'multer';
 import User from '../models/User.js';
 import { JWT_SECRET, JWT_EXPIRATION, MAIL_USER, mailConfig } from '../configs/config.js';
-import e from 'express';
-
-const DEFAULT_AVT = 'https://res.cloudinary.com/dtjl7hjbe/image/upload/v1733547284/default-avatar_vqnong.jpg';
-const DEFAULT_AVT_ADMIN = 'https://res.cloudinary.com/dtjl7hjbe/image/upload/v1733587392/default-avatar-admin_xndhuf.jpg';
 
 const generateToken = (id, role) => {
     return jwt.sign({ id, role }, JWT_SECRET, {
@@ -15,9 +10,8 @@ const generateToken = (id, role) => {
     });
 };
 
-const registerUser = async (data, mediaUrls) => {
+const registerUser = async (data) => {
     const { email, password, full_name, date_of_birth, phone_number } = data;
-    const avatar = mediaUrls && mediaUrls.length > 0 ? mediaUrls[0] : undefined;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -31,7 +25,6 @@ const registerUser = async (data, mediaUrls) => {
         full_name,
         date_of_birth,
         phone_number,
-        avatar: avatar || DEFAULT_AVT,
     };
 
     const user = new User({ email, password, profile });
@@ -77,15 +70,13 @@ const getUserProfile = async (userId) => {
     return user;
 };
 
-const updateUserProfile = async (userId, data, mediaUrls) => {
+const updateUserProfile = async (userId, data) => {
     const { full_name, date_of_birth, phone_number } = data;
-    const avatar = mediaUrls && mediaUrls.length > 0 ? mediaUrls[0] : undefined;
     
     const profileUpdates = {};
     if (full_name !== undefined) profileUpdates['profile.full_name'] = full_name;
     if (date_of_birth !== undefined) profileUpdates['profile.date_of_birth'] = date_of_birth;
     if (phone_number !== undefined) profileUpdates['profile.phone_number'] = phone_number;
-    if (avatar) profileUpdates['profile.avatar'] = avatar;
     
     const updatedUser = await User.findByIdAndUpdate(
         userId,
@@ -109,9 +100,8 @@ const changePassword = async (userId, currentPassword, newPassword) => {
     return { message: 'Password changed successfully.' };
 };
 
-const registerAdmin = async (data, mediaUrls) => {
+const registerAdmin = async (data) => {
     const { email, password, full_name, date_of_birth, phone_number } = data;
-    const avatar = mediaUrls && mediaUrls.length > 0 ? mediaUrls[0] : undefined;
 
     const existingUser = await User.findOne({ $or: [{ email }] });
     if (existingUser) {
@@ -125,7 +115,6 @@ const registerAdmin = async (data, mediaUrls) => {
         full_name,
         date_of_birth,
         phone_number,
-        avatar: avatar || DEFAULT_AVT_ADMIN,
     };
 
     const admin = new User({ email, password, profile, role: 'admin' });

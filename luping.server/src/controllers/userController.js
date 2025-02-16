@@ -3,7 +3,7 @@ import multer from 'multer';
 
 const registerUser = async (req, res, next) => {
     try {
-        const result = await userService.registerUser(req.body, req.mediaUrls);
+        const result = await userService.registerUser(req.body);
         res.status(201).json(result);
     } catch (error) {
         if (error instanceof multer.MulterError) {
@@ -36,7 +36,7 @@ const getUserProfile = async (req, res, next) => {
 
 const updateUserProfile = async (req, res, next) => {
     try {
-        const updatedUser = await userService.updateUserProfile(req.user._id, req.body, req.mediaUrls);
+        const updatedUser = await userService.updateUserProfile(req.user._id, req.body);
         res.status(200).json(updatedUser);
     } catch (error) {
         next(error);

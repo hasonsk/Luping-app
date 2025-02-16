@@ -16,12 +16,7 @@ const profileSchema = new Schema({
   phone_number: {
     type: String,
     trim: true,
-  },
-  avatar: {
-    type: String,
-    required: false,
-    trim: true,
-  },
+  }
 }, { _id: false });
 
 // Define the User Schema
