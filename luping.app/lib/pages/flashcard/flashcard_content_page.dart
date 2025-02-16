@@ -1,29 +1,21 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-
 import 'package:flutter/services.dart';
 
-class KanjivocabLearnScreen extends StatefulWidget {
+class FlashcardContentPage extends StatefulWidget {
   @override
-  _KanjivocabLearnScreenState createState() => _KanjivocabLearnScreenState();
+  _FlashcardContentPageState createState() => _FlashcardContentPageState();
 }
 
-class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
+class _FlashcardContentPageState extends State<FlashcardContentPage> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-
 
   final List<Map<String, dynamic>> flashcards = [
     {"word": "你好", "meaning": "Xin chào", "status": false},
     {"word": "谢谢", "meaning": "Cảm ơn", "status": false},
     {"word": "再见", "meaning": "Tạm biệt", "status": false},
   ];
-
-  void updateStatus(int index) {
-    setState(() {
-      flashcards[index]["status"] = !flashcards[index]["status"];
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,19 +27,13 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
         ),
         title: Text('${_currentIndex + 1}/${flashcards.length}', style: TextStyle(fontSize: 18)),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.play_arrow),
-            onPressed: () {},
-          ),
-        ],
         elevation: 6,
         shadowColor: Colors.black54,
         backgroundColor: Colors.white,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarBrightness: Brightness.light, // Cho iOS: (biểu tượng sáng)
-            statusBarIconBrightness: Brightness.dark, // Cho Android: (biểu tượng tối)
-          )
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
+        ),
       ),
       body: Column(
         children: [
@@ -63,10 +49,9 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
               itemBuilder: (context, index) {
                 return FlashCard(
                   key: PageStorageKey(index),
+                  index: index + 1, // Số thứ tự bắt đầu từ 1
                   frontText: flashcards[index]["word"]!,
                   backText: flashcards[index]["meaning"]!,
-                  isLearned: flashcards[index]["status"],
-                  onLearned: () => updateStatus(index),
                 );
               },
             ),
@@ -87,12 +72,12 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                       : null,
                   icon: Icon(
                     Icons.arrow_back,
-                    color: _currentIndex > 0 ? Colors.black : Colors.grey, // Đổi màu icon
+                    color: _currentIndex > 0 ? Colors.black : Colors.grey,
                   ),
                   label: Text(
                     "Trước",
                     style: TextStyle(
-                      color: _currentIndex > 0 ? Colors.black : Colors.grey, // Đổi màu text
+                      color: _currentIndex > 0 ? Colors.black : Colors.grey,
                     ),
                   ),
                 ),
@@ -107,8 +92,8 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                   ),
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                    backgroundColor: Colors.transparent, // 🔥 Nền trong suốt
-                    shadowColor: Colors.transparent, // 🔥 Loại bỏ hiệu ứng bóng
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
                   ),
                 ),
                 TextButton.icon(
@@ -122,33 +107,35 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                       : null,
                   icon: Icon(
                     Icons.arrow_forward,
-                    color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey, // Đổi màu icon
+                    color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey,
                   ),
                   label: Text(
                     "Sau",
                     style: TextStyle(
-                      color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey, // Đổi màu text
+                      color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-
         ],
       ),
     );
   }
-
 }
 
 class FlashCard extends StatefulWidget {
+  final int index;
   final String frontText;
   final String backText;
-  final bool isLearned;
-  final VoidCallback onLearned;
 
-  FlashCard({Key? key, required this.frontText, required this.backText, required this.isLearned, required this.onLearned}) : super(key: key);
+  FlashCard({
+    Key? key,
+    required this.index,
+    required this.frontText,
+    required this.backText,
+  }) : super(key: key);
 
   @override
   _FlashCardState createState() => _FlashCardState();
@@ -200,11 +187,11 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
               alignment: Alignment.center,
               index: _animation.value > pi / 2 ? 1 : 0,
               children: [
-                _buildCard(widget.frontText, isFront: true),
+                _buildCard(widget.frontText, isFront: true, showIndex: true),
                 Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.rotationY(pi),
-                  child: _buildCard(widget.backText, isFront: false),
+                  child: _buildCard(widget.backText, isFront: false, showIndex: false),
                 ),
               ],
             ),
@@ -214,14 +201,14 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
     );
   }
 
-  Widget _buildCard(String text, {bool isFront = false}) {
+  Widget _buildCard(String text, {bool isFront = false, required bool showIndex}) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(25, 35, 25, 20),
+      margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 10,
@@ -230,50 +217,32 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
         children: [
-          if (isFront) ...[
-            const SizedBox(height: 20),
-            const Row(
-              children: [
-                SizedBox(width: 5,),
-                Icon(Icons.volume_up_outlined, size: 26, color: Colors.grey),
-                Expanded(child: SizedBox()),
-                Icon(Icons.star_border, size: 26, color: Colors.grey),
-                SizedBox(width: 5,),
-              ],
-            ),
-          ],
-          Expanded(
-            child: Center(
-              child: Text(
-                text,
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          if (isFront) ...[
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: widget.onLearned,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: widget.isLearned ? Colors.green : Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
-                side: BorderSide(color: Colors.grey, width: 1), // Viền màu xanh lá
-              ),
-              child: Text(
-                "Đã thuộc",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: widget.isLearned ? Colors.white : Colors.green, // Màu chữ thay đổi
+          if (showIndex) // Chỉ hiển thị số thứ tự nếu là mặt trước
+            Positioned(
+              top: 8,
+              left: 12,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.white, // Đặt màu nền nếu cần
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey, width: 1), // Thêm viền màu đen dày 2px
+                ),
+                child: Text(
+                  "#${widget.index}", // Số thứ tự
+                  style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-          ],
-          SizedBox(height: 20,)
+          Center(
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
     );

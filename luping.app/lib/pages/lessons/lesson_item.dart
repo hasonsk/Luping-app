@@ -66,9 +66,9 @@ class LessonItem extends StatelessWidget {
               children: [
                 Container(width: 1, height: 50, color: Colors.green[100]),
                 const SizedBox(width: 10),
-                _buildButton(context, 'Hán tự', () => _navigateToKanjiScreen(context)),
+                _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
                 const SizedBox(width: 20),
-                _buildButton(context, 'Từ vựng', () => _navigateToVocabularyScreen(context)),
+                _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context)),
                 const SizedBox(width: 20),
                 _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
               ],
