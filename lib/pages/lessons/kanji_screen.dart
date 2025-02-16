@@ -69,13 +69,13 @@ class KanjiScreen extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          backgroundColor: Colors.grey[200], // Màu nền của AppBar
+          backgroundColor: Colors.white, // Màu nền của AppBar
           foregroundColor: Colors.black,
           elevation: 4,
           centerTitle: true,
           shadowColor: Colors.black,
           systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Colors.grey[200], // Đặt màu nền Status Bar trùng với AppBar
+            statusBarColor: Colors.white, // Đặt màu nền Status Bar trùng với AppBar
             statusBarIconBrightness: Brightness.dark, // Giữ icon status bar màu tối
           ),
         ),
@@ -93,11 +93,16 @@ class KanjiScreen extends StatelessWidget {
                 children: [
                   _buildActionButton(context, Icons.school, 'Học', () => _navigateToLearnScreen(context)),
                   SizedBox(width: 20,),
-                  _buildActionButton(context, Icons.edit, 'Luyện tập', () {}),
+                  // _buildActionButton(context, Icons.edit, 'Luyện tập', () {}),
                   // _buildActionButton(context, Icons.check, 'Kiểm tra', () => _navigateToTestScreen(context)),
                 ],
               ),
               const SizedBox(height: 25),
+              _buildSectionTitle('Hướng dẫn :', Colors.green),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                child: Text('Ở phần này chúng ta hãy cùng nhau chuẩn bị các Hán tự cần thiết cho bài mới nhé.', style: TextStyle(color: Colors.black87),),
+              ),
               Container(
                 width: double.infinity, // Chiều ngang tối đa
                 height: 1, // Chiều cao 1

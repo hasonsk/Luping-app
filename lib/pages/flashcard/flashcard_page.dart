@@ -12,6 +12,7 @@ class FlashcardPage extends StatefulWidget {
 }
 
 class _FlashcardPageState extends State<FlashcardPage> {
+  final FocusNode _focusNode = FocusNode(); // FocusNode để kiểm soát focus của TextField
 
   final List<Flashcard> flashcards = [
     Flashcard(
@@ -41,61 +42,76 @@ class _FlashcardPageState extends State<FlashcardPage> {
   ];
 
   @override
+  void dispose() {
+    _focusNode.dispose(); // Giải phóng FocusNode để tránh rò rỉ bộ nhớ
+    super.dispose();
+  }
+
+  void _unfocusTextField() {
+    if (_focusNode.hasFocus) {
+      _focusNode.unfocus();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(48.0), // Đặt chiều cao của AppBar ở đây
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white, // Màu nền của AppBar
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2), // Giảm độ đậm của bóng đổ
-                spreadRadius: 0,
-                blurRadius: 5.0, // Tăng độ mờ của bóng đổ
-                offset: const Offset(0, 2), // Bóng đổ chỉ xuất hiện ở phần dưới
-              ),
-            ],
-          ),
-          child: AppBar(
-            systemOverlayStyle: const SystemUiOverlayStyle(
-              statusBarColor: Colors.white,
-              statusBarBrightness: Brightness.light,
-              statusBarIconBrightness: Brightness.dark,
-            ),
-            backgroundColor: Colors.white, // Đặt màu nền AppBar thành trắng
-            elevation: 0, // Tắt đổ bóng mặc định
-            centerTitle: true,
-            title: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                  Icon(Icons.stacked_bar_chart, color: Colors.green,),
-                  SizedBox(width: 4,),
-                  Text('Trình tạo Flashcard',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 17,
-                  ),
+    return GestureDetector(
+      onTap: _unfocusTextField, // Khi nhấn vào bất kỳ đâu, bỏ focus khỏi TextField
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(48.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  spreadRadius: 0,
+                  blurRadius: 5.0,
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
+            child: AppBar(
+              systemOverlayStyle: const SystemUiOverlayStyle(
+                statusBarColor: Colors.white,
+                statusBarBrightness: Brightness.light,
+                statusBarIconBrightness: Brightness.dark,
+              ),
+              backgroundColor: Colors.white,
+              elevation: 0,
+              centerTitle: true,
+              title: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Icon(Icons.stacked_bar_chart, color: Colors.green),
+                  SizedBox(width: 4),
+                  Text(
+                    'Trình tạo Flashcard',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
-      body: Container(
-        color: const Color(0xFFF5F5F5),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                child: Row(
+        body: Container(
+          color: const Color(0xFFF5F5F5),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
                     TextButton(
                       onPressed: () {
+                        _unfocusTextField(); // Hủy focus trước khi điều hướng
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -106,7 +122,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
                         side: MaterialStateProperty.all<BorderSide>(
-                            const BorderSide(color: Colors.grey, width: 0.5)),
+                          const BorderSide(color: Colors.grey, width: 0.5),
+                        ),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -125,10 +142,11 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         ],
                       ),
                     ),
-
                     const Expanded(child: SizedBox()),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _unfocusTextField(); // Hủy focus khi nhấn vào nút "Tạo"
+                      },
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -140,42 +158,43 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     )
                   ],
                 ),
-              ),
-              const SizedBox(height: 15),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        spreadRadius: 1,
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
+                const SizedBox(height: 15),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          spreadRadius: 1,
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      focusNode: _focusNode, // Gán FocusNode vào TextField để kiểm soát focus
+                      decoration: InputDecoration(
+                        hintText: 'Ví dụ : 跑步, 运动, 游泳  ',
+                        hintStyle: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[600],
+                        ),
+                        border: InputBorder.none,
                       ),
-                    ],
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Ví dụ : 跑步, 运动, 游泳  ',
-                      hintStyle: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
-                        color: Colors.grey[600],
+                        color: Colors.black,
                       ),
-                      border: InputBorder.none,
+                      maxLines: null,
+                      expands: true,
                     ),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                    ),
-                    maxLines: null,
-                    expands: true,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

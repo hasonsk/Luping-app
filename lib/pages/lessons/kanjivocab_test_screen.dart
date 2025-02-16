@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'test_summary_screen.dart';
 import 'question_form.dart';
+import 'dart:async';
 
 class KanjivocabTestScreen extends StatefulWidget {
   @override
@@ -10,17 +11,68 @@ class KanjivocabTestScreen extends StatefulWidget {
 
 class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
   final List<Map<String, String>> flashcards = [
-    {"word": "你好", "meaning": "Xin chào", "pinyin": "nǐ hǎo", "imgURL": "https://assets.hanzii.net/img_word/7eca689f0d3389d9dea66ae112e5cfd7_h.jpg"},
-    {"word": "谢谢", "meaning": "Cảm ơn", "pinyin": "xièxie", "imgURL": "https://assets.hanzii.net/img_word/a34490b593cdc390c77104721ba7eb39_h.jpg"},
-    {"word": "再见", "meaning": "Tạm biệt", "pinyin": "zàijiàn", "imgURL": "https://assets.hanzii.net/img_word/8e5c0a1e46703251c02613c1048177f1_h.jpg"},
-    {"word": "我们", "meaning": "Chúng tôi", "pinyin": "wǒmen", "imgURL": "https://assets.hanzii.net/img_word/ab4a85fc2ec4cf830e0f84aaacefcb1c_h.jpg"},
+    {
+      "word": "你好",
+      "meaning": "Xin chào",
+      "pinyin": "nǐ hǎo",
+      "imgURL": "https://assets.hanzii.net/img_word/7eca689f0d3389d9dea66ae112e5cfd7_h.jpg"
+    },
+    {
+      "word": "谢谢",
+      "meaning": "Cảm ơn",
+      "pinyin": "xièxie",
+      "imgURL": "https://assets.hanzii.net/img_word/a34490b593cdc390c77104721ba7eb39_h.jpg"
+    },
+    {
+      "word": "再见",
+      "meaning": "Tạm biệt",
+      "pinyin": "zàijiàn",
+      "imgURL": "https://assets.hanzii.net/img_word/8e5c0a1e46703251c02613c1048177f1_h.jpg"
+    },
+    {
+      "word": "我们",
+      "meaning": "Chúng tôi",
+      "pinyin": "wǒmen",
+      "imgURL": "https://assets.hanzii.net/img_word/ab4a85fc2ec4cf830e0f84aaacefcb1c_h.jpg"
+    },
   ];
 
   PageController _pageController = PageController();
   int _currentQuestionIndex = 0;
   int _correctAnswers = 0;
   List<bool> _results = [];
-  bool _showImages = true; // Trạng thái toggle hiển thị ảnh
+  bool _showImages = true;
+  bool _isLoading = true; // Trạng thái load ảnh
+
+  @override
+  void initState() {
+    super.initState();
+    _preloadImages();
+  }
+
+  Future<void> _preloadImages() async {
+    for (var card in flashcards) {
+      if (card["imgURL"] != null && card["imgURL"]!.isNotEmpty) {
+        try {
+          final img = Image.network(card["imgURL"]!);
+          final Completer<void> completer = Completer();
+          img.image.resolve(ImageConfiguration()).addListener(
+            ImageStreamListener(
+                  (info, _) => completer.complete(),
+              onError: (error, stackTrace) {
+                print("Lỗi tải ảnh: ${card["imgURL"]} - $error");
+                completer.complete(); // Vẫn tiếp tục load ảnh khác
+              },
+            ),
+          );
+          await completer.future;
+        } catch (e) {
+          print("Lỗi tải ảnh: ${card["imgURL"]} - $e");
+        }
+      }
+    }
+    setState(() => _isLoading = false);
+  }
 
   void _nextQuestion(bool isCorrect) {
     if (isCorrect) _correctAnswers++;
@@ -85,7 +137,18 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
             ),
           ],
         ),
-        body: PageView.builder(
+        body: _isLoading
+            ? Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // Căn giữa theo trục dọc
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 10), // Thêm khoảng cách giữa các phần tử
+              Text('Đang tải...')
+            ],
+          ),
+        )
+            : PageView.builder(
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),
           itemCount: flashcards.length,
@@ -94,7 +157,7 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
               question: flashcards[index],
               allOptions: flashcards,
               onNextQuestion: _nextQuestion,
-              showImages: _showImages, // Truyền trạng thái ẩn/hiện ảnh
+              showImages: _showImages,
             );
           },
         ),

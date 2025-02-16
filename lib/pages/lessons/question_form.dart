@@ -115,12 +115,12 @@ class _QuestionFormState extends State<QuestionForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.question["meaning"]!,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 24),
           Expanded(child: SizedBox()),
+          Text(
+            'Từ nào sau đây có nghĩa là: \"${widget.question["meaning"]!}\"',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20,),
           GridView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
@@ -138,6 +138,7 @@ class _QuestionFormState extends State<QuestionForm> {
               style: OutlinedButton.styleFrom(
                 side: BorderSide(
                   color: _selectedAnswer == _options[index]["word"] ? Colors.blue : Colors.grey,
+                  width: _selectedAnswer == _options[index]["word"] ? 2.5 : 1, // Tăng độ dày khi được chọn
                 ),
                 padding: EdgeInsets.all(12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
