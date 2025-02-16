@@ -202,7 +202,7 @@ class SearchService {
     }
   }
 
-  Future<Sentence?> getSentence(String searchWord) async {
+  Future<List<Sentence>> getSentence(String searchWord) async {
     try {
       final db = await _db;
 
@@ -220,25 +220,24 @@ class SearchService {
       // Tách query thành các token, loại bỏ token rỗng
       final tokens =
       normalizedQuery.split(" ").where((t) => t.isNotEmpty).toList();
-      if (tokens.isEmpty) return null;
+      if (tokens.isEmpty) return [];
 
       // 2. Tạo bonus exact match cho từng trường
       // Mỗi trường nếu khớp chính xác với chuỗi tìm kiếm không khoảng trắng sẽ nhận bonus cao
       final String exactBonusClause = """
       (
-        CASE WHEN REPLACE(word, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyinQuery, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
+        CASE WHEN REPLACE(sentence, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
+        CASE WHEN REPLACE(pinyin, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
         CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(hanviet, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END
+        CASE WHEN REPLACE(searchquery, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END
       )
       """;
 
       final String partialBonusClause = """
       (
-        CASE WHEN REPLACE(word, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyinQuery, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
+        CASE WHEN REPLACE(sentence, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
+        CASE WHEN REPLACE(pinyin, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
         CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(hanviet, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END
         CASE WHEN REPLACE(searchquery, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END
       )
       """;
@@ -251,16 +250,16 @@ class SearchService {
       final List<String> scoreParts = tokens.map((token) => """
       (
         CASE 
-          WHEN REPLACE(word, '​', '') = '$token' THEN 20 
-          WHEN REPLACE(word, '​', '') LIKE '$token%' THEN 15 
-          WHEN REPLACE(word, '​', '') LIKE '%$token%' THEN 10 
+          WHEN REPLACE(sentence, '​', '') = '$token' THEN 20 
+          WHEN REPLACE(sentence, '​', '') LIKE '$token%' THEN 15 
+          WHEN REPLACE(sentence, '​', '') LIKE '%$token%' THEN 10 
           ELSE 0 
         END
         +
         CASE 
-          WHEN REPLACE(pinyinQuery, '​', '') = '$token' THEN 16 
-          WHEN REPLACE(pinyinQuery, '​', '') LIKE '$token%' THEN 12 
-          WHEN REPLACE(pinyinQuery, '​', '') LIKE '%$token%' THEN 8 
+          WHEN REPLACE(pinyin, '​', '') = '$token' THEN 16 
+          WHEN REPLACE(pinyin, '​', '') LIKE '$token%' THEN 12 
+          WHEN REPLACE(pinyin, '​', '') LIKE '%$token%' THEN 8 
           ELSE 0 
         END
         +
@@ -272,9 +271,9 @@ class SearchService {
         END
         +
         CASE 
-          WHEN REPLACE(hanviet, '​', '') = '$token' THEN 10 
-          WHEN REPLACE(hanviet, '​', '') LIKE '$token%' THEN 7 
-          WHEN REPLACE(hanviet, '​', '') LIKE '%$token%' THEN 5 
+          WHEN REPLACE(searchquery, '​', '') = '$token' THEN 10 
+          WHEN REPLACE(searchquery, '​', '') LIKE '$token%' THEN 7 
+          WHEN REPLACE(searchquery, '​', '') LIKE '%$token%' THEN 5 
           ELSE 0 
         END
       )
@@ -290,10 +289,9 @@ class SearchService {
       final List<String> conditions = [];
       for (final token in tokens) {
         conditions.addAll([
-          """REPLACE(word, '​', '') LIKE '%$token%'""",
-          """REPLACE(pinyinQuery, '​', '') LIKE '%$token%'""",
+          """REPLACE(search, '​', '') LIKE '%$token%'""",
+          """REPLACE(pinyin, '​', '') LIKE '%$token%'""",
           """REPLACE(meaning, '​', '') LIKE '%$token%'""",
-          """REPLACE(hanviet, '​', '') LIKE '%$token%'"""
           """REPLACE(searchquery, '​', '') LIKE '%$token%'"""
         ]);
       }
@@ -310,10 +308,12 @@ class SearchService {
       ORDER BY relevance DESC
       LIMIT $MAX_RESULTS
       """;
-
+      // 6. Thực thi truy vấn
+      final List<Map<String, dynamic>> results = await db.rawQuery(sql);
+      return results.map((row) => Sentence.fromMap(row)).toList();
     } catch (e) {
       logger.e('Error occurred while retrieving sentence: $e');
-      return null;
+      return [];
     }
   }
 }
