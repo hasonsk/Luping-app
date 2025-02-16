@@ -10,6 +10,7 @@ import errorHandler from './middlewares/errorHandler.js';
 import logger from './configs/logger.js';
 
 import userRoutes from './routes/userRoutes.js'
+import chatBotRoutes from './routes/chatBotRoutes.js';
 
 // Swagger setup
 import swaggerUi from 'swagger-ui-express';
@@ -40,6 +41,7 @@ app.get('/swagger.json', (req, res) => {
 
 // Mount routes 
 app.use('/api/users', userRoutes);
+app.use('/api/chatbot', chatBotRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

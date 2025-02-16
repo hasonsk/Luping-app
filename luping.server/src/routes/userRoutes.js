@@ -162,7 +162,7 @@ const router = Router();
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *             type: object
  *             properties:
@@ -173,9 +173,6 @@ const router = Router();
  *                 type: string
  *                 format: password
  *                 example: securepassword
- *               avatar:
- *                 type: string
- *                 format: binary
  *               full_name:
  *                 type: string
  *                 example: John Doe
@@ -190,10 +187,6 @@ const router = Router();
  *               - email
  *               - password
  *               - full_name
- *           encoding:
- *             avatar:
- *               style: form
- *               explode: true
  *     responses:
  *       201:
  *         description: User registered successfully.
@@ -218,9 +211,6 @@ const router = Router();
  *                       format: date
  *                     phone_number:
  *                       type: string
- *                     avatar:
- *                       type: string
- *                       format: string
  *                 token:
  *                   type: string
  *               example:
@@ -231,7 +221,6 @@ const router = Router();
  *                   full_name: "John Doe"
  *                   date_of_birth: "1990-01-01"
  *                   phone_number: "+1234567890"
- *                   avatar: "https://cloudinary.com/avatar.jpg"
  *                 token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
  *         description: Bad request.
@@ -263,7 +252,7 @@ router.post(
         body('phone_number')
             .optional()
             .matches(/^\+?[1-9]\d{1,14}$/)
-            .withMessage('Please provide a valid phone number in E.164 format'),
+            .withMessage('Please provide a valid phone number in E.164 format')
     ],
     validate,
     registerUser
