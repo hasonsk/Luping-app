@@ -1,3 +1,4 @@
+const User = require('../../models/client/User');
 const authService = require('../../services/client/authService');
 
 class authController {
@@ -9,13 +10,13 @@ class authController {
       if (!result.success)
         return res.status(401).json({ message: 'Authentication failed' });
 
-      return res
-        .status(200)
-        .json({
-          message: 'Logged in successfully',
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
-        });
+      return res.status(200).json({
+        message: 'Logged in successfully',
+        email: result.email,
+        id: result.id,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+      });
     } catch (err) {
       return res.status(500).json({ message: 'Internal server error' });
     }
@@ -29,6 +30,7 @@ class authController {
       const result = await authService.newUserSignUp(email, password, fullname);
       if (result.success)
         return res.status(200).json({ message: result.message });
+      else return res.status(409).json({ message: result.message });
     } catch (err) {
       return res.status(500).json({ message: 'Internal server error' });
     }

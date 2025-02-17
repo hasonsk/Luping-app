@@ -36,6 +36,8 @@ class authService {
         return {
           success: true,
           message: 'Login successfully',
+          email: user.email,
+          id : user.id,
           accessToken,
           refreshToken,
         };
