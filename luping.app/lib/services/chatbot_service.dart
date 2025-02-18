@@ -70,7 +70,8 @@ class ChatbotService {
   }
 
   /// Makes the POST API call.
-  Future<ChatbotResponse?> fetchChatResponse({required String userMessage}) async {
+  Future<ChatbotResponse?> fetchChatResponse(
+      {required String userMessage}) async {
     final session = currentSession;
     if (session == null) {
       throw Exception("Chat session is not initialized.");
@@ -97,10 +98,11 @@ class ChatbotService {
     try {
       final response = await http
           .post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(requestData),
-      ).timeout(const Duration(seconds: 10));
+            url,
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode(requestData),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
@@ -109,6 +111,66 @@ class ChatbotService {
         final aggregatedResponse = aggregateResponseSentences(chatbotResponse);
 
         // Add AI's response.
+        await addMessage(ChatMessage(
+          sender: "AI",
+          message: aggregatedResponse,
+          timestamp: DateTime.now(),
+        ));
+
+        return chatbotResponse;
+      } else {
+        logger.e("Error: ${response.statusCode} - ${response.reasonPhrase}");
+        return null;
+      }
+    } catch (e) {
+      logger.e("Network error: $e");
+      return null;
+    }
+  }
+
+  /// Initialize a chat session and get first response from API
+  Future<ChatbotResponse?> initChatSession({
+    required String role,
+    required String topic,
+    required String chineseLevel,
+  }) async {
+    // Clear existing session
+    await clearSession();
+
+    // Create new session
+    await initSession(
+      role: role,
+      topic: topic,
+      chineseLevel: chineseLevel,
+    );
+
+    final serverBaseUrl = dotenv.env['SERVER_BASE_URL'] ?? '';
+    final url = Uri.parse("$serverBaseUrl/chatbot/response");
+
+    final Map<String, dynamic> requestData = {
+      "role": role,
+      "topic": topic,
+      "chinese_level": chineseLevel,
+      "user_message": "",
+      "chat_history": [],
+    };
+
+    try {
+      final response = await http
+          .post(
+            url,
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode(requestData),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        final chatbotResponse = ChatbotResponse.fromJson(jsonResponse);
+
+        final aggregatedResponse = aggregateResponseSentences(chatbotResponse);
+
+        // Add AI's initial response
         await addMessage(ChatMessage(
           sender: "AI",
           message: aggregatedResponse,
