@@ -1,3 +1,5 @@
+import 'package:hanjii/models/hint_story.dart';
+import 'package:hanjii/models/story.dart';
 import 'package:hanjii/models/word.dart';
 import 'package:logger/logger.dart';
 import 'package:sqflite/sqflite.dart';
@@ -219,7 +221,7 @@ class SearchService {
 
       // Tách query thành các token, loại bỏ token rỗng
       final tokens =
-      normalizedQuery.split(" ").where((t) => t.isNotEmpty).toList();
+          normalizedQuery.split(" ").where((t) => t.isNotEmpty).toList();
       if (tokens.isEmpty) return [];
 
       // 2. Tạo bonus exact match cho từng trường
@@ -229,7 +231,7 @@ class SearchService {
         CASE WHEN REPLACE(sentence, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
         CASE WHEN REPLACE(pinyin, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
         CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(searchquery, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END
+        CASE WHEN REPLACE(searchquery, '​', ' ') = '$normalizedQuery' THEN 150 ELSE 0 END
       )
       """;
 
@@ -238,7 +240,7 @@ class SearchService {
         CASE WHEN REPLACE(sentence, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
         CASE WHEN REPLACE(pinyin, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
         CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(searchquery, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END
+        CASE WHEN REPLACE(searchquery, '​', ' ') LIKE '%$normalizedQuery%' THEN 100 ELSE 0 END
       )
       """;
 
@@ -271,9 +273,9 @@ class SearchService {
         END
         +
         CASE 
-          WHEN REPLACE(searchquery, '​', '') = '$token' THEN 10 
-          WHEN REPLACE(searchquery, '​', '') LIKE '$token%' THEN 7 
-          WHEN REPLACE(searchquery, '​', '') LIKE '%$token%' THEN 5 
+          WHEN REPLACE(searchquery, '​', '') = '$token' THEN 30 
+          WHEN REPLACE(searchquery, '​', '') LIKE '$token%' THEN 25 
+          WHEN REPLACE(searchquery, '​', '') LIKE '%$token%' THEN 20 
           ELSE 0 
         END
       )
@@ -314,6 +316,72 @@ class SearchService {
     } catch (e) {
       logger.e('Error occurred while retrieving sentence: $e');
       return [];
+    }
+  }
+
+  Future<List<HintStory>> getStoryHint(String query) async {
+    try {
+      final db = await _db;
+      // 1. Lọc bỏ các ký tự không phải chữ Hán
+      final hanziQuery =
+          query.replaceAll(RegExp(r'[^\p{Script=Han}]', unicode: true), '');
+
+      if (hanziQuery.isEmpty) {
+        return [];
+      }
+
+      // 2. Tạo danh sách các placeholder và các giá trị tương ứng cho truy vấn
+      final placeholders = List.filled(hanziQuery.length, '?').join(',');
+      final characters = hanziQuery.split('');
+
+      // 3. Truy vấn cơ sở dữ liệu
+      final results = await db.query(
+        'Storys',
+        columns: ['id', 'character', 'pinyin', 'hanviet', 'meaning'],
+        where: 'character IN ($placeholders)',
+        whereArgs: characters,
+      );
+
+      // 4. Tạo danh sách HintStory
+      final List<HintStory> hintStories = [];
+      for (final char in characters) {
+        // Tìm story có character khớp với ký tự hiện tại
+        final storyMap = results.firstWhere(
+          (map) => map['character'] == char,
+          orElse: () => {}, // Return empty map if no match
+        );
+
+        if (storyMap.isNotEmpty) {
+          hintStories.add(HintStory.fromMap(storyMap));
+        }
+      }
+
+      return hintStories;
+    } catch (e) {
+      logger.e("Error in getStoryHint: $e");
+      return [];
+    }
+  }
+
+  // New function to get story detail by character
+  Future<Story?> getStoryDetail(String character) async {
+    try {
+      final db = await _db;
+      final result = await db.query(
+        'Storys',
+        where: 'character = ?',
+        whereArgs: [character],
+        limit: 1,
+      );
+
+      if (result.isNotEmpty) {
+        return Story.fromMap(result.first);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      logger.e('Error in getStoryDetail: $e');
+      return null;
     }
   }
 }
