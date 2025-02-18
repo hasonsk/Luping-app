@@ -49,8 +49,7 @@ flutter:
 
   assets:
     - assets/
-    - lib/data/HanziStory.sqlite
-    - .env
+#    - .env
 
   fonts:
     - family: Lobster
