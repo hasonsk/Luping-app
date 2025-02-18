@@ -44,3 +44,5 @@ app.*.map.json
 codebase_documentation.md
 
 .env
+
+HanziStory.sqlite
