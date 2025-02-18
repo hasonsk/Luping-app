@@ -5,8 +5,11 @@ import 'package:hive/hive.dart';
 import '../models/chat_message.dart';
 import '../models/chatbot_response.dart';
 import '../models/chat_session.dart';
+import 'package:logger/logger.dart';
 
 class ChatbotService {
+  static final logger = Logger();
+
   static final ChatbotService _instance = ChatbotService._internal();
   factory ChatbotService() => _instance;
   ChatbotService._internal();
@@ -114,11 +117,11 @@ class ChatbotService {
 
         return chatbotResponse;
       } else {
-        print("Error: ${response.statusCode} - ${response.reasonPhrase}");
+        logger.e("Error: ${response.statusCode} - ${response.reasonPhrase}");
         return null;
       }
     } catch (e) {
-      print("Network error: $e");
+      logger.e("Network error: $e");
       return null;
     }
   }

@@ -61,7 +61,7 @@ class Story {
       bothanhphan: convertToList(map['bothanhphan']),
       meaning: convertToList(map['meaning']),
       image: map['image'],
-      mnemonic_v_seperate: convertToList(map['mnemonic_v_seperate']), // Chuyển đổi đúng kiểu dữ liệu
+      mnemonic_v_seperate: convertToList(map['mnemonic_v_seperate']), 
       mnemonic_v_content: map['mnemonic_v_content'],
       mnemonic_v_media: convertToList(map['mnemonic_v_media']),
       mnemonic_c_content: map['mnemonic_c_content'],

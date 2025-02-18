@@ -6,7 +6,7 @@ import '../../models/hint_character.dart';
 class SearchStoryView extends StatefulWidget {
   final List<HintCharacter> list;
 
-  const SearchStoryView({Key? key, required this.list}) : super(key: key);
+  const SearchStoryView({super.key, required this.list});
 
   @override
   _SearchStoryViewState createState() => _SearchStoryViewState();

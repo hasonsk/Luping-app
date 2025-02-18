@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SearchLobbyView extends StatelessWidget {
-  const SearchLobbyView({Key? key}) : super(key: key);
+  const SearchLobbyView({super.key});
 
   @override
   Widget build(BuildContext context) {
