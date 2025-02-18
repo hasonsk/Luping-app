@@ -6,7 +6,7 @@ import 'package:get/get.dart'; // Import GetX
 import 'package:flutter_svg/flutter_svg.dart';
 import 'note.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:hanjii/pages/search.dart';
+import 'package:hanjii/pages/search/search.dart';
 
 class Home extends StatefulWidget {
   final ValueChanged<bool>

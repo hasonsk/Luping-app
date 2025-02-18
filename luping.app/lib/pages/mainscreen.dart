@@ -132,7 +132,7 @@ class _MainScreenState extends State<MainScreen> {
       default: // Home
         SystemChrome.setSystemUIOverlayStyle(
           const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent, // Bạn có thể thay đổi màu khác nếu muốn
+            statusBarColor: Colors.transparent, 
             statusBarIconBrightness: Brightness.light,
           ),
         );
