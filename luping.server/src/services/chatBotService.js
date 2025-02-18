@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import * as fs from 'fs/promises';
 import { GEMINI_API_KEY } from '../configs/config.js';
-import logger from '../configs/logger.js';
+import logger from '../configs/logger.js'; // Assuming this is your main application logger
 import { createLogger, transports, format } from 'winston';
 import path from 'path';
 
@@ -13,7 +13,9 @@ const chatbotLogger = createLogger({
         format.json()
     ),
     transports: [
-        new transports.File({ filename: path.join('logs', 'chatbot.log'), level: 'info' })
+        new transports.File({ filename: path.join('logs', 'chatbot.log'), level: 'info' }),
+        // Optionally add console logging for dev/debugging
+        // new transports.Console({ level: 'debug' }) // Use 'debug' level during development
     ]
 });
 
@@ -28,69 +30,72 @@ const generationConfig = {
 };
 
 const validateChatbotResponse = (response) => {
+    // Added checks for null/undefined values for robustness.
     return (
         response &&
+        response.response_sentences &&
         Array.isArray(response.response_sentences) &&
-        response.response_sentences.every(s => typeof s.sentence === 'string' && typeof s.pinyin === 'string' && typeof s.meaning_VN === 'string') &&
-        typeof response.comment === 'string' &&
+        response.response_sentences.every(s => s && typeof s.sentence === 'string' && typeof s.pinyin === 'string' && typeof s.meaning_VN === 'string') &&
+        response.comment && typeof response.comment === 'string' &&
+        response.suggested_sentences &&
         Array.isArray(response.suggested_sentences) &&
-        response.suggested_sentences.length <= 2 && // Based on the example, max 2 suggestions
-        response.suggested_sentences.every(s => typeof s.sentence === 'string' && typeof s.pinyin === 'string' && typeof s.meaning_VN === 'string')
+        response.suggested_sentences.length <= 2 &&
+        response.suggested_sentences.every(s => s && typeof s.sentence === 'string' && typeof s.pinyin === 'string' && typeof s.meaning_VN === 'string')
     );
 };
 
 const generateChatbotResponse = async (userInput) => {
     const promptTemplate = await fs.readFile('./src/services/prompt.xml', 'utf-8');
 
-    // Basic input validation (prevent prompt injection)
-    const safeRole = /^[a-zA-Z0-9\s]+$/.test(userInput.role) ? userInput.role : 'Any role';
-    const safeTopic = /^[a-zA-Z0-9\s]+$/.test(userInput.topic) ? userInput.topic : 'Any topic';
+    // Basic input validation (prevent prompt injection),  handle null/undefined
+    const safeRole = userInput?.role ? (/^[a-zA-Z0-9\s]+$/.test(userInput.role) ? userInput.role : 'Any role') : 'Any role';
+    const safeTopic = userInput?.topic ? (/^[a-zA-Z0-9\s]+$/.test(userInput.topic) ? userInput.topic : 'Any topic') : 'Any topic';
+    const safeChineseLevel = userInput?.chinese_level || 'beginner'; //  default value
+    const safeUserMessage = userInput?.user_message || ''; //  default value
+    const safeChatHistory = userInput?.chat_history || '';  // default value
 
     const prompt = promptTemplate
         .replace('{{$role}}', safeRole)
         .replace('{{$topic}}', safeTopic)
-        .replace('{{$chinese_level}}', userInput.chinese_level)
-        .replace('{{$user_message}}', userInput.user_message)
-        .replace('{{$chat_history}}', userInput.chat_history);
+        .replace('{{$chinese_level}}', safeChineseLevel)
+        .replace('{{$user_message}}', safeUserMessage)
+        .replace('{{$chat_history}}', safeChatHistory);
 
     const chat = model.startChat({
         generationConfig,
-        history: [], // History is handled in the prompt, not here
+        history: [], // History is handled in the prompt
     });
 
     let retries = 3;
     let delay = 100; // Initial delay in milliseconds
+    let lastError; // Store the last error for the final error throw
+
     while (retries > 0) {
+        const attempt = 4 - retries; // Calculate the current attempt number
         try {
             const startTime = Date.now();
+
             // Count prompt tokens *before* sending the message
             const promptTokenCount = await model.countTokens(prompt);
-            logger.info(`Prompt token count: ${promptTokenCount.totalTokens}`);
-            chatbotLogger.info({
-                type: 'prompt_tokens',
-                tokens: promptTokenCount.totalTokens
-            });
+            // chatbotLogger.info({ attempt, type: 'prompt_tokens', tokens: promptTokenCount.totalTokens });
 
             const result = await chat.sendMessage(prompt);
             const endTime = Date.now();
+            const latency = endTime - startTime;
             let responseText = result.response.text();
 
             // Count response tokens *after* receiving the response
             const responseTokenCount = await model.countTokens(responseText);
-            logger.info(`Response token count: ${responseTokenCount.totalTokens}`);
-             chatbotLogger.info({
-                type: 'response_tokens',
-                tokens: responseTokenCount.totalTokens
-            });
+            // chatbotLogger.info({ attempt, type: 'response_tokens', tokens: responseTokenCount.totalTokens });
 
             responseText = responseText.replace(/```json\n?|\n?```/g, '').trim();
-
-            // Log the raw response and timing
-            logger.info(`Chatbot API Response (Attempt ${4 - retries}): ${responseText}`);
+            // Log raw response and timing
             chatbotLogger.info({
-                attempt: 4 - retries,
-                latency: `${endTime - startTime}ms`,
-                userInput: userInput,
+                attempt,
+                promptTokenCount,
+                responseTokenCount,
+                latency: `${latency}ms`,
+                userInput,
                 rawResponse: responseText,
             });
 
@@ -98,68 +103,55 @@ const generateChatbotResponse = async (userInput) => {
             try {
                 parsedResponse = JSON.parse(responseText);
             } catch (parseError) {
-                logger.error(`Error parsing chatbot response: ${parseError.message}, retrying...`);
-                chatbotLogger.error({
-                  attempt: 4 - retries,
-                  error: `Parsing error: ${parseError.message}`,
-                  rawResponse: responseText,
+                // Log the parsing error
+                chatbotLogger.warn({
+                    attempt,
+                    error: `Parsing error: ${parseError.message}`,
+                    rawResponse: responseText,
                 });
-                retries--;
-                await new Promise(resolve => setTimeout(resolve, delay));
-                delay *= 1.5; // Increase delay for next retry
-                continue;
+                lastError = parseError; // Update lastError
+                throw parseError; // Re-throw to be caught in the outer catch block
             }
 
             if (validateChatbotResponse(parsedResponse)) {
-                 // Log successful response and token usage (if available)
-                if (result.response.promptFeedback) {
-                    chatbotLogger.info({
-                        attempt: 4 - retries,
-                        status: 'success',
-                        parsedResponse: parsedResponse,
-                        promptFeedback: result.response.promptFeedback,
-                    });
-                } else {
-                  chatbotLogger.info({
-                      attempt: 4 - retries,
-                      status: "success",
-                      parsedResponse: parsedResponse,
-                  });
-                }
+                // Log successful response and token usage
+                chatbotLogger.info({
+                    attempt,
+                    status: 'success',
+                    parsedResponse,
+                    promptFeedback: result.response.promptFeedback || 'No feedback provided', // Handle missing feedback
+                });
                 return parsedResponse;
             } else {
-                logger.warn(`Chatbot response failed validation, retrying...`);
+                const validationError = new Error("Response validation failed");
                 chatbotLogger.warn({
-                    attempt: 4 - retries,
+                    attempt,
                     status: 'failed validation',
-                    parsedResponse: parsedResponse,
+                    parsedResponse,
                 });
-                retries--;
-                await new Promise(resolve => setTimeout(resolve, delay));
-                 delay *= 1.5; // Increase delay for next retry
+                lastError = validationError;
+                throw validationError; // Throw a validation error
             }
         } catch (error) {
-            logger.error(`Chatbot API Error: ${error.message}, retries remaining: ${retries}`);
+            // Generic error handling (API errors, network issues, etc.)
             chatbotLogger.error({
-              attempt: 4 - retries,
-              error: error.message,
-              stack: error.stack,
+                attempt,
+                error: error.message,
+                stack: error.stack, // Log the full stack trace
             });
+            lastError = error; // Store the error
+
             retries--;
-            if(retries === 0){
-              const err = new Error('Chatbot service failed.');
-              err.status = 500;
-              err.detail = "The chatbot service is currently unavailable after multiple retries. " + error.message;
-              throw err;
+            if (retries === 0) {
+                const err = new Error('Chatbot service failed.');
+                err.status = 500;
+                err.detail = "The chatbot service is currently unavailable after multiple retries. Last error: " + lastError.message;
+                throw err;
             }
             await new Promise(resolve => setTimeout(resolve, delay));
-             delay *= 1.5; // Increase delay for next retry
+            delay *= 1.5; // Exponential backoff
         }
     }
-    const err = new Error('Chatbot service failed.');
-    err.status = 500;
-    err.detail = "The chatbot service is currently unavailable after multiple retries.";
-    throw err;
 };
 
 export { generateChatbotResponse };
