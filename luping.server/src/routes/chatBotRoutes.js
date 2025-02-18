@@ -131,7 +131,7 @@ const router = Router();
  */
 router.post(
     '/response',
-    authenticate,
+    // authenticate,
     [
         body('role')
             .isString()
