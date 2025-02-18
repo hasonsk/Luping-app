@@ -2,6 +2,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:hanjii/models/hint_character.dart';
 import 'package:hanjii/data/database_helper.dart';
+import 'package:hanjii/pages/search/drawingboard.dart';
+import 'package:hanjii/pages/search/search_image_view.dart';
 import 'package:hanjii/pages/search/search_lobby_view.dart';
 import 'dart:async';
 import 'package:hanjii/pages/search/search_story_view.dart';
@@ -59,6 +61,17 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       hanViet: 'Môn',
       shortMeaning: 'chúng',
     ),
+  ];
+  List<String> imageData = [
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIBK512v9cBy7_94eTofhozRCKwwszEWdeYw&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWWM5vq0LOukFhr-hw3b5GS1MkUJm0p5A2gw&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8yXKP24h_8R175Yf46FniZ4OBxlbfKbs7tQ&s",
+    "https://i.kfs.io/album/global/255707687,0v1/fit/500x500.jpg",
+    "https://www.tanghuaku.com/wp-content/uploads/2021/04/TK-1174.jpg",
+    "https://i.ytimg.com/vi/lNB8Y82DVio/maxresdefault.jpg",
+    "https://upload.wikimedia.org/wikipedia/zh/4/41/You_and_Me_cover.jpg",
+    "https://p1.img.cctvpic.com/photoAlbum/page/performance/img/2016/6/28/1467095898279_379.jpg",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJKaM5XMXpZmdB3jA13DGi_nGK_PyzBZArmw&s",
   ];
 // Setter cho _selectedTabIndex để đồng bộ TabBar và PageView
   set selectedTabIndex(int index) {
@@ -427,7 +440,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                     buildWordsView(),
                     buildStoriesView(),
                     buildSentencesView(),
-                    buildSentencesView(),
+                    buildImagesView(),
                   ],
                 ),
               ),
@@ -476,6 +489,10 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   Widget buildSentencesView() {
     return const Center(child: Text('Sentences Content'));
   }
+
+  Widget buildImagesView() {
+    return SearchImageView(list : imageData);
+  }
 }
 
 class TriangleIndicator extends Decoration {
@@ -518,153 +535,3 @@ class _TrianglePainter extends BoxPainter {
   }
 }
 
-class DrawingBoard extends StatefulWidget {
-  const DrawingBoard({super.key});
-
-  @override
-  _DrawingBoardState createState() => _DrawingBoardState();
-}
-
-class _DrawingBoardState extends State<DrawingBoard> {
-  final List<Offset?> _points = [];
-  String _recognizedResult = "";
-  late Handwriting _handwriting; // Khai báo đối tượng Handwriting
-
-  @override
-  void initState() {
-    super.initState();
-    _handwriting = Handwriting(width: 300, height: 200);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        const Text(
-          "Vẽ ký tự tiếng Trung ở đây",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Expanded(
-          child: GestureDetector(
-            onPanUpdate: (details) {
-              setState(() {
-                _points.add(details.localPosition);
-              });
-            },
-            onPanEnd: (details) {
-              _points.add(null); // Đánh dấu kết thúc vẽ
-            },
-            child: CustomPaint(
-              size: Size.infinite,
-              painter: DrawingPainter(_points),
-            ),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            _recognizeHandwriting();
-          },
-          child: const Text("Nhận diện"),
-        ),
-        const SizedBox(height: 20),
-        Text(
-          "Kết quả nhận diện: $_recognizedResult",
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
-
-  void _recognizeHandwriting() {
-    List<List<List<int>>> rawTrace =
-        _convertPointsToTrace(_points); // Đổi kiểu biến ở đây
-    print("Trace: $rawTrace"); // In tọa độ ra console
-
-    // Chuyển đổi rawTrace sang định dạng đúng cho phương thức recognize
-    List<List<int>> trace = [];
-
-    for (var stroke in rawTrace) {
-      // Chỉ thêm x và y vào trace
-      if (stroke.length == 2) {
-        trace.add(stroke[0]); // X coordinates
-        trace.add(stroke[1]); // Y coordinates
-      }
-    }
-
-    var options = {
-      'language': 'zh_TW',
-      'numOfReturn': 5,
-      'numOfWords': 2,
-    };
-
-    _handwriting.recognize(
-      trace,
-      options,
-      (results, error) {
-        if (error != null) {
-          setState(() {
-            _recognizedResult = "Error: ${error.toString()}";
-          });
-        } else {
-          setState(() {
-            _recognizedResult = results?.toString() ?? "No result";
-          });
-        }
-      },
-    );
-  }
-
-  List<List<List<int>>> _convertPointsToTrace(List<Offset?> points) {
-    List<List<List<int>>> trace = [];
-    List<int> xCoords = [];
-    List<int> yCoords = [];
-
-    for (var point in points) {
-      if (point != null) {
-        // Thêm tọa độ vào danh sách
-        xCoords.add(point.dx.toInt());
-        yCoords.add(point.dy.toInt());
-      } else {
-        // Khi gặp null, có thể đã kết thúc một stroke
-        if (xCoords.isNotEmpty && yCoords.isNotEmpty) {
-          // Thêm stroke vào trace
-          trace.add([xCoords, yCoords]);
-          // Reset danh sách tọa độ cho stroke tiếp theo
-          xCoords = [];
-          yCoords = [];
-        }
-      }
-    }
-
-    // Nếu còn tọa độ trong xCoords và yCoords, thêm stroke cuối cùng
-    if (xCoords.isNotEmpty && yCoords.isNotEmpty) {
-      trace.add([xCoords, yCoords]);
-    }
-
-    return trace; // Trả về danh sách các strokes
-  }
-}
-
-class DrawingPainter extends CustomPainter {
-  final List<Offset?> points;
-
-  DrawingPainter(this.points);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 4.0;
-
-    for (int i = 0; i < points.length - 1; i++) {
-      if (points[i] != null && points[i + 1] != null) {
-        canvas.drawLine(points[i]!, points[i + 1]!, paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(DrawingPainter oldDelegate) => true;
-}

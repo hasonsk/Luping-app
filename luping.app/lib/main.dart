@@ -26,7 +26,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize dotenv, specifying the path.
-  await dotenv.load(fileName: '.env');
+  // await dotenv.load(fileName: '.env');
 
   // Khởi tạo Firebase
   await Firebase.initializeApp(
