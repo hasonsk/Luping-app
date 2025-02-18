@@ -79,7 +79,6 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/search/character', page: () => const Character()),
         GetPage(name: '/search/word', page: () => const WordInfo()),
         GetPage(name: '/game', page: () => GameScreen()),
-        GetPage(name: '/chatbot', page: () => const ChatbotPage()),
       ],
     );
   }
