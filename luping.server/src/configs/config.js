@@ -5,7 +5,8 @@ config();
 export const PORT = process.env.PORT || 3000;
 export const MONGO_URI = process.env.MONGO_URI;
 export const JWT_SECRET = process.env.JWT_SECRET;
-export const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '1d';
+export const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '1h';
+export const JWT_REFRESH_EXPIRATION = process.env.JWT_REFRESH_EXPIRATION || '30d'
 export const NODE_ENV = process.env.NODE_ENV || 'development';
 
 export const MAIL_USER = process.env.MAIL_USER;

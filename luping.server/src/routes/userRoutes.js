@@ -14,6 +14,7 @@ import {
     getProfileById,
     sendCode,
     verifyCode,
+    refreshToken
 } from '../controllers/userController.js';
 
 const router = Router();
@@ -211,7 +212,9 @@ const router = Router();
  *                       format: date
  *                     phone_number:
  *                       type: string
- *                 token:
+ *                 refreshToken:
+ *                   type: string
+ *                 accessToken:
  *                   type: string
  *               example:
  *                 _id: 60d5ec49f9a1b14a3c8d4567
@@ -221,7 +224,8 @@ const router = Router();
  *                   full_name: "John Doe"
  *                   date_of_birth: "1990-01-01"
  *                   phone_number: "+1234567890"
- *                 token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *                 accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *                 refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
  *         description: Bad request.
  *       409:
@@ -260,6 +264,54 @@ router.post(
 
 /**
  * @swagger
+ * /users/refresh-token:
+ *   post:
+ *     summary: Refresh access token
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *             example:
+ *               refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *     responses:
+ *       200:
+ *         description: New access token generated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *               example:
+ *                 accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *       400:
+ *         description: Bad request, missing token.
+ *       401:
+ *         description: Invalid or expired refresh token.
+ */
+
+router.post(
+    '/refresh-token',
+    [
+        body('refreshToken')
+            .notEmpty()
+            .withMessage('Refresh token is required')
+    ],
+    validate,
+    refreshToken
+);
+
+
+
+/**
+ * @swagger
  * /users/login:
  *   post:
  *     summary: Login a user
@@ -284,13 +336,16 @@ router.post(
  *                   type: string
  *                 role:
  *                   type: string
- *                 token:
+ *                 accessToken:
+ *                   type: string
+ *                 refreshToken:
  *                   type: string
  *               example:
  *                 _id: 60d5ec49f9a1b14a3c8d4567
  *                 email: "johndoe@example.com"
  *                 role: "user"
- *                 token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *                 accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *                 refreshToken:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
  *         description: Bad request.
  *       401:
