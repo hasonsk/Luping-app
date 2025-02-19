@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import { body } from 'express-validator';
-import validate from '../middlewares/validate.js';
-import authenticate from '../middlewares/authenticate.js';
-import { getChatbotResponse } from '../controllers/chatBotController.js';
+import { Router } from "express";
+import { body } from "express-validator";
+import validate from "../middlewares/validate.js";
+import authenticate from "../middlewares/authenticate.js";
+import { getChatbotResponse } from "../controllers/chatBotController.js";
 
 const router = Router();
 
@@ -53,21 +53,19 @@ const router = Router();
  *     ChatbotResponse:
  *       type: object
  *       properties:
- *         response_sentences:
- *           type: array
- *           description: Array of response sentences with their details
- *           items:
- *             type: object
- *             properties:
- *               sentence:
- *                 type: string
- *                 description: Chinese sentence
- *               pinyin:
- *                 type: string
- *                 description: Pinyin pronunciation
- *               meaning_VN:
- *                 type: string
- *                 description: Vietnamese translation
+ *         response:
+ *           type: object
+ *           description:  Response sentence with details
+ *           properties:
+ *             sentence:
+ *               type: string
+ *               description: Chinese sentence
+ *             pinyin:
+ *               type: string
+ *               description: Pinyin pronunciation
+ *             meaning_VN:
+ *               type: string
+ *               description: Vietnamese translation
  *         comment:
  *           type: string
  *           description: Additional comments or instructions
@@ -87,10 +85,10 @@ const router = Router();
  *                 type: string
  *                 description: Vietnamese translation
  *       example:
- *         response_sentences:
- *           - sentence: "你好吗？"
- *             pinyin: "Nǐ hǎo ma?"
- *             meaning_VN: "Bạn khỏe không?"
+ *         response:
+ *           sentence: "你好吗？"
+ *           pinyin: "Nǐ hǎo ma?"
+ *           meaning_VN: "Bạn khỏe không?"
  *         comment: ""
  *         suggested_sentences:
  *           - sentence: "我很好，谢谢！"
@@ -130,33 +128,31 @@ const router = Router();
  *         description: Internal server error
  */
 router.post(
-    '/response',
-    // authenticate,
-    [
-        body('role')
-            .isString()
-            .withMessage('Role must be a string')
-            .notEmpty()
-            .withMessage('Role is required'),
-        body('topic')
-            .isString()
-            .withMessage('Topic must be a string')
-            .notEmpty()
-            .withMessage('Topic is required'),
-        body('chinese_level')
-            .isString()
-            .withMessage('Chinese level must be a string')
-            .notEmpty()
-            .withMessage('Chinese level is required'),
-        body('user_message')
-            .isString()
-            .withMessage('User message must be a string'),
-        body('chat_history')
-            .isArray()
-            .withMessage('Chat history must be an array'),
-    ],
-    validate,
-    getChatbotResponse
+  "/response",
+  // authenticate,
+  [
+    body("role")
+      .isString()
+      .withMessage("Role must be a string")
+      .notEmpty()
+      .withMessage("Role is required"),
+    body("topic")
+      .isString()
+      .withMessage("Topic must be a string")
+      .notEmpty()
+      .withMessage("Topic is required"),
+    body("chinese_level")
+      .isString()
+      .withMessage("Chinese level must be a string")
+      .notEmpty()
+      .withMessage("Chinese level is required"),
+    body("user_message")
+      .isString()
+      .withMessage("User message must be a string"),
+    body("chat_history").isArray().withMessage("Chat history must be an array"),
+  ],
+  validate,
+  getChatbotResponse,
 );
 
 export default router;
