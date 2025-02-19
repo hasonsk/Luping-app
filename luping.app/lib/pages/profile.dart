@@ -8,7 +8,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  static const Color primaryColor = Color(0xFF96D962);
+  // static const Color primaryColor = Color(0xFF96D962);
   static final Color backColor = Colors.grey[200]!;
 
   @override
