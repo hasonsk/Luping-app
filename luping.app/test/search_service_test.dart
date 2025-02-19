@@ -26,8 +26,10 @@ void main() {
 
       // Debug print
       print('\n=== Results for "ni hao" search ===');
-      results.forEach((hint) => print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}'));
+      for (var hint in results) {
+        print(
+          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}');
+      }
       print('Total results: ${results.length}\n');
 
       expect(results, isNotEmpty,
@@ -45,8 +47,10 @@ void main() {
 
       // Debug print
       print('\n=== Results for "你" search ===');
-      results.forEach((hint) => print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}'));
+      for (var hint in results) {
+        print(
+          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}');
+      }
       print('Total results: ${results.length}\n');
 
       expect(results, isNotEmpty,
@@ -64,8 +68,10 @@ void main() {
 
       // Debug print
       print('\n=== Results for "hao" search ===');
-      results.forEach((hint) => print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}'));
+      for (var hint in results) {
+        print(
+          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}');
+      }
       print('Total results: ${results.length}\n');
 
       expect(results, isNotEmpty,
@@ -81,8 +87,10 @@ void main() {
 
       // Debug print
       print('\n=== Results for "xin chào" search ===');
-      results.forEach((hint) => print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}'));
+      for (var hint in results) {
+        print(
+          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}');
+      }
       print('Total results: ${results.length}\n');
 
       expect(results, isNotEmpty,

@@ -8,12 +8,12 @@ class QuestionForm extends StatefulWidget {
   final bool showImages; // Trạng thái hiển thị ảnh
 
   const QuestionForm({
-    Key? key,
+    super.key,
     required this.question,
     required this.allOptions,
     required this.onNextQuestion,
     required this.showImages, // Nhận trạng thái từ `KanjivocabTestScreen`
-  }) : super(key: key);
+  });
 
   @override
   _QuestionFormState createState() => _QuestionFormState();
@@ -49,7 +49,7 @@ class _QuestionFormState extends State<QuestionForm> {
       isDismissible: false,
       isScrollControlled: true,
       enableDrag: false,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => WillPopScope(
@@ -58,34 +58,34 @@ class _QuestionFormState extends State<QuestionForm> {
           widthFactor: 1,
           heightFactor: 0.4,
           child: Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isCorrect ? Colors.green : Colors.red,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   isCorrect ? 'Bạn đang làm rất tốt!' : 'Không chính xác!',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-                SizedBox(height: 16),
-                Text(
+                const SizedBox(height: 16),
+                const Text(
                   'Đáp án:',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white70),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   widget.question["word"]!,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   widget.question["meaning"]!,
-                  style: TextStyle(fontSize: 18, color: Colors.white70),
+                  style: const TextStyle(fontSize: 18, color: Colors.white70),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -97,7 +97,7 @@ class _QuestionFormState extends State<QuestionForm> {
                       backgroundColor: Colors.white,
                       foregroundColor: isCorrect ? Colors.green : Colors.red,
                     ),
-                    child: Text('Tiếp tục'),
+                    child: const Text('Tiếp tục'),
                   ),
                 ),
               ],
@@ -111,20 +111,20 @@ class _QuestionFormState extends State<QuestionForm> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: SizedBox()),
+          const Expanded(child: SizedBox()),
           Text(
-            'Từ nào sau đây có nghĩa là: \"${widget.question["meaning"]!}\"',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            'Từ nào sau đây có nghĩa là: "${widget.question["meaning"]!}"',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 20,),
+          const SizedBox(height: 20,),
           GridView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 1.2,
               crossAxisSpacing: 10,
@@ -140,7 +140,7 @@ class _QuestionFormState extends State<QuestionForm> {
                   color: _selectedAnswer == _options[index]["word"] ? Colors.blue : Colors.grey,
                   width: _selectedAnswer == _options[index]["word"] ? 2.5 : 1, // Tăng độ dày khi được chọn
                 ),
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               child: Column(
@@ -151,34 +151,34 @@ class _QuestionFormState extends State<QuestionForm> {
                         ? Image.network(
                       _options[index]["imgURL"]!,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 40, color: Colors.grey),
                     )
-                        : Icon(Icons.image_not_supported, size: 40, color: Colors.grey), // Nếu ẩn ảnh, hiển thị icon
+                        : const Icon(Icons.image_not_supported, size: 40, color: Colors.grey), // Nếu ẩn ảnh, hiển thị icon
                   ),
                   Expanded(
                     flex: 1,
                     child: Text(
                       _options[index]["word"]!,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          SizedBox(height: 24),
-          Expanded(child: SizedBox()),
+          const SizedBox(height: 24),
+          const Expanded(child: SizedBox()),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: _selectedAnswer == null ? null : _checkAnswer,
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
               ),
-              child: Text(
+              child: const Text(
                 'Kiểm tra đáp án',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),

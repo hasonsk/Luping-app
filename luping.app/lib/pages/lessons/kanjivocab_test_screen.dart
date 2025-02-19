@@ -5,6 +5,8 @@ import 'question_form.dart';
 import 'dart:async';
 
 class KanjivocabTestScreen extends StatefulWidget {
+  const KanjivocabTestScreen({super.key});
+
   @override
   _KanjivocabTestScreenState createState() => _KanjivocabTestScreenState();
 }
@@ -37,10 +39,10 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
     },
   ];
 
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   int _currentQuestionIndex = 0;
   int _correctAnswers = 0;
-  List<bool> _results = [];
+  final List<bool> _results = [];
   bool _showImages = true;
   bool _isLoading = true; // Trạng thái load ảnh
 
@@ -56,7 +58,7 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
         try {
           final img = Image.network(card["imgURL"]!);
           final Completer<void> completer = Completer();
-          img.image.resolve(ImageConfiguration()).addListener(
+          img.image.resolve(const ImageConfiguration()).addListener(
             ImageStreamListener(
                   (info, _) => completer.complete(),
               onError: (error, stackTrace) {
@@ -80,7 +82,7 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
 
     if (_currentQuestionIndex < flashcards.length - 1) {
       setState(() => _currentQuestionIndex++);
-      _pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     } else {
       Navigator.pushReplacement(
         context,
@@ -99,11 +101,11 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Xác nhận"),
-        content: Text("Bạn có muốn thoát khỏi bài kiểm tra không?"),
+        title: const Text("Xác nhận"),
+        content: const Text("Bạn có muốn thoát khỏi bài kiểm tra không?"),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text("Không")),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: Text("Có")),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Không")),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Có")),
         ],
       ),
     ) ??
@@ -138,7 +140,7 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
           ],
         ),
         body: _isLoading
-            ? Center(
+            ? const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, // Căn giữa theo trục dọc
             children: [
@@ -150,7 +152,7 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
         )
             : PageView.builder(
           controller: _pageController,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: flashcards.length,
           itemBuilder: (context, index) {
             return QuestionForm(

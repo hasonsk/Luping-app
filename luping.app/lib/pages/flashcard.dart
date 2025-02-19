@@ -66,9 +66,9 @@ class _FlashcardState extends State<Flashcard> {
                     TextButton(
                       onPressed: () {},
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                        side: MaterialStateProperty.all<BorderSide>(const BorderSide(color: Colors.grey, width: 0.5)),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                        side: WidgetStateProperty.all<BorderSide>(const BorderSide(color: Colors.grey, width: 0.5)),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

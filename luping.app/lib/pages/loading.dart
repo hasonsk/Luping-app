@@ -28,7 +28,7 @@ class _LoadingState extends State<Loading> {
     }
 
     // Điều hướng đến MainScreen sau khi dữ liệu đã sẵn sàng
-    Get.off(() => MainScreen()); // Sử dụng hàm để trả về widget
+    Get.off(() => const MainScreen()); // Sử dụng hàm để trả về widget
   }
 
   @override

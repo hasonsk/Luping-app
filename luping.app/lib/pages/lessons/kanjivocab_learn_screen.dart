@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 
 class KanjivocabLearnScreen extends StatefulWidget {
+  const KanjivocabLearnScreen({super.key});
+
   @override
   _KanjivocabLearnScreenState createState() => _KanjivocabLearnScreenState();
 }
@@ -30,14 +32,14 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('${_currentIndex + 1}/${flashcards.length}', style: TextStyle(fontSize: 18)),
+        title: Text('${_currentIndex + 1}/${flashcards.length}', style: const TextStyle(fontSize: 18)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.play_arrow),
+            icon: const Icon(Icons.play_arrow),
             onPressed: () {},
           ),
         ],
@@ -80,7 +82,7 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                   onPressed: _currentIndex > 0
                       ? () {
                     _pageController.previousPage(
-                      duration: Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                     );
                   }
@@ -100,13 +102,13 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                   onPressed: () {
                     // TODO: Xử lý mở màn hình chi tiết
                   },
-                  icon: Icon(Icons.info_outline, color: Colors.black),
-                  label: Text(
+                  icon: const Icon(Icons.info_outline, color: Colors.black),
+                  label: const Text(
                     "Chi tiết",
                     style: TextStyle(color: Colors.black),
                   ),
                   style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     backgroundColor: Colors.transparent, // 🔥 Nền trong suốt
                     shadowColor: Colors.transparent, // 🔥 Loại bỏ hiệu ứng bóng
                   ),
@@ -115,7 +117,7 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                   onPressed: _currentIndex < flashcards.length - 1
                       ? () {
                     _pageController.nextPage(
-                      duration: Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                     );
                   }
@@ -148,7 +150,7 @@ class FlashCard extends StatefulWidget {
   final bool isLearned;
   final VoidCallback onLearned;
 
-  FlashCard({Key? key, required this.frontText, required this.backText, required this.isLearned, required this.onLearned}) : super(key: key);
+  const FlashCard({super.key, required this.frontText, required this.backText, required this.isLearned, required this.onLearned});
 
   @override
   _FlashCardState createState() => _FlashCardState();
@@ -164,7 +166,7 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 400),
     );
     _animation = Tween<double>(begin: 0, end: pi).animate(_controller);
   }
@@ -255,14 +257,14 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
             ),
           ),
           if (isFront) ...[
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: widget.onLearned,
               style: ElevatedButton.styleFrom(
                 backgroundColor: widget.isLearned ? Colors.green : Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
-                side: BorderSide(color: Colors.grey, width: 1), // Viền màu xanh lá
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                side: const BorderSide(color: Colors.grey, width: 1), // Viền màu xanh lá
               ),
               child: Text(
                 "Đã thuộc",
@@ -273,7 +275,7 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
               ),
             ),
           ],
-          SizedBox(height: 20,)
+          const SizedBox(height: 20,)
         ],
       ),
     );

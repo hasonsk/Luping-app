@@ -203,7 +203,7 @@ class _HomeState extends State<Home> {
                   false); // Hiện lại BottomNavigationBar
             });
           },
-          child: SearchContainer()),
+          child: const SearchContainer()),
     );
   }
 
@@ -278,7 +278,7 @@ class _HomeState extends State<Home> {
             _buildSectionTitle(
                 'HSK', Colors.green, 'assets/twobird_ic (1).png'),
             const SizedBox(height: 15),
-            ShimmerImageGrid(),
+            const ShimmerImageGrid(),
             const SizedBox(height: 15),
             _buildSectionTitle(
                 'Bạn bè', Colors.purple, 'assets/goccay_icon_1 (1).png'),

@@ -441,7 +441,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   Widget buildWordsView() {
     if (_controller.text.isEmpty) {
-      return SearchLobbyView(); // Gọi hàm xây dựng giao diện sảnh chờ
+      return const SearchLobbyView(); // Gọi hàm xây dựng giao diện sảnh chờ
     }
 
     if (isLoading) {

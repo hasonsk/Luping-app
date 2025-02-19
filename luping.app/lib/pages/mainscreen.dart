@@ -34,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
       const Notebook(),
       const FlashcardPage(),
       const Profile(),
-      ChatBotLobby(),
+      const ChatBotLobby(),
     ]);
   }
 
@@ -134,7 +134,7 @@ class _MainScreenState extends State<MainScreen> {
         break;
       case 4: // ChatBot
         SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(
+          const SystemUiOverlayStyle(
             statusBarColor: Colors.white,
             statusBarIconBrightness: Brightness.dark,
           ),

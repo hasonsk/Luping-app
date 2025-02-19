@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'chatbot_screen.dart';
 
 class ChatBotLobby extends StatefulWidget {
-  const ChatBotLobby({Key? key}) : super(key: key);
+  const ChatBotLobby({super.key});
 
   @override
   _ChatBotLobbyState createState() => _ChatBotLobbyState();
@@ -115,7 +115,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
   Widget _buildChatHistoryTab() {
     return Column(
       children: [
-        SizedBox(height: 10,),
+        const SizedBox(height: 10,),
         // Danh sách lịch sử chat (sẽ chiếm toàn bộ không gian trống)
         Expanded(
           child: ListView.separated(
@@ -154,7 +154,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
             ),
           ),
         ),
-        SizedBox(height: 10,)
+        const SizedBox(height: 10,)
       ],
     );
   }
@@ -196,7 +196,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 const CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.white,
@@ -247,7 +247,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                             BoxShadow(
                               color: Colors.grey.shade500,
                               blurRadius: 12,
-                              offset: Offset(4, 4),
+                              offset: const Offset(4, 4),
                             ),
                           ],
                         ),
@@ -279,7 +279,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                         BoxShadow(
                           color: Colors.green.shade400,
                           blurRadius: 10,
-                          offset: Offset(3, 3),
+                          offset: const Offset(3, 3),
                         ),
                       ],
                     ),

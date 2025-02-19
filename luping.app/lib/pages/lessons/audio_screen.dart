@@ -6,7 +6,7 @@ import '../../models/lesson.dart';
 class AudioScreen extends StatelessWidget {
   final Lesson lesson;
 
-  const AudioScreen({Key? key, required this.lesson}) : super(key: key);
+  const AudioScreen({super.key, required this.lesson});
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +29,11 @@ class AudioScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10,),
+            const SizedBox(height: 10,),
             Row(
               children: [
-                Icon(Icons.book, color: Colors.green, size: 20),
-                SizedBox(width: 10),
+                const Icon(Icons.book, color: Colors.green, size: 20),
+                const SizedBox(width: 10),
                 Text(
                   'Bài ${lesson.index} : ${lesson.title}',
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -69,12 +69,12 @@ class AudioListItem extends StatefulWidget {
   final bool isLast; // Kiểm tra phần tử cuối
 
   const AudioListItem({
-    Key? key,
+    super.key,
     required this.index,
     required this.title,
     required this.audioPath,
     required this.isLast,
-  }) : super(key: key);
+  });
 
   @override
   _AudioListItemState createState() => _AudioListItemState();
@@ -152,7 +152,7 @@ class _AudioListItemState extends State<AudioListItem> {
                 ),
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(
               '${widget.index}.',
               style: const TextStyle(color: Colors.black, fontSize: 13),
@@ -166,9 +166,9 @@ class _AudioListItemState extends State<AudioListItem> {
             ),
           ],
         ),
-        SizedBox(height: 25),
+        const SizedBox(height: 25),
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -177,13 +177,13 @@ class _AudioListItemState extends State<AudioListItem> {
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
                 blurRadius: 8,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: Row(
             children: [
-              SizedBox(width: 15),
+              const SizedBox(width: 15),
               Container(
                 width: 26,
                 height: 26,
@@ -194,7 +194,7 @@ class _AudioListItemState extends State<AudioListItem> {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
                       blurRadius: 4,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -208,10 +208,10 @@ class _AudioListItemState extends State<AudioListItem> {
                   padding: EdgeInsets.zero,
                 ),
               ),
-              SizedBox(width: 15),
+              const SizedBox(width: 15),
               Text(
                 '${_formatDuration(_currentPosition)} / ${_formatDuration(_totalDuration)}',
-                style: TextStyle(fontSize: 10),
+                style: const TextStyle(fontSize: 10),
               ),
               Expanded(
                 child: SliderTheme(
@@ -220,7 +220,7 @@ class _AudioListItemState extends State<AudioListItem> {
                     inactiveTrackColor: Colors.grey.withOpacity(0.3),
                     thumbColor: Colors.green,
                     overlayColor: Colors.green.withOpacity(0.2),
-                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5.0),
                   ),
                   child: Slider(
                     value: _currentPosition.inSeconds.toDouble(),
@@ -232,13 +232,13 @@ class _AudioListItemState extends State<AudioListItem> {
                   ),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
             ],
           ),
         ),
-        SizedBox(height: 25),
+        const SizedBox(height: 25),
         if (!widget.isLast) const Divider(), // Ẩn Divider nếu là phần tử cuối
-        if (!widget.isLast) SizedBox(height: 15),
+        if (!widget.isLast) const SizedBox(height: 15),
       ],
     );
   }

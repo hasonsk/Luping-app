@@ -142,7 +142,7 @@ class Handwriting {
 
   void recognize(List<List<int>> trace, Map<String, dynamic> options, Function(dynamic, dynamic) callback) {
     // Giả lập quá trình nhận diện chữ viết tay
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       callback(["字", "汉"], null); // Kết quả giả định
     });
   }

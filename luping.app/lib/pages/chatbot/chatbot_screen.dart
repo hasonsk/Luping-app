@@ -5,7 +5,7 @@ import 'chatbot_screen_appbar.dart';
 import 'chatbot_screen_bottomsheet.dart';
 
 class ChatBotScreen extends StatefulWidget {
-  const ChatBotScreen({Key? key}) : super(key: key);
+  const ChatBotScreen({super.key});
 
   @override
   _ChatBotScreenState createState() => _ChatBotScreenState();

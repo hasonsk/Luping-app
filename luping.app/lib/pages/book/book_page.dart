@@ -6,7 +6,7 @@ import '../lessons/lesson_item.dart';
 class BookPage extends StatelessWidget {
   final Book book;
 
-  const BookPage({Key? key, required this.book}) : super(key: key);
+  const BookPage({super.key, required this.book});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class BookPage extends StatelessWidget {
                   const SizedBox(height: 10),
                   _buildProgressSection(0, book.lessons.length),
                   const SizedBox(height: 20),
-                  ...book.lessons.map((lesson) => LessonItem(lesson: lesson)).toList(),
+                  ...book.lessons.map((lesson) => LessonItem(lesson: lesson)),
                 ],
               ),
             ),

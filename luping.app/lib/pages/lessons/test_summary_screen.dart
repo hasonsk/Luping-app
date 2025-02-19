@@ -7,11 +7,11 @@ class TestSummaryScreen extends StatelessWidget {
   final List<bool> results;
 
   const TestSummaryScreen({
-    Key? key,
+    super.key,
     required this.totalQuestions,
     required this.correctAnswers,
     required this.results,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
