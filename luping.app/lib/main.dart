@@ -56,23 +56,6 @@ void main() async {
     Hive.registerAdapter(ChatSessionAdapter());
   }
 
-  // ChatbotService Tests
-  ChatbotService chatbotService = ChatbotService();
-  await chatbotService.initHive(); // Now, the adapters are registered!
-  await chatbotService.clearSession();
-
-  final response = await chatbotService.initChatSession(
-    role: "Cô giáo Hà - Giáo viên tiếng Trung sơ cấp, nữ, người Việt Nam, 25 tuổi, kiên nhẫn, nhẹ nhàng, khuyến khích học sinh.",
-    topic: "Chào hỏi và giới thiệu bản thân.",
-    chineseLevel: "HSK 1",
-  );
-
-  if (response != null) {
-    print("[CHAT]: ${response.response.sentence}");
-  } else {
-    print("[CHAT]: Failed to initialize chat session.");
-  }
-
   // Khởi chạy ứng dụng
   runApp(const MyApp());
 }
