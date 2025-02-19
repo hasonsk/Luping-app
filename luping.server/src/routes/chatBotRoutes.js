@@ -131,7 +131,11 @@ const router = Router();
  */
 router.post(
     '/response',
+<<<<<<< HEAD
     authenticate,
+=======
+    // authenticate,
+>>>>>>> develop
     [
         body('role')
             .isString()

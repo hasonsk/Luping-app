@@ -1,7 +1,12 @@
+import 'dart:io';
+import 'package:flutter/services.dart';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart'; // Import GetX
 import 'package:hanjii/data/database_helper.dart';
+import 'package:path_provider/path_provider.dart';
+
 import 'pages/loading.dart';
 // import 'pages/authpage.dart';
 import 'pages/auth/auth_page.dart';
@@ -10,11 +15,18 @@ import 'pages/word.dart';
 import 'pages/note.dart';
 import 'pages/gamescreen.dart';
 import 'pages/mainscreen.dart';
-import 'package:flutter/services.dart';
-// Import lớp quản lý cơ sở dữ liệu
+
+import 'models/chat_message.dart';
+import 'models/chat_session.dart';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize dotenv, specifying the path.
+  // await dotenv.load(fileName: '.env');
 
   // Khởi tạo Firebase
   await Firebase.initializeApp(
@@ -30,6 +42,12 @@ void main() async {
   // Đảm bảo cơ sở dữ liệu tồn tại
   await DatabaseHelper.ensureDatabase();
   await DatabaseHelper.testDatabase();
+
+  // Initialize Hive.
+  await Hive.initFlutter();
+  // Register the ChatMessage adapter.
+  Hive.registerAdapter(ChatMessageAdapter());
+  Hive.registerAdapter(ChatSessionAdapter());
 
   // Khởi chạy ứng dụng
   runApp(const MyApp());

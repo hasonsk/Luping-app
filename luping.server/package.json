@@ -26,7 +26,11 @@
     "geolib": "^3.3.4",
     "jsonwebtoken": "^9.0.2",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "kantan_lunch_api": "file:../luping.server",
+=======
+    "kantan_lunch_api": "file:../kantan_lunch_api",
+>>>>>>> develop
 =======
     "kantan_lunch_api": "file:../kantan_lunch_api",
 >>>>>>> develop

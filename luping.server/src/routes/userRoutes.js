@@ -384,24 +384,24 @@ router.get(
  *         description: Unauthorized.
  */
 router.put(
-  '/profile',
-  authenticate,
-  [
-    body('full_name')
-      .optional()
-      .isString()
-      .withMessage('Full name must be a string'),
-    body('date_of_birth')
-      .optional()
-      .isISO8601()
-      .withMessage('Date of birth must be a valid date'),
-    body('phone_number')
-      .optional()
-      .matches(/^\+?[1-9]\d{1,14}$/)
-      .withMessage('Please provide a valid phone number in E.164 format'),
-  ],
-  validate,
-  updateUserProfile
+    '/profile',
+    authenticate,
+    [
+        body('full_name')
+            .optional()
+            .isString()
+            .withMessage('Full name must be a string'),
+        body('date_of_birth')
+            .optional()
+            .isISO8601()
+            .withMessage('Date of birth must be a valid date'),
+        body('phone_number')
+            .optional()
+            .matches(/^\+?[1-9]\d{1,14}$/)
+            .withMessage('Please provide a valid phone number in E.164 format'),
+    ],
+    validate,
+    updateUserProfile
 );
 
 /**
@@ -450,20 +450,20 @@ router.put(
  *         description: Internal server error.
  */
 router.put(
-  '/change-password',
-  authenticate,
-  [
-    body('currentPassword')
-      .notEmpty()
-      .withMessage('Current password is required'),
-    body('newPassword')
-      .notEmpty()
-      .withMessage('New password is required')
-      .isLength({ min: 6 })
-      .withMessage('New password must be at least 6 characters long'),
-  ],
-  validate,
-  changePassword
+    '/change-password',
+    authenticate,
+    [
+        body('currentPassword')
+            .notEmpty()
+            .withMessage('Current password is required'),
+        body('newPassword')
+            .notEmpty()
+            .withMessage('New password is required')
+            .isLength({ min: 6 })
+            .withMessage('New password must be at least 6 characters long'),
+    ],
+    validate,
+    changePassword
 );
 
 /**
@@ -627,10 +627,12 @@ router.get(
  *         description: User not found.
  */
 router.get(
-  '/:id',
-  [param('id').isMongoId().withMessage('ID must be a valid MongoDB ObjectId')],
-  validate,
-  getProfileById
+    '/:id',
+    [
+        param('id').isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
+    ],
+    validate,
+    getProfileById
 );
 
 /**
@@ -672,10 +674,10 @@ router.get(
  *         description: User not found.
  */
 router.post(
-  '/send-code',
-  [body('email').isEmail().withMessage('Invalid email')],
-  validate, // Middleware validate lỗi từ express-validator
-  sendCode
+    '/send-code',
+    [body('email').isEmail().withMessage('Invalid email')],
+    validate, // Middleware validate lỗi từ express-validator
+    sendCode
 );
 
 /**
@@ -723,15 +725,13 @@ router.post(
  *         description: User not found.
  */
 router.post(
-  '/verify-code',
-  [
-    body('email').isEmail().withMessage('Invalid email'),
-    body('code')
-      .isLength({ min: 6, max: 6 })
-      .withMessage('Code must be 6 digits'),
-  ],
-  validate,
-  verifyCode
+    '/verify-code',
+    [
+        body('email').isEmail().withMessage('Invalid email'),
+        body('code').isLength({ min: 6, max: 6 }).withMessage('Code must be 6 digits'),
+    ],
+    validate,
+    verifyCode
 );
 
 export default router;
