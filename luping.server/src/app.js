@@ -45,6 +45,11 @@ app.get("/", (req, res) => {
   res.send("API is working, IP: " + req.ip);
 });
 
+// Index route
+app.get("/api", (req, res) => {
+  res.send("API is working, IP: " + req.ip);
+});
+
 // Mount routes
 app.use("/api/users", userRoutes);
 app.use("/api/chatbot", chatBotRoutes);
