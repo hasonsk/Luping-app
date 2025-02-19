@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:hanjii/models/hint_story.dart';
 import '../../models/hint_character.dart';
 
 class SearchStoryView extends StatefulWidget {
-  final List<HintCharacter> list;
+  final List<HintStory> list;
 
   const SearchStoryView({super.key, required this.list});
 
@@ -66,7 +67,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                                 maxWidth: MediaQuery.of(context).size.width * 0.5,
                               ),
                               child: Text(
-                                item.hanzi,
+                                item.character,
                                 style: const TextStyle(fontSize: 30, color: Colors.red),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
@@ -78,7 +79,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    item.hanViet,
+                                    item.hanviet,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: const TextStyle(fontSize: 14, color: Colors.purple),
@@ -100,7 +101,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           ],
                         ),
                         Text(
-                          item.shortMeaning,
+                          item.meaning as String,
                           style: const TextStyle(fontSize: 14, color: Colors.black),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,

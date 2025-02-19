@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:hanjii/models/hint_character.dart';
 import 'package:hanjii/data/database_helper.dart';
+import 'package:hanjii/models/hint_story.dart';
 import 'package:hanjii/pages/search/drawingboard.dart';
 import 'package:hanjii/pages/search/search_image_view.dart';
 import 'package:hanjii/pages/search/search_lobby_view.dart';
@@ -48,20 +49,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   Map<int, bool> selectedCards = {};
   bool _isBackPressed = false;
   List<HintCharacter> wordData = [];
-  List<HintCharacter> hanziData = [
-    HintCharacter(
-      hanzi: '我',
-      pinyin: 'wǒ',
-      hanViet: 'Ngã',
-      shortMeaning: 'Tôi',
-    ),
-    HintCharacter(
-      hanzi: '们',
-      pinyin: 'men',
-      hanViet: 'Môn',
-      shortMeaning: 'chúng',
-    ),
-  ];
+  List<HintStory> hanziData = [];
   List<String> imageData = [
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIBK512v9cBy7_94eTofhozRCKwwszEWdeYw&s",
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWWM5vq0LOukFhr-hw3b5GS1MkUJm0p5A2gw&s",
