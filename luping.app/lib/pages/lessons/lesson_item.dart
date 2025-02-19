@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:hanjii/pages/lessons/kanji_screen.dart';
-import 'package:hanjii/pages/lessons/vocabulary_screen.dart';
-import 'package:hanjii/pages/lessons/audio_screen.dart';
-import '../../models/lesson.dart';
+import 'package:hanjii/pages/lessons/kanji/kanji_screen.dart';
+import 'package:hanjii/pages/lessons/vocabulary/vocabulary_screen.dart';
+import 'package:hanjii/pages/lessons/listening/listening_screen.dart';
+import 'package:hanjii/pages/lessons/conversation/conversation_screen.dart';
+import '../../domain/models/lesson.dart';
+import '../../domain/usecases/play_audio_usecase.dart';
+import '../../domain/usecases/start_recording_usecase.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 class LessonItem extends StatelessWidget {
   final Lesson lesson;
@@ -30,6 +35,19 @@ class LessonItem extends StatelessWidget {
     );
   }
 
+  void _navigateToKaiwaScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConversationScreen(
+          playAudioUseCase: context.read<PlayAudioUseCase>(),
+          startRecordingUseCase: context.read<StartRecordingUseCase>(),
+          conversation: lesson.lessonConversation,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -44,7 +62,7 @@ class LessonItem extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    'Bài ${lesson.index} :',
+                    'Bài ${lesson.lessonId} :',
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
@@ -54,7 +72,7 @@ class LessonItem extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      lesson.title,
+                      lesson.lessonName,
                       style: const TextStyle(fontSize: 16),
                       softWrap: true,
                     ),
@@ -66,11 +84,13 @@ class LessonItem extends StatelessWidget {
               children: [
                 Container(width: 1, height: 50, color: Colors.green[100]),
                 const SizedBox(width: 10),
-                _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
+                _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context), width: 70),
                 const SizedBox(width: 20),
-                _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context)),
+                _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context), width: 70),
                 const SizedBox(width: 20),
-                _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
+                _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context), width: 70),
+                const SizedBox(width: 20),
+                _buildButton(context, 'Hội thoại', () => _navigateToKaiwaScreen(context), width: 70),
               ],
             ),
           ],
@@ -88,20 +108,23 @@ class LessonItem extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(BuildContext context, String text, VoidCallback onPressed) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        textStyle: const TextStyle(fontSize: 14),
-        side: const BorderSide(color: Colors.grey, width: 0.5),
-        elevation: 4,
-        shadowColor: Colors.grey.withOpacity(0.5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+  Widget _buildButton(BuildContext context, String text, VoidCallback onPressed, {double? width}) {
+    return Container(
+      width: width, // Thêm tham số width
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          textStyle: const TextStyle(fontSize: 12), // Giảm font size
+          side: const BorderSide(color: Colors.grey, width: 0.5),
+          elevation: 4,
+          shadowColor: Colors.grey.withOpacity(0.5),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: Text(text),
       ),
-      child: Text(text),
     );
   }
 }

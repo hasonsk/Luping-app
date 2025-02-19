@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart'; // Import GetX
 import 'package:hanjii/data/database_helper.dart';
-import 'package:hanjii/models/word.dart';
+import 'package:hanjii/domain/models/word.dart';
 import 'package:hanjii/services/search_service.dart';  // Import lớp hintCharacter
 
 

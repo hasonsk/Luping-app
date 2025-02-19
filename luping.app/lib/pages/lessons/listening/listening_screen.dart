@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
-import '../../models/lesson.dart';
+import '../../../domain/models/lesson.dart';
 
 class AudioScreen extends StatelessWidget {
   final Lesson lesson;
@@ -35,7 +35,7 @@ class AudioScreen extends StatelessWidget {
                 Icon(Icons.book, color: Colors.green, size: 20),
                 SizedBox(width: 10),
                 Text(
-                  'Bài ${lesson.index} : ${lesson.title}',
+                  'Bài ${lesson.lessonId} : ${lesson.lessonName}',
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -43,14 +43,14 @@ class AudioScreen extends StatelessWidget {
             const SizedBox(height: 30),
             Expanded(
               child: ListView.builder(
-                itemCount: lesson.audioFiles.length,
+                itemCount: lesson.lessonListening.length,
                 itemBuilder: (context, index) {
-                  final audioFile = lesson.audioFiles[index];
+                  final audioFile = lesson.lessonListening[index];
                   return AudioListItem(
                     index: index + 1,
                     title: audioFile.title,
                     audioPath: audioFile.filePath,
-                    isLast: index == lesson.audioFiles.length - 1, // Xác định phần tử cuối cùng
+                    isLast: index == lesson.lessonListening.length - 1, // Xác định phần tử cuối cùng
                   );
                 },
               ),

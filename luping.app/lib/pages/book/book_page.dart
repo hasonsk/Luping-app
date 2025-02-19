@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../models/book.dart';
+import '../../domain/models/book.dart';
 import '../lessons/lesson_item.dart';
 
 class BookPage extends StatelessWidget {
@@ -25,7 +25,7 @@ class BookPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(right: 25),
             child: Text(
-              book.title,
+              book.bookName,
               style: const TextStyle(fontSize: 17),
             ),
           ),

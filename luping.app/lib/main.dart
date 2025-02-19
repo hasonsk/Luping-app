@@ -11,6 +11,13 @@ import 'pages/note.dart';
 import 'pages/gamescreen.dart';
 import 'pages/mainscreen.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:hanjii/domain/usecases/play_audio_usecase.dart';
+import 'package:hanjii/domain/usecases/start_recording_usecase.dart';
+import 'package:hanjii/data/repositories/audio_repository_impl.dart'
+    show AudioRepositoryImpl;
+import 'package:hanjii/data/repositories/speech_repository_impl.dart'
+    show SpeechRepositoryImpl;
 // Import lớp quản lý cơ sở dữ liệu
 
 void main() async {
@@ -32,7 +39,17 @@ void main() async {
   await DatabaseHelper.testDatabase();
 
   // Khởi chạy ứng dụng
-  runApp(const MyApp());
+  // runApp(const MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider(create: (_) => PlayAudioUseCase(AudioRepositoryImpl())),
+        Provider(create: (_) => StartRecordingUseCase(SpeechRepositoryImpl())),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart'; // Required for SystemChannels
 import 'package:flutter/material.dart';
-import 'package:hanjii/models/hint_character.dart';
+import 'package:hanjii/domain/models/hint_character.dart';
 import 'package:hanjii/data/database_helper.dart';
 import 'dart:async';
 import 'package:flutter_html/flutter_html.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../models/lesson.dart';
+import '../../../domain/models/lesson.dart';
+import '../../../domain/models/word.dart';
 
 class VocabularyScreen extends StatelessWidget {
   final Lesson lesson;
@@ -40,7 +41,7 @@ class VocabularyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bài ${lesson.index} / Từ vựng'),
+        title: Text('Bài ${lesson.lessonPosition} / Từ vựng'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0.5,
@@ -118,13 +119,13 @@ class VocabularyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVocabularyCard(String vocab, int index) {
+  Widget _buildVocabularyCard(Word vocab, int index) {
     return Card(
       color: Colors.white,
       elevation: 2,
       child: Center(
         child: Text(
-          vocab,
+          vocab.word ?? '', // Display the word, or an empty string if null
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),

@@ -1,15 +1,15 @@
-import 'package:hanjii/models/word.dart';
+import 'package:hanjii/domain/models/word.dart';
 import 'package:logger/logger.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../data/database_helper.dart';
-import '../models/hint_character.dart';
+import '../domain/models/hint_character.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import '../models/sentence.dart';
+import '../domain/models/sentence.dart';
 
 class SearchService {
   static const int MAX_RESULTS = 15;

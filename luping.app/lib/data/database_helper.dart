@@ -4,8 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:flutter/services.dart';
-import 'package:hanjii/models/hint_character.dart'; // Import lớp hintCharacter
-import 'package:hanjii/models/word.dart'; // Import lớp word
+import 'package:hanjii/domain/models/hint_character.dart'; // Import lớp hintCharacter
+import 'package:hanjii/domain/models/word.dart'; // Import lớp word
 import 'dart:convert'; // Import for JSON decoding
 
 class DatabaseHelper {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../models/flashcard.dart';
+import '../../domain/models/flashcard.dart';
 
 class CreateFlashcardPage extends StatefulWidget {
   final Function(Flashcard) onCreate;

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hanjii/pages/lessons/kanjivocab_learn_screen.dart';
-import '../../models/lesson.dart';
-import 'kanjivocab_test_screen.dart';
+import '../../../domain/models/lesson.dart';
+import '../../../domain/models/word.dart';
+import '../kanjivocab_test_screen.dart';
 
 class KanjiScreen extends StatelessWidget {
   final Lesson lesson;
@@ -62,7 +63,7 @@ class KanjiScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Bài ${lesson.index} / Chuẩn bị',
+            'Bài ${lesson.lessonPosition} / Chuẩn bị',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 17,
@@ -120,7 +121,7 @@ class KanjiScreen extends StatelessWidget {
                   ),
                   itemCount: lesson.vocabulary.length,
                   itemBuilder: (context, index) {
-                    return _buildVocabularyCard(lesson.vocabulary[index], index + 1);
+                    return _buildVocabularyCard(lesson.kanji[index], index + 1);
                   },
                 ),
               ),
@@ -183,23 +184,17 @@ class KanjiScreen extends StatelessWidget {
     );
   }
 
-
-
-  Widget _buildVocabularyCard(String vocab, int index) {
+  Widget _buildVocabularyCard(Word vocab, int index) {
     return Card(
       color: Colors.white,
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.0), // Giảm border radius xuống 4
-      ),
       child: Center(
         child: Text(
-          vocab,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          vocab.word ?? '', // Display the word, or an empty string if null
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
       ),
     );
   }
-
 }

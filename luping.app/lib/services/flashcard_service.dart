@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/flashcard.dart';
+import '../domain/models/flashcard.dart';
 
 const String userId = "user_123";
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../models/flashcard.dart';
-import '../../models/flashcard_item.dart';
+import '../../domain/models/flashcard.dart';
+import '../../domain/models/flashcard_item.dart';
 import 'flashcard_list_page.dart';
 
 class FlashcardPage extends StatefulWidget {

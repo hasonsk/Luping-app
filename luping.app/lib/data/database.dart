@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hanjii/models/hint_character.dart';  // Import lớp hintCharacter
+import 'package:hanjii/domain/models/hint_character.dart';  // Import lớp hintCharacter
 
 class DatabaseService {
   final CollectionReference characterCollection = FirebaseFirestore.instance.collection('characters');

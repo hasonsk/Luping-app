@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../models/flashcard.dart';
+import '../../domain/models/flashcard.dart';
 import 'create_flashcard_page.dart';
 import 'flashcard_content_page.dart'; // Import màn hình cần chuyển đến
 

@@ -43,4 +43,5 @@ app.*.map.json
 /android/app/release
 codebase_documentation.md
 
-**/.env
+**/.envlib/data/HanziStory.sqlite
+/lib/data/HanziStory.sqlite
