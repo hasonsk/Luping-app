@@ -132,6 +132,14 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
         break;
+      case 4: // ChatBot
+        SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(
+            statusBarColor: Colors.white,
+            statusBarIconBrightness: Brightness.dark,
+          ),
+        );
+        break;
       default: // Home
         SystemChrome.setSystemUIOverlayStyle(
           const SystemUiOverlayStyle(
