@@ -8,17 +8,19 @@ import logger from "../configs/logger.js";
  * @param {Function} next - The next middleware function.
  */
 const errorHandler = (err, req, res, next) => {
-    logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+  logger.error(
+    `${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`,
+  );
 
-    const response = {
-        type: 'about:blank',
-        title: err.message || 'Internal Server Error',
-        status: err.status || 500,
-        detail: err.detail || 'An unexpected error occurred.',
-        instance: req.originalUrl
-    };
+  const response = {
+    type: "about:blank",
+    title: err.message || "Internal Server Error",
+    status: err.status || 500,
+    detail: err.detail || "An unexpected error occurred.",
+    instance: req.originalUrl,
+  };
 
-    res.status(err.status || 500).json(response);
+  res.status(err.status || 500).json(response);
 };
 
 export default errorHandler;

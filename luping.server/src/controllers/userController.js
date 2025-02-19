@@ -1,5 +1,5 @@
-import * as userService from '../services/userService.js';
-import multer from 'multer';
+import * as userService from "../services/userService.js";
+import multer from "multer";
 
 const registerUser = async (req, res, next) => {
   try {
@@ -7,10 +7,10 @@ const registerUser = async (req, res, next) => {
     res.status(201).json(result);
   } catch (error) {
     if (error instanceof multer.MulterError) {
-      if (error.code === 'LIMIT_FILE_SIZE') {
+      if (error.code === "LIMIT_FILE_SIZE") {
         return res
           .status(400)
-          .json({ message: 'File size exceeds the limit of 5MB.' });
+          .json({ message: "File size exceeds the limit of 5MB." });
       }
       return res.status(400).json({ message: error.message });
     }
@@ -49,7 +49,7 @@ const updateUserProfile = async (req, res, next) => {
   try {
     const updatedUser = await userService.updateUserProfile(
       req.user._id,
-      req.body
+      req.body,
     );
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -63,7 +63,7 @@ const changePassword = async (req, res, next) => {
     const result = await userService.changePassword(
       req.user._id,
       currentPassword,
-      newPassword
+      newPassword,
     );
     res.status(200).json(result);
   } catch (error) {
@@ -77,10 +77,10 @@ const registerAdmin = async (req, res, next) => {
     res.status(201).json(result);
   } catch (error) {
     if (error instanceof multer.MulterError) {
-      if (error.code === 'LIMIT_FILE_SIZE') {
+      if (error.code === "LIMIT_FILE_SIZE") {
         return res
           .status(400)
-          .json({ message: 'File size exceeds the limit of 5MB.' });
+          .json({ message: "File size exceeds the limit of 5MB." });
       }
       return res.status(400).json({ message: error.message });
     }
@@ -136,5 +136,5 @@ export {
   getProfileById,
   sendCode,
   verifyCode,
-  refreshToken
+  refreshToken,
 };

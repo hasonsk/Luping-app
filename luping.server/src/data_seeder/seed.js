@@ -400,7 +400,7 @@
 //             restaurant_id: restaurantIds.restaurant5,
 //             rating: 4,
 //             reviewed: true,
-//         },       
+//         },
 //         // Feedback cho nhà hàng Green Mango
 //         {   //salad xoài xanh
 //             type: 'Feedback',

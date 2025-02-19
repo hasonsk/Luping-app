@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import multer from 'multer';
-import { assessPronunciation } from '../controllers/pronunciationAssessmentController.js';
-import authenticate from '../middlewares/authenticate.js';
+import { Router } from "express";
+import multer from "multer";
+import { assessPronunciation } from "../controllers/pronunciationAssessmentController.js";
+import authenticate from "../middlewares/authenticate.js";
 
 const router = Router();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: "uploads/" });
 
 /**
  * @swagger
@@ -110,11 +110,6 @@ const upload = multer({ dest: 'uploads/' });
  *                   type: string
  *                   example: "Internal server error"
  */
-router.post(
-    '/', 
-    authenticate, 
-    upload.single('audio'), 
-    assessPronunciation
-);
+router.post("/", authenticate, upload.single("audio"), assessPronunciation);
 
 export default router;

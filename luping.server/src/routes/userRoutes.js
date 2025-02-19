@@ -1,21 +1,21 @@
-import { Router } from 'express';
-import { body, param, query } from 'express-validator';
-import validate from '../middlewares/validate.js';
-import authenticate from '../middlewares/authenticate.js';
-import authorizeRoles from '../middlewares/authorizeRoles.js';
+import { Router } from "express";
+import { body, param, query } from "express-validator";
+import validate from "../middlewares/validate.js";
+import authenticate from "../middlewares/authenticate.js";
+import authorizeRoles from "../middlewares/authorizeRoles.js";
 
 import {
-    registerUser,
-    loginUser,
-    getUserProfile,
-    updateUserProfile,
-    changePassword,
-    getAllUsers,
-    getProfileById,
-    sendCode,
-    verifyCode,
-    refreshToken
-} from '../controllers/userController.js';
+  registerUser,
+  loginUser,
+  getUserProfile,
+  updateUserProfile,
+  changePassword,
+  getAllUsers,
+  getProfileById,
+  sendCode,
+  verifyCode,
+  refreshToken,
+} from "../controllers/userController.js";
 
 const router = Router();
 
@@ -232,34 +232,34 @@ const router = Router();
  *         description: User with this email already exists.
  */
 router.post(
-    '/register',
-    [
-        body('email')
-            .notEmpty()
-            .withMessage('Email is required')
-            .isEmail()
-            .withMessage('Invalid email address'),
-        body('password')
-            .notEmpty()
-            .withMessage('Password is required')
-            .isLength({ min: 6 })
-            .withMessage('Password must be at least 6 characters'),
-        body('full_name')
-            .notEmpty()
-            .withMessage('Full name is required')
-            .isString()
-            .withMessage('Full name must be a string'),
-        body('date_of_birth')
-            .optional()
-            .isISO8601()
-            .withMessage('Date of birth must be a valid date'),
-        body('phone_number')
-            .optional()
-            .matches(/^\+?[1-9]\d{1,14}$/)
-            .withMessage('Please provide a valid phone number in E.164 format')
-    ],
-    validate,
-    registerUser
+  "/register",
+  [
+    body("email")
+      .notEmpty()
+      .withMessage("Email is required")
+      .isEmail()
+      .withMessage("Invalid email address"),
+    body("password")
+      .notEmpty()
+      .withMessage("Password is required")
+      .isLength({ min: 6 })
+      .withMessage("Password must be at least 6 characters"),
+    body("full_name")
+      .notEmpty()
+      .withMessage("Full name is required")
+      .isString()
+      .withMessage("Full name must be a string"),
+    body("date_of_birth")
+      .optional()
+      .isISO8601()
+      .withMessage("Date of birth must be a valid date"),
+    body("phone_number")
+      .optional()
+      .matches(/^\+?[1-9]\d{1,14}$/)
+      .withMessage("Please provide a valid phone number in E.164 format"),
+  ],
+  validate,
+  registerUser,
 );
 
 /**
@@ -298,17 +298,11 @@ router.post(
  */
 
 router.post(
-    '/refresh-token',
-    [
-        body('refreshToken')
-            .notEmpty()
-            .withMessage('Refresh token is required')
-    ],
-    validate,
-    refreshToken
+  "/refresh-token",
+  [body("refreshToken").notEmpty().withMessage("Refresh token is required")],
+  validate,
+  refreshToken,
 );
-
-
 
 /**
  * @swagger
@@ -345,26 +339,24 @@ router.post(
  *                 email: "johndoe@example.com"
  *                 role: "user"
  *                 accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
- *                 refreshToken:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *                 refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
  *         description: Bad request.
  *       401:
  *         description: Invalid email or password.
  */
 router.post(
-    '/login',
-    [
-        body('email')
-            .notEmpty()
-            .withMessage('Email is required')
-            .isEmail()
-            .withMessage('Invalid email address'),
-        body('password')
-            .notEmpty()
-            .withMessage('Password is required'),
-    ],
-    validate,
-    loginUser
+  "/login",
+  [
+    body("email")
+      .notEmpty()
+      .withMessage("Email is required")
+      .isEmail()
+      .withMessage("Invalid email address"),
+    body("password").notEmpty().withMessage("Password is required"),
+  ],
+  validate,
+  loginUser,
 );
 
 /**
@@ -387,11 +379,7 @@ router.post(
  *       404:
  *         description: User not found.
  */
-router.get(
-    '/profile',
-    authenticate,
-    getUserProfile
-);
+router.get("/profile", authenticate, getUserProfile);
 
 /**
  * @swagger
@@ -435,24 +423,24 @@ router.get(
  *         description: Unauthorized.
  */
 router.put(
-    '/profile',
-    authenticate,
-    [
-        body('full_name')
-            .optional()
-            .isString()
-            .withMessage('Full name must be a string'),
-        body('date_of_birth')
-            .optional()
-            .isISO8601()
-            .withMessage('Date of birth must be a valid date'),
-        body('phone_number')
-            .optional()
-            .matches(/^\+?[1-9]\d{1,14}$/)
-            .withMessage('Please provide a valid phone number in E.164 format'),
-    ],
-    validate,
-    updateUserProfile
+  "/profile",
+  authenticate,
+  [
+    body("full_name")
+      .optional()
+      .isString()
+      .withMessage("Full name must be a string"),
+    body("date_of_birth")
+      .optional()
+      .isISO8601()
+      .withMessage("Date of birth must be a valid date"),
+    body("phone_number")
+      .optional()
+      .matches(/^\+?[1-9]\d{1,14}$/)
+      .withMessage("Please provide a valid phone number in E.164 format"),
+  ],
+  validate,
+  updateUserProfile,
 );
 
 /**
@@ -501,20 +489,20 @@ router.put(
  *         description: Internal server error.
  */
 router.put(
-    '/change-password',
-    authenticate,
-    [
-        body('currentPassword')
-            .notEmpty()
-            .withMessage('Current password is required'),
-        body('newPassword')
-            .notEmpty()
-            .withMessage('New password is required')
-            .isLength({ min: 6 })
-            .withMessage('New password must be at least 6 characters long'),
-    ],
-    validate,
-    changePassword
+  "/change-password",
+  authenticate,
+  [
+    body("currentPassword")
+      .notEmpty()
+      .withMessage("Current password is required"),
+    body("newPassword")
+      .notEmpty()
+      .withMessage("New password is required")
+      .isLength({ min: 6 })
+      .withMessage("New password must be at least 6 characters long"),
+  ],
+  validate,
+  changePassword,
 );
 
 /**
@@ -597,41 +585,41 @@ router.put(
  *         description: Forbidden.
  */
 router.get(
-    '/',
-    authenticate,
-    authorizeRoles('admin'), // Only admins can access this route
-    [
-        query('page')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('Page must be a positive integer'),
-        query('limit')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('Limit must be a positive integer'),
-        query('search')
-            .optional()
-            .isString()
-            .withMessage('Search must be a string'),
-        query('role')
-            .optional()
-            .isIn(['user', 'admin'])
-            .withMessage('Role must be either user or admin'),
-        query('banned')
-            .optional()
-            .isBoolean()
-            .withMessage('Banned must be a boolean'),
-        query('sortBy')
-            .optional()
-            .isIn(['email', 'role', 'banned', 'createdAt'])
-            .withMessage('Invalid sortBy field'),
-        query('sortOrder')
-            .optional()
-            .isIn(['asc', 'desc'])
-            .withMessage('SortOrder must be either asc or desc'),
-    ],
-    validate,
-    getAllUsers
+  "/",
+  authenticate,
+  authorizeRoles("admin"), // Only admins can access this route
+  [
+    query("page")
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage("Page must be a positive integer"),
+    query("limit")
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage("Limit must be a positive integer"),
+    query("search")
+      .optional()
+      .isString()
+      .withMessage("Search must be a string"),
+    query("role")
+      .optional()
+      .isIn(["user", "admin"])
+      .withMessage("Role must be either user or admin"),
+    query("banned")
+      .optional()
+      .isBoolean()
+      .withMessage("Banned must be a boolean"),
+    query("sortBy")
+      .optional()
+      .isIn(["email", "role", "banned", "createdAt"])
+      .withMessage("Invalid sortBy field"),
+    query("sortOrder")
+      .optional()
+      .isIn(["asc", "desc"])
+      .withMessage("SortOrder must be either asc or desc"),
+  ],
+  validate,
+  getAllUsers,
 );
 
 /**
@@ -678,12 +666,10 @@ router.get(
  *         description: User not found.
  */
 router.get(
-    '/:id',
-    [
-        param('id').isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
-    ],
-    validate,
-    getProfileById
+  "/:id",
+  [param("id").isMongoId().withMessage("ID must be a valid MongoDB ObjectId")],
+  validate,
+  getProfileById,
 );
 
 /**
@@ -725,10 +711,10 @@ router.get(
  *         description: User not found.
  */
 router.post(
-    '/send-code',
-    [body('email').isEmail().withMessage('Invalid email')],
-    validate, // Middleware validate lỗi từ express-validator
-    sendCode
+  "/send-code",
+  [body("email").isEmail().withMessage("Invalid email")],
+  validate, // Middleware validate lỗi từ express-validator
+  sendCode,
 );
 
 /**
@@ -776,13 +762,15 @@ router.post(
  *         description: User not found.
  */
 router.post(
-    '/verify-code',
-    [
-        body('email').isEmail().withMessage('Invalid email'),
-        body('code').isLength({ min: 6, max: 6 }).withMessage('Code must be 6 digits'),
-    ],
-    validate,
-    verifyCode
+  "/verify-code",
+  [
+    body("email").isEmail().withMessage("Invalid email"),
+    body("code")
+      .isLength({ min: 6, max: 6 })
+      .withMessage("Code must be 6 digits"),
+  ],
+  validate,
+  verifyCode,
 );
 
 export default router;

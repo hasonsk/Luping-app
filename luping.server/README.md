@@ -10,9 +10,9 @@
 
 3. Tải dependency
 
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 4. Tạo file `.env` với nội dung tương tự như file `.env.example`
 
@@ -20,21 +20,22 @@
 
 1. Chạy MongoDB bằng Docker Compose:
 
-    ```bash
-    docker-compose up -d
-    ```
+   ```bash
+   docker-compose up -d
+   ```
 
-    - Nếu muốn sử dụng MongoDB trên máy, chỉ cần thay đổi `MONGO_URI` trong file `.env` thành địa chỉ MongoDB trên máy.
+   - Nếu muốn sử dụng MongoDB trên máy, chỉ cần thay đổi `MONGO_URI` trong file `.env` thành địa chỉ MongoDB trên máy.
 
 2. Chạy ứng dụng
-    - Chạy ứng dụng ở chế độ development
 
-        ```bash
-        npm run dev
-        ```
+   - Chạy ứng dụng ở chế độ development
 
-    - Chạy ứng dụng ở chế độ production
+     ```bash
+     npm run dev
+     ```
 
-        ```bash
-        npm start
-        ```
+   - Chạy ứng dụng ở chế độ production
+
+     ```bash
+     npm start
+     ```
