@@ -47,8 +47,6 @@ void main() async {
   // Initialize Hive.
   await Hive.initFlutter();
 
-  // Register adapters *BEFORE* any other Hive operations.
-  // The conditional check is still a good idea.
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(ChatMessageAdapter());
   }
