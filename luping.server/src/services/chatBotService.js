@@ -1,7 +1,7 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import * as fs from "fs/promises";
 import { GEMINI_API_KEY } from "../configs/config.js";
-import logger from "../configs/logger.js"; // Assuming this is your main application logger
+import logger from "../configs/logger.js";
 import { createLogger, transports, format } from "winston";
 import path from "path";
 
@@ -24,10 +24,28 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-002" });
 
 const generationConfig = {
-  temperature: 1.2,
+  temperature: 1,
   topP: 1,
   topK: 32,
   maxOutputTokens: 1000,
+  safetySettings: [
+    {
+      category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    },
+    {
+      category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    },
+    {
+      category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    },
+    {
+      category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    },
+  ],
 };
 
 const validateChatbotResponse = (response) => {
@@ -37,7 +55,7 @@ const validateChatbotResponse = (response) => {
     typeof response.response.sentence === "string" &&
     typeof response.response.pinyin === "string" &&
     typeof response.response.meaning_VN === "string" &&
-    response.hasOwnProperty('comment') && 
+    response.hasOwnProperty('comment') &&
     typeof response.comment === "string" &&
     response.suggested_sentences &&
     Array.isArray(response.suggested_sentences) &&
@@ -69,7 +87,7 @@ const generateChatbotResponse = async (userInput) => {
       ? userInput.topic
       : "Any topic"
     : "Any topic";
-  const safeChineseLevel = userInput?.chinese_level || "beginner"; //  default value
+  const safeChineseLevel = userInput?.chinese_level || "HSK 1"; //  default value
   const safeUserMessage = userInput?.user_message || ""; //  default value
   const safeChatHistory = userInput?.chat_history || ""; // default value
 
@@ -129,7 +147,8 @@ const generateChatbotResponse = async (userInput) => {
           error: `Parsing error: ${parseError.message}`,
           rawResponse: responseText,
         });
-        lastError = parseError; // Update lastError
+        lastError = parseError;
+        logger.error(parseError.message);
         throw parseError; // Re-throw to be caught in the outer catch block
       }
 
@@ -151,6 +170,7 @@ const generateChatbotResponse = async (userInput) => {
           parsedResponse,
         });
         lastError = validationError;
+        logger.error(validationError.message);
         throw validationError; // Throw a validation error
       }
     } catch (error) {
@@ -169,6 +189,7 @@ const generateChatbotResponse = async (userInput) => {
         err.detail =
           "The chatbot service is currently unavailable after multiple retries. Last error: " +
           lastError.message;
+        logger.error(err.detail);
         throw err;
       }
       await new Promise((resolve) => setTimeout(resolve, delay));
