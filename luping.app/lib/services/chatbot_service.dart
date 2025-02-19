@@ -43,6 +43,7 @@ class ChatbotService {
   ChatSession? get currentSession => _sessionBox.get('current_session');
 
   /// Add a message to the current session.
+  // Updated to accept optional pinyin and meaningVN
   Future<void> addMessage(ChatMessage message) async {
     final session = currentSession;
     if (session != null) {
@@ -62,11 +63,6 @@ class ChatbotService {
     final session = currentSession;
     if (session == null) return [];
     return session.messages.map((msg) => msg.toApiFormat()).toList();
-  }
-
-  /// Aggregate chatbot response by joining all sentences.
-  String aggregateResponseSentences(ChatbotResponse response) {
-    return response.responseSentences.map((s) => s.sentence).join(" ");
   }
 
   /// Makes the POST API call.
@@ -91,7 +87,9 @@ class ChatbotService {
     // Add user's message.
     await addMessage(ChatMessage(
       sender: "User",
-      message: userMessage,
+      sentence: userMessage, // Changed from message to sentence
+      pinyin: '', // Leave empty for user messages
+      meaningVN: '', // Leave empty for user messages
       timestamp: DateTime.now(),
     ));
 
@@ -108,12 +106,12 @@ class ChatbotService {
         final jsonResponse = jsonDecode(response.body);
         final chatbotResponse = ChatbotResponse.fromJson(jsonResponse);
 
-        final aggregatedResponse = aggregateResponseSentences(chatbotResponse);
-
         // Add AI's response.
         await addMessage(ChatMessage(
           sender: "AI",
-          message: aggregatedResponse,
+          sentence: chatbotResponse.response.sentence, // Changed from message
+          pinyin: chatbotResponse.response.pinyin,
+          meaningVN: chatbotResponse.response.meaningVN,
           timestamp: DateTime.now(),
         ));
 
@@ -168,12 +166,12 @@ class ChatbotService {
         final jsonResponse = jsonDecode(response.body);
         final chatbotResponse = ChatbotResponse.fromJson(jsonResponse);
 
-        final aggregatedResponse = aggregateResponseSentences(chatbotResponse);
-
         // Add AI's initial response
         await addMessage(ChatMessage(
           sender: "AI",
-          message: aggregatedResponse,
+          sentence: chatbotResponse.response.sentence, // Changed from message
+          pinyin: chatbotResponse.response.pinyin,
+          meaningVN: chatbotResponse.response.meaningVN,
           timestamp: DateTime.now(),
         ));
 

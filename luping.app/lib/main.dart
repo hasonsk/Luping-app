@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart'; // Import GetX
 import 'package:hanjii/data/database_helper.dart';
+import 'package:hanjii/services/chatbot_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'pages/loading.dart';
@@ -26,7 +27,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize dotenv, specifying the path.
-  // await dotenv.load(fileName: '.env');
+  await dotenv.load(fileName: '.env');
 
   // Khởi tạo Firebase
   await Firebase.initializeApp(
@@ -45,9 +46,32 @@ void main() async {
 
   // Initialize Hive.
   await Hive.initFlutter();
-  // Register the ChatMessage adapter.
-  Hive.registerAdapter(ChatMessageAdapter());
-  Hive.registerAdapter(ChatSessionAdapter());
+
+  // Register adapters *BEFORE* any other Hive operations.
+  // The conditional check is still a good idea.
+  if (!Hive.isAdapterRegistered(0)) {
+    Hive.registerAdapter(ChatMessageAdapter());
+  }
+  if (!Hive.isAdapterRegistered(1)) {
+    Hive.registerAdapter(ChatSessionAdapter());
+  }
+
+  // ChatbotService Tests
+  ChatbotService chatbotService = ChatbotService();
+  await chatbotService.initHive(); // Now, the adapters are registered!
+  await chatbotService.clearSession();
+
+  final response = await chatbotService.initChatSession(
+    role: "Cô giáo Hà - Giáo viên tiếng Trung sơ cấp, nữ, người Việt Nam, 25 tuổi, kiên nhẫn, nhẹ nhàng, khuyến khích học sinh.",
+    topic: "Chào hỏi và giới thiệu bản thân.",
+    chineseLevel: "HSK 1",
+  );
+
+  if (response != null) {
+    print("[CHAT]: ${response.response.sentence}");
+  } else {
+    print("[CHAT]: Failed to initialize chat session.");
+  }
 
   // Khởi chạy ứng dụng
   runApp(const MyApp());
@@ -71,8 +95,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const Loading()), // Đổi trang khởi đầu thành Loading
-        GetPage(name: '/main', page: () => const MainScreen()), // Đăng ký MainScreen
+        GetPage(
+            name: '/',
+            page: () => const Loading()), // Đổi trang khởi đầu thành Loading
+        GetPage(
+            name: '/main',
+            page: () => const MainScreen()), // Đăng ký MainScreen
         GetPage(name: '/authpage', page: () => const AuthPage()),
         // GetPage(name: '/search', page: () => const Search()),
         GetPage(name: '/note', page: () => const Note()),

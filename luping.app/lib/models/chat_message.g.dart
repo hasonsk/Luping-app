@@ -18,20 +18,26 @@ class ChatMessageAdapter extends TypeAdapter<ChatMessage> {
     };
     return ChatMessage(
       sender: fields[0] as String,
-      message: fields[1] as String,
-      timestamp: fields[2] as DateTime,
+      sentence: fields[1] as String,
+      pinyin: fields[2] as String,
+      meaningVN: fields[3] as String,
+      timestamp: fields[4] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, ChatMessage obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.sender)
       ..writeByte(1)
-      ..write(obj.message)
+      ..write(obj.sentence)
       ..writeByte(2)
+      ..write(obj.pinyin)
+      ..writeByte(3)
+      ..write(obj.meaningVN)
+      ..writeByte(4)
       ..write(obj.timestamp);
   }
 
