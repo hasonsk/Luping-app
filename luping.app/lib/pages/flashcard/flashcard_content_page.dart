@@ -1,0 +1,250 @@
+import 'package:flutter/material.dart';
+import 'dart:math';
+import 'package:flutter/services.dart';
+
+class FlashcardContentPage extends StatefulWidget {
+  @override
+  _FlashcardContentPageState createState() => _FlashcardContentPageState();
+}
+
+class _FlashcardContentPageState extends State<FlashcardContentPage> {
+  final PageController _pageController = PageController();
+  int _currentIndex = 0;
+
+  final List<Map<String, dynamic>> flashcards = [
+    {"word": "你好", "meaning": "Xin chào", "status": false},
+    {"word": "谢谢", "meaning": "Cảm ơn", "status": false},
+    {"word": "再见", "meaning": "Tạm biệt", "status": false},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text('${_currentIndex + 1}/${flashcards.length}', style: TextStyle(fontSize: 18)),
+        centerTitle: true,
+        elevation: 6,
+        shadowColor: Colors.black54,
+        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: flashcards.length,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              itemBuilder: (context, index) {
+                return FlashCard(
+                  key: PageStorageKey(index),
+                  index: index + 1, // Số thứ tự bắt đầu từ 1
+                  frontText: flashcards[index]["word"]!,
+                  backText: flashcards[index]["meaning"]!,
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton.icon(
+                  onPressed: _currentIndex > 0
+                      ? () {
+                    _pageController.previousPage(
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                      : null,
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: _currentIndex > 0 ? Colors.black : Colors.grey,
+                  ),
+                  label: Text(
+                    "Trước",
+                    style: TextStyle(
+                      color: _currentIndex > 0 ? Colors.black : Colors.grey,
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    // TODO: Xử lý mở màn hình chi tiết
+                  },
+                  icon: Icon(Icons.info_outline, color: Colors.black),
+                  label: Text(
+                    "Chi tiết",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: _currentIndex < flashcards.length - 1
+                      ? () {
+                    _pageController.nextPage(
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                      : null,
+                  icon: Icon(
+                    Icons.arrow_forward,
+                    color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey,
+                  ),
+                  label: Text(
+                    "Sau",
+                    style: TextStyle(
+                      color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FlashCard extends StatefulWidget {
+  final int index;
+  final String frontText;
+  final String backText;
+
+  FlashCard({
+    Key? key,
+    required this.index,
+    required this.frontText,
+    required this.backText,
+  }) : super(key: key);
+
+  @override
+  _FlashCardState createState() => _FlashCardState();
+}
+
+class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isFlipped = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 400),
+    );
+    _animation = Tween<double>(begin: 0, end: pi).animate(_controller);
+  }
+
+  void _flipCard() {
+    if (_isFlipped) {
+      _controller.reverse();
+    } else {
+      _controller.forward();
+    }
+    setState(() {
+      _isFlipped = !_isFlipped;
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _flipCard,
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(_animation.value)..setEntry(3, 2, 0.001),
+            child: IndexedStack(
+              alignment: Alignment.center,
+              index: _animation.value > pi / 2 ? 1 : 0,
+              children: [
+                _buildCard(widget.frontText, isFront: true, showIndex: true),
+                Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.rotationY(pi),
+                  child: _buildCard(widget.backText, isFront: false, showIndex: false),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCard(String text, {bool isFront = false, required bool showIndex}) {
+    return Container(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          if (showIndex) // Chỉ hiển thị số thứ tự nếu là mặt trước
+            Positioned(
+              top: 8,
+              left: 12,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.white, // Đặt màu nền nếu cần
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey, width: 1), // Thêm viền màu đen dày 2px
+                ),
+                child: Text(
+                  "#${widget.index}", // Số thứ tự
+                  style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          Center(
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
