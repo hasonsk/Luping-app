@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Thêm dòng này
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hanjii/pages/chatbot/chatbot_lobby.dart';
 import 'home.dart';
 import 'profile.dart';
 import 'notebook.dart';
@@ -33,6 +34,7 @@ class _MainScreenState extends State<MainScreen> {
       const Notebook(),
       const FlashcardPage(),
       const Profile(),
+      ChatBotLobby(),
     ]);
   }
 
@@ -60,6 +62,7 @@ class _MainScreenState extends State<MainScreen> {
             Expanded(child: _buildCustomBottomNavigationBarItem('assets/home.svg', 'Home', 0)),
             Expanded(child: _buildCustomBottomNavigationBarItem('assets/notebook.svg', 'Tài liệu', 1)),
             Expanded(child: _buildCustomBottomNavigationBarItem('assets/flashcard.svg', 'Thẻ nhớ', 2)),
+            Expanded(child: _buildCustomBottomNavigationBarItem('assets/chatbot.svg', 'AI Chat', 4)),
             Expanded(child: _buildCustomBottomNavigationBarItem('assets/user.svg', 'Hồ sơ', 3)),
           ],
         ),
@@ -132,7 +135,7 @@ class _MainScreenState extends State<MainScreen> {
       default: // Home
         SystemChrome.setSystemUIOverlayStyle(
           const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent, 
+            statusBarColor: Colors.transparent,
             statusBarIconBrightness: Brightness.light,
           ),
         );

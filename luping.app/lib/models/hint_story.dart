@@ -1,9 +1,9 @@
 class HintStory {
   final int id;
-  final String? character;
-  final String? hanviet;
-  final String? pinyin;
-  final List<String>? meaning;
+  final String character;
+  final String hanviet;
+  final String pinyin;
+  final List<String> meaning;
 
   HintStory({
     required this.id,
