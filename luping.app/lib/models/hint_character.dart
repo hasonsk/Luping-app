@@ -29,7 +29,7 @@ class HintCharacter {
       hanzi: map['word'] ?? '',
       pinyin: map['pinyin'] ?? '',
       hanViet: map['hanviet'] ?? '',
-      shortMeaning: map['meaning'] ?? '',
+      shortMeaning: map['shortmeaning'] ?? '',
     );
   }
 

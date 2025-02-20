@@ -15,7 +15,6 @@ class SearchSentencesView extends StatelessWidget {
             itemCount: list.length,
             itemBuilder: (context, index) {
               final item = list[index];
-              // print("Rendering item $index: ${item.sentences}, ${item.pinyin}, ${item.meaning}");
               return Card(
                 color: Colors.white,
                 margin: const EdgeInsets.fromLTRB(8, 0, 8, 4),
@@ -24,40 +23,28 @@ class SearchSentencesView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      /// Câu tiếng Trung + Icon âm thanh (trên cùng một hàng)
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Container(
-                            constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width * 0.5,
-                            ),
+                          Expanded(
                             child: Text(
                               item.sentences,
                               style: const TextStyle(fontSize: 18, color: Colors.red),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
                             ),
                           ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item.pinyin,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: const TextStyle(fontSize: 14, color: Colors.orange),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                            child: Icon(Icons.volume_up_outlined, size: 20, color: Colors.grey),
-                          ),
-                          const SizedBox(width: 5),
+                          const SizedBox(width: 10),
+                          const Icon(Icons.volume_up_outlined, size: 20, color: Colors.grey),
                         ],
                       ),
+                      const SizedBox(height: 4), // Khoảng cách giữa sentence và pinyin
+                      Text(
+                        item.pinyin,
+                        style: const TextStyle(fontSize: 14, color: Colors.orange),
+                      ),
+                      const SizedBox(height: 8), // Khoảng cách giữa Pinyin và Meaning
+
+                      /// Nghĩa tiếng Việt
                       Text(
                         item.meaning,
                         style: const TextStyle(fontSize: 14, color: Colors.black),

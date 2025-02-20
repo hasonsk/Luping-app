@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hanjii/pages/chatbot/chatbot_lobby.dart';
 import 'home.dart';
 import 'profile.dart';
-import 'notebook.dart';
+import 'book/notebook.dart';
 import 'flashcard/flashcard_page.dart';
 
 class MainScreen extends StatefulWidget {

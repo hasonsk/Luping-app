@@ -10,6 +10,7 @@ import 'package:hanjii/pages/search/search_lobby_view.dart';
 import 'package:hanjii/pages/search/search_sentence_view.dart';
 import 'dart:async';
 import 'package:hanjii/pages/search/search_story_view.dart';
+import 'package:hanjii/pages/search/search_triangle_icon.dart';
 import 'package:hanjii/pages/search/search_word_view.dart';
 import 'package:hanjii/services/search_service.dart';
 import 'handwriting.dart'; // Import lớp Handwriting
@@ -46,12 +47,13 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   late PageController _pageController; // Thêm PageController
 
   bool isLoading = false; // Biến trạng thái cho loading
+
+  String searchword = ''; // Biến lưu query hiện tại
   String _previousText = '';
-  final Map<String, List<HintCharacter>> _searchCache = {};
+
   bool _isTabTapped = false; // Biến để theo dõi khi tab được nhấn
-  Timer? _debounce;
-  final ScrollController _scrollController =
-      ScrollController(); // Controller cho ScrollView
+  Timer? _debounceTimer; // Biến lưu Timer để thực hiện debounce
+
   bool isFocused = false;
   bool isCardReplaced = false; // Biến để theo dõi trạng thái thay thế thẻ
   Map<int, bool> selectedCards = {};
@@ -60,7 +62,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   bool _isBackPressed = false;
 
   // Parameter
-  int _selectedTabIndex = 3;
+  late ValueNotifier<int> _selectedTabIndex;
 
   // Data field
   List<HintCharacter> wordData = [];
@@ -73,7 +75,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 // Setter cho _selectedTabIndex để đồng bộ TabBar và PageView
   set selectedTabIndex(int index) {
     setState(() {
-      _selectedTabIndex = index; // Cập nhật chỉ số tab
+      _selectedTabIndex.value = index; // Cập nhật chỉ số tab
       _tabController.animateTo(index); // Cập nhật TabBar
       _pageController.jumpToPage(index); // Cập nhật PageView
     });
@@ -82,38 +84,20 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _selectedTabIndex =
+    _selectedTabIndex = ValueNotifier<int>(widget.sharedIndex);
+    _selectedTabIndex.value =
         widget.sharedIndex; // Gán giá trị ban đầu từ sharedIndex
     _tabController = TabController(length: 4, vsync: this);
     _pageController = PageController(); // in initState()
 
     // Khi khởi tạo, đồng bộ TabBar và PageView theo _selectedTabIndex
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _tabController.animateTo(_selectedTabIndex); // Chọn tab tương ứng index
+      _tabController.animateTo(_selectedTabIndex.value); // Chọn tab tương ứng index
       _pageController
-          .jumpToPage(_selectedTabIndex); // Hiển thị trang tương ứng index
+          .jumpToPage(_selectedTabIndex.value); // Hiển thị trang tương ứng index
       // Kiểm tra nếu pageIndex = 1 thì focus vào TextField
       if (widget.pageIndex == 1) {
         FocusScope.of(context).requestFocus(_focusNode);
-      }
-    });
-
-    // Lắng nghe sự thay đổi của textfield
-    _controller.addListener(() {
-      if (_debounce?.isActive ?? false) _debounce!.cancel();
-      _debounce = Timer(const Duration(milliseconds: 100), () {
-        String text = _controller.text;
-        if (text != _previousText) {
-          _previousText = text;
-          _getData(text, _selectedTabIndex);
-        }
-      });
-    });
-
-    _scrollController.addListener(() {
-      // Ẩn bàn phím khi cuộn
-      if (_scrollController.hasClients) {
-        FocusScope.of(context).unfocus();
       }
     });
 
@@ -122,7 +106,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       if (_tabController.indexIsChanging) {
         _isTabTapped = true; // Tab được nhấn
         setState(() {
-          _selectedTabIndex =
+          _selectedTabIndex.value =
               _tabController.index; // Cập nhật tab đang được chọn
         });
         _pageController.animateToPage(
@@ -139,7 +123,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         final page = _pageController.page?.round();
         if (page != null && page != _tabController.index) {
           setState(() {
-            _selectedTabIndex = page; // Cập nhật tab đang được chọn
+            _selectedTabIndex.value = page; // Cập nhật tab đang được chọn
           });
           _tabController.animateTo(page);
         }
@@ -153,9 +137,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     // Cập nhật _selectedTabIndex nếu widget.sharedIndex thay đổi
     if (oldWidget.sharedIndex != widget.sharedIndex) {
       setState(() {
-        _selectedTabIndex = widget.sharedIndex; // Cập nhật từ sharedIndex
-        _tabController.animateTo(_selectedTabIndex); // Cập nhật TabBar
-        _pageController.jumpToPage(_selectedTabIndex); // Cập nhật PageView
+        _selectedTabIndex = ValueNotifier<int>(widget.sharedIndex); // Cập nhật từ sharedIndex
+        _tabController.animateTo(_selectedTabIndex.value); // Cập nhật TabBar
+        _pageController.jumpToPage(_selectedTabIndex.value); // Cập nhật PageView
       });
     }
 
@@ -174,22 +158,12 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _tabController.dispose();
     _focusNode.dispose();
-    _scrollController.dispose();
     _pageController.dispose(); // Dispose page controller
+    _selectedTabIndex.dispose();
     super.dispose();
   }
-
-
-  // Data field
-  // List<HintCharacter> wordData = [];
-  // List<HintStory> hanziData = [];
-  // List<Sentence> sentenceData = [];
-  // List<String> imageData = [];
-  //
-  // final SearchService _searchService = SearchService();
 
   // Xử lý dữ liệu mình tab cho lần đầu
   Future<void> _getData(String? text, int index) async {
@@ -212,7 +186,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           hanziData = [];
           sentenceData = [];
           imageData = [];
-          print("wordData: $wordData");
         });
         break;
       case 1:
@@ -222,7 +195,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           hanziData = result;
           sentenceData = [];
           imageData = [];
-          print("hanziData: $hanziData");
         });
         break;
       case 2:
@@ -232,7 +204,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           hanziData = [];
           sentenceData = result;
           imageData = [];
-          print("sentenceData: $sentenceData");
         });
         break;
       case 3:
@@ -242,22 +213,56 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           hanziData = [];
           sentenceData = [];
           imageData = result ?? []; // Nếu result là null, đặt imageData = []
-          print("imageData: $imageData");
         });
         break;
       default:
-        print("⚠️ Index không hợp lệ: $index");
+        print("Index không hợp lệ: $index");
     }
   }
 
 
-
-
-
   // Cập nhât dữ liệu khi người dùng đổi tab
-  Future<void> _updateData() async {
+  Future<void> _updateData(String? text, int index) async {
+    if (text == null || text.trim().isEmpty) return; // Nếu text rỗng, không làm gì
 
+    switch (index) {
+      case 0:
+        if (wordData.isEmpty) {
+          var result = await _searchService.hintSearch(text);
+          setState(() {
+            wordData = result;
+          });
+        }
+        break;
+      case 1:
+        if (hanziData.isEmpty) {
+          var result = await _searchService.getStoryHint(text);
+          setState(() {
+            hanziData = result;
+          });
+        }
+        break;
+      case 2:
+        if (sentenceData.isEmpty) {
+          var result = await _searchService.getSentence(text);
+          setState(() {
+            sentenceData = result;
+          });
+        }
+        break;
+      case 3:
+        if (imageData.isEmpty) {
+          var result = await _searchService.getImage(text, 0);
+          setState(() {
+            imageData = result ?? [];
+          });
+        }
+        break;
+      default:
+        print("Index không hợp lệ: $index");
+    }
   }
+
 
   Future<bool> _onWillPop() async {
     // Nếu TextField đang focus, bỏ focus và không thoát ứng dụng
@@ -331,6 +336,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                               autofocus: false,
                               focusNode: _focusNode,
                               controller: _controller,
+                              onChanged: _onSearchTextChanged,
                               style: const TextStyle(
                                   fontSize: 15.0), // Kiểu chữ cho text nhập vào
                               cursorColor: Colors.grey,
@@ -493,85 +499,56 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   Widget buildWordsView() {
     if (_controller.text.isEmpty) {
-      return SearchLobbyView(); // Gọi hàm xây dựng giao diện sảnh chờ
+      return const SearchLobbyView(); // Gọi hàm xây dựng giao diện sảnh chờ
     }
-
-    if (isLoading) {
-      if (isFocused) {
-        return const Center(
-            child: Image(
-          image: AssetImage('assets/loading_green.gif'),
-          height: 90,
-        ));
-      } else {
-        return const Padding(
-          padding: EdgeInsets.only(bottom: 150),
-          child: Center(
-              child: Image(
-            image: AssetImage('assets/loading_green.gif'),
-            height: 100,
-          )),
-        );
-      }
+    if(wordData.isEmpty){
+      _updateData(_controller.text, 0);
     }
-
-    if (wordData.isEmpty) {
-      return const Center(child: Text('Không có dữ liệu'));
-    }
-
     return SearchWordView(list: wordData);
   }
 
   Widget buildStoriesView() {
+    if(hanziData.isEmpty){
+      _updateData(_controller.text, 1);
+    }
     return SearchStoryView(list : hanziData);
   }
 
   Widget buildSentencesView() {
+    if(sentenceData.isEmpty){
+      _updateData(_controller.text, 2);
+    }
     return SearchSentencesView(list: sentenceData);
   }
 
   Widget buildImagesView() {
+    if(sentenceData.isEmpty){
+      _updateData(_controller.text, 3);
+    }
     return SearchImageView(list : imageData);
   }
-}
 
-class TriangleIndicator extends Decoration {
-  final Color color;
 
-  const TriangleIndicator({required this.color});
+  // Hàm này được gọi khi người dùng thay đổi nội dung TextField
+  void _onSearchTextChanged(String newQuery) {
+    // Hủy bỏ Timer cũ nếu người dùng tiếp tục gõ
+    if (_debounceTimer != null) {
+      _debounceTimer!.cancel();
+    }
 
-  @override
-  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
-    return _TrianglePainter(color: color);
+    // Tạo một Timer mới, sau thời gian debounce (300ms), gửi request
+    _debounceTimer = Timer(Duration(milliseconds: 300), () {
+      // Kiểm tra xem query mới có khác với searchword hiện tại không
+      if (newQuery != searchword) {
+        setState(() {
+          searchword = newQuery; // Cập nhật searchword mới
+        });
+
+        // Gửi request tìm kiếm tại đây
+        _getData(searchword, _selectedTabIndex.value);
+      }
+    });
   }
+
+
 }
-
-class _TrianglePainter extends BoxPainter {
-  final Color color;
-
-  _TrianglePainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
-    final Paint paint = Paint()..color = color;
-
-    final Rect rect = offset & configuration.size!;
-
-    // Chiều cao và chiều rộng cố định cho tam giác
-    const double triangleHeight = 8.0;
-    const double triangleWidth = 20.0;
-
-    // Tính toán vị trí tam giác sao cho nó nằm ở giữa theo chiều ngang
-    final double triangleStartX = rect.left + (rect.width - triangleWidth) / 2;
-    final Path path = Path()
-      ..moveTo(triangleStartX, rect.bottom) // Bắt đầu từ bên trái của tam giác
-      ..lineTo(triangleStartX + triangleWidth / 2,
-          rect.bottom - triangleHeight) // Đỉnh tam giác ở giữa
-      ..lineTo(triangleStartX + triangleWidth,
-          rect.bottom) // Kết thúc bên phải của tam giác
-      ..close(); // Đóng tam giác
-
-    canvas.drawPath(path, paint);
-  }
-}
-

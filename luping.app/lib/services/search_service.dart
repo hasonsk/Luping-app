@@ -333,13 +333,12 @@ class SearchService {
       return [];
     }
   }
-
   Future<List<HintStory>> getStoryHint(String query) async {
     try {
       final db = await _db;
       // 1. Lọc bỏ các ký tự không phải chữ Hán
       final hanziQuery =
-          query.replaceAll(RegExp(r'[^\p{Script=Han}]', unicode: true), '');
+      query.replaceAll(RegExp(r'[^\p{Script=Han}]', unicode: true), '');
 
       if (hanziQuery.isEmpty) {
         return [];
@@ -349,10 +348,10 @@ class SearchService {
       final placeholders = List.filled(hanziQuery.length, '?').join(',');
       final characters = hanziQuery.split('');
 
-      // 3. Truy vấn cơ sở dữ liệu
+      // 3. Truy vấn cơ sở dữ liệu, bao gồm trường 'image'
       final results = await db.query(
         'Storys',
-        columns: ['id', 'character', 'pinyin', 'hanviet', 'meaning'],
+        columns: ['id', 'character', 'pinyin', 'hanviet', 'meaning', 'image'], // Cập nhật ở đây
         where: 'character IN ($placeholders)',
         whereArgs: characters,
       );
@@ -362,7 +361,7 @@ class SearchService {
       for (final char in characters) {
         // Tìm story có character khớp với ký tự hiện tại
         final storyMap = results.firstWhere(
-          (map) => map['character'] == char,
+              (map) => map['character'] == char,
           orElse: () => {}, // Return empty map if no match
         );
 
@@ -378,25 +377,4 @@ class SearchService {
     }
   }
 
-  // New function to get story detail by character
-  Future<Story?> getStoryDetail(String character) async {
-    try {
-      final db = await _db;
-      final result = await db.query(
-        'Storys',
-        where: 'character = ?',
-        whereArgs: [character],
-        limit: 1,
-      );
-
-      if (result.isNotEmpty) {
-        return Story.fromMap(result.first);
-      } else {
-        return null;
-      }
-    } catch (e) {
-      logger.e('Error in getStoryDetail: $e');
-      return null;
-    }
-  }
 }
