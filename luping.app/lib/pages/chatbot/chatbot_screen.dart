@@ -92,7 +92,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                         },
                         child: Row(
                           mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             if (!isUser)
                               const CircleAvatar(
@@ -126,6 +126,16 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                                 ),
                               ),
                             ),
+                            if (!isUser)
+                              IconButton(
+                                icon: const Icon(Icons.more_vert, color: Colors.grey),
+                                onPressed: () {
+                                  showChatBotBottomSheet(context, _messages[index]);
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                splashRadius: 24,
+                              ),
                             if (isUser)
                               const CircleAvatar(
                                 backgroundColor: userColor,
