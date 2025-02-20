@@ -25,8 +25,6 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
     "Bạn: Hôm nay thời tiết thế nào?",
     "Bot: Hôm nay trời nắng đẹp! 🌞",
     "Bạn: Cảm ơn nhé!",
-    "Bot: Hôm nay trời nắng đẹp! 🌞",
-    "Bạn: Cảm ơn nhé!",
   ];
 
   @override
@@ -154,7 +152,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
             ),
           ),
         ),
-        SizedBox(height: 10,)
+        SizedBox(height: 30,)
       ],
     );
   }
@@ -222,7 +220,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18),
                           child: TabBar(
                             labelColor: primaryColor,
                             unselectedLabelColor: Colors.black54,

@@ -166,40 +166,55 @@ class SearchService {
     }
   }
 
-  Future<Map?> getImage(String input, int offset) async {
+  Future<List<String>?> getImage(String input, int offset) async {
     /*
-      Fetch images from Google Image via Google Custom Search API
-    :param: input: search query
-    :param: offset: starting search index
-    ;return: list of results as Map
-    */
+    Fetch images from Google Image via Google Custom Search API
+    and return a list of image URLs.
+  */
 
-    // JSON object to send as query parameters
-    final Map<String, dynamic> queryParams = {
+    // Lấy API Key & CSE ID, kiểm tra null
+    final apiKey = dotenv.env['API_KEY'] ?? "";
+    final cseId = dotenv.env['CSE_ID'] ?? "";
+    if (apiKey.isEmpty || cseId.isEmpty) {
+      throw Exception("API_KEY hoặc CSE_ID chưa được cấu hình!");
+    }
+
+    // Tham số truy vấn API
+    final Map<String, String> queryParams = {
       "q": input,
-      "num": 9,
-      "start": offset,
+      "num": "9",
+      "start": offset.toString(),
       "imgSize": "medium",
       "searchType": "image",
-      "key": dotenv.env['API_KEY'],
-      "cx": dotenv.env['CSE_ID']
+      "key": apiKey,
+      "cx": cseId
     };
 
-    // Convert queryParams to URI format
-    final uri = Uri.https(
-        'https://www.googleapis.com', '/customsearch/v1', queryParams);
+    // Tạo URI chính xác
+    final uri = Uri.https('www.googleapis.com', '/customsearch/v1', queryParams);
 
     try {
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['items'];
+
+        if (data.containsKey('items')) {
+          // Lọc ra danh sách link hình ảnh từ kết quả API
+          List<String> imageLinks = List<String>.from(
+              data['items'].map((item) => item['link'])
+          );
+
+          return imageLinks;
+        } else {
+          logger.w("Không tìm thấy hình ảnh nào.");
+          return [];
+        }
       } else {
-        throw Exception('Failed to fetch data: ${response.statusCode}');
+        throw Exception('Lỗi API: ${response.statusCode}');
       }
     } catch (e) {
-      logger.e("Error in getImage: $e");
+      logger.e("Lỗi trong getImage: $e");
       return null;
     }
   }
@@ -291,7 +306,7 @@ class SearchService {
       final List<String> conditions = [];
       for (final token in tokens) {
         conditions.addAll([
-          """REPLACE(search, '​', '') LIKE '%$token%'""",
+          """REPLACE(searchquery, '​', '') LIKE '%$token%'""",
           """REPLACE(pinyin, '​', '') LIKE '%$token%'""",
           """REPLACE(meaning, '​', '') LIKE '%$token%'""",
           """REPLACE(searchquery, '​', '') LIKE '%$token%'"""

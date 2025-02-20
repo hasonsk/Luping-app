@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:hanjii/models/hint_character.dart';
 import 'package:hanjii/data/database_helper.dart';
 import 'package:hanjii/models/hint_story.dart';
+import 'package:hanjii/models/sentence.dart';
 import 'package:hanjii/pages/search/drawingboard.dart';
 import 'package:hanjii/pages/search/search_image_view.dart';
 import 'package:hanjii/pages/search/search_lobby_view.dart';
+import 'package:hanjii/pages/search/search_sentence_view.dart';
 import 'dart:async';
 import 'package:hanjii/pages/search/search_story_view.dart';
 import 'package:hanjii/pages/search/search_word_view.dart';
@@ -28,16 +30,22 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
-  static const primaryColor = Color(0xFF96D962);
+
+  // Import Search Service
+  final SearchService _searchService = SearchService();
+
+  // Color variable
+  static const primaryColor = Color(0xFF96D962); // Màu chủ đề
   static const bodyColor = Color(0xFFF2F2F7); // Màu nền của body
+
+  // Điều khiển text-field && Tab
   final TextEditingController _controller =
       TextEditingController(); // Điều khiển nội dung của TextField
   final FocusNode _focusNode = FocusNode();
-  final SearchService _searchService = SearchService();
-  bool isLoading = false; // Biến trạng thái cho loading
-  int _selectedTabIndex = 3;
   late TabController _tabController;
   late PageController _pageController; // Thêm PageController
+
+  bool isLoading = false; // Biến trạng thái cho loading
   String _previousText = '';
   final Map<String, List<HintCharacter>> _searchCache = {};
   bool _isTabTapped = false; // Biến để theo dõi khi tab được nhấn
@@ -47,20 +55,21 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   bool isFocused = false;
   bool isCardReplaced = false; // Biến để theo dõi trạng thái thay thế thẻ
   Map<int, bool> selectedCards = {};
+
+  // Parameter Quay lại
   bool _isBackPressed = false;
+
+  // Parameter
+  int _selectedTabIndex = 3;
+
+  // Data field
   List<HintCharacter> wordData = [];
   List<HintStory> hanziData = [];
-  List<String> imageData = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIBK512v9cBy7_94eTofhozRCKwwszEWdeYw&s",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWWM5vq0LOukFhr-hw3b5GS1MkUJm0p5A2gw&s",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8yXKP24h_8R175Yf46FniZ4OBxlbfKbs7tQ&s",
-    "https://i.kfs.io/album/global/255707687,0v1/fit/500x500.jpg",
-    "https://www.tanghuaku.com/wp-content/uploads/2021/04/TK-1174.jpg",
-    "https://i.ytimg.com/vi/lNB8Y82DVio/maxresdefault.jpg",
-    "https://upload.wikimedia.org/wikipedia/zh/4/41/You_and_Me_cover.jpg",
-    "https://p1.img.cctvpic.com/photoAlbum/page/performance/img/2016/6/28/1467095898279_379.jpg",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJKaM5XMXpZmdB3jA13DGi_nGK_PyzBZArmw&s",
-  ];
+  List<Sentence> sentenceData = [];
+  List<String> imageData = [];
+
+
+
 // Setter cho _selectedTabIndex để đồng bộ TabBar và PageView
   set selectedTabIndex(int index) {
     setState(() {
@@ -89,13 +98,14 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       }
     });
 
+    // Lắng nghe sự thay đổi của textfield
     _controller.addListener(() {
       if (_debounce?.isActive ?? false) _debounce!.cancel();
       _debounce = Timer(const Duration(milliseconds: 100), () {
         String text = _controller.text;
         if (text != _previousText) {
           _previousText = text;
-          _getData(text);
+          _getData(text, _selectedTabIndex);
         }
       });
     });
@@ -172,39 +182,81 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> _getData(String text) async {
-    if (text.isEmpty) {
+
+  // Data field
+  // List<HintCharacter> wordData = [];
+  // List<HintStory> hanziData = [];
+  // List<Sentence> sentenceData = [];
+  // List<String> imageData = [];
+  //
+  // final SearchService _searchService = SearchService();
+
+  // Xử lý dữ liệu mình tab cho lần đầu
+  Future<void> _getData(String? text, int index) async {
+    if (text == null || text.trim().isEmpty) {
+      // Nếu text null hoặc rỗng, đặt tất cả dữ liệu về danh sách rỗng
       setState(() {
         wordData = [];
-        isLoading = false;
+        hanziData = [];
+        sentenceData = [];
+        imageData = [];
       });
-      return;
+      return; // Thoát khỏi hàm, không gọi API
     }
 
-    setState(() {
-      isLoading = true;
-    });
-
-    if (_searchCache.containsKey(text)) {
-      setState(() {
-        wordData = _searchCache[text]!;
-        isLoading = false;
-      });
-    } else {
-      try {
-        List<HintCharacter> results = await _searchService.hintSearch(text);
+    switch (index) {
+      case 0:
+        var result = await _searchService.hintSearch(text);
         setState(() {
-          wordData = results;
-          _searchCache[text] = results;
-          isLoading = false;
+          wordData = result;
+          hanziData = [];
+          sentenceData = [];
+          imageData = [];
+          print("wordData: $wordData");
         });
-      } catch (e) {
+        break;
+      case 1:
+        var result = await _searchService.getStoryHint(text);
         setState(() {
           wordData = [];
-          isLoading = false;
+          hanziData = result;
+          sentenceData = [];
+          imageData = [];
+          print("hanziData: $hanziData");
         });
-      }
+        break;
+      case 2:
+        var result = await _searchService.getSentence(text);
+        setState(() {
+          wordData = [];
+          hanziData = [];
+          sentenceData = result;
+          imageData = [];
+          print("sentenceData: $sentenceData");
+        });
+        break;
+      case 3:
+        var result = await _searchService.getImage(text, 0);
+        setState(() {
+          wordData = [];
+          hanziData = [];
+          sentenceData = [];
+          imageData = result ?? []; // Nếu result là null, đặt imageData = []
+          print("imageData: $imageData");
+        });
+        break;
+      default:
+        print("⚠️ Index không hợp lệ: $index");
     }
+  }
+
+
+
+
+
+  // Cập nhât dữ liệu khi người dùng đổi tab
+  Future<void> _updateData() async {
+
   }
 
   Future<bool> _onWillPop() async {
@@ -475,7 +527,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   }
 
   Widget buildSentencesView() {
-    return const Center(child: Text('Sentences Content'));
+    return SearchSentencesView(list: sentenceData);
   }
 
   Widget buildImagesView() {

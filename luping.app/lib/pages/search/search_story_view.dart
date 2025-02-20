@@ -101,7 +101,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           ],
                         ),
                         Text(
-                          item.meaning as String,
+                          item.meaning[0],
                           style: const TextStyle(fontSize: 14, color: Colors.black),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
