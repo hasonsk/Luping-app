@@ -78,36 +78,33 @@ class LessonItem extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal, // Cuộn theo chiều ngang
-                child: Row(
-                  children: [
-                    _buildSection(
-                      title: '1.1 Chuẩn bị bài',
-                      buttons: [
-                        _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
-                        _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context)),
-                      ],
-                    ),
-                    SizedBox(width: 20), // Khoảng cách giữa các nhóm cột
-                    _buildSection(
-                      title: '1.2 Học tại lớp',
-                      buttons: [
-                        _buildButton(context, 'Hội thoại', () => _navigateToConverScreen(context)),
-                      ],
-                    ),
-                    SizedBox(width: 20),
-                    _buildSection(
-                      title: '1.3 Ôn tại nhà',
-                      buttons: [
-                        _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
-                        _buildButton(context, 'Tham khảo', () => _navigateToReferScreen(context)),
-                      ],
-                    ),
-                  ],
-                ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal, // Cuộn theo chiều ngang
+              child: Row(
+                children: [
+                  _buildSection(
+                    title: '1.1 Chuẩn bị bài',
+                    buttons: [
+                      _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
+                      _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context)),
+                    ],
+                  ),
+                  SizedBox(width: 20), // Khoảng cách giữa các nhóm cột
+                  _buildSection(
+                    title: '1.2 Học tại lớp',
+                    buttons: [
+                      _buildButton(context, 'Hội thoại', () => _navigateToConverScreen(context)),
+                    ],
+                  ),
+                  SizedBox(width: 20),
+                  _buildSection(
+                    title: '1.3 Ôn tại nhà',
+                    buttons: [
+                      _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
+                      _buildButton(context, 'Tham khảo', () => _navigateToReferScreen(context)),
+                    ],
+                  ),
+                ],
               ),
             )
           ],
