@@ -13,7 +13,7 @@ class AudioScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('File nghe', style: TextStyle(fontSize: 17)),
+        title: Text('Bài ${lesson.index} / File nghe' , style: TextStyle(fontSize: 17)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 4,
