@@ -7,7 +7,7 @@ import 'kanjivocab_test_screen.dart';
 class KanjiScreen extends StatelessWidget {
   final Lesson lesson;
 
-  const KanjiScreen({Key? key, required this.lesson}) : super(key: key);
+  const KanjiScreen({super.key, required this.lesson});
 
   void _navigateToLearnScreen(BuildContext context) {
     Navigator.push(
@@ -64,7 +64,7 @@ class KanjiScreen extends StatelessWidget {
           title: Text(
             'Bài ${lesson.index} / Chuẩn bị',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
             ),
@@ -74,7 +74,7 @@ class KanjiScreen extends StatelessWidget {
           elevation: 4,
           centerTitle: true,
           shadowColor: Colors.black,
-          systemOverlayStyle: SystemUiOverlayStyle(
+          systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarColor: Colors.white, // Đặt màu nền Status Bar trùng với AppBar
             statusBarIconBrightness: Brightness.dark, // Giữ icon status bar màu tối
           ),
@@ -86,21 +86,21 @@ class KanjiScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildSectionTitle('Bắt đầu :', Colors.green),
               const SizedBox(height: 10),
               Row(
                 children: [
                   _buildActionButton(context, Icons.school, 'Học', () => _navigateToLearnScreen(context)),
-                  SizedBox(width: 20,),
+                  const SizedBox(width: 20,),
                   // _buildActionButton(context, Icons.edit, 'Luyện tập', () {}),
                   // _buildActionButton(context, Icons.check, 'Kiểm tra', () => _navigateToTestScreen(context)),
                 ],
               ),
               const SizedBox(height: 25),
               _buildSectionTitle('Hướng dẫn :', Colors.green),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                 child: Text('Ở phần này chúng ta hãy cùng nhau chuẩn bị các Hán tự cần thiết cho bài mới nhé.', style: TextStyle(color: Colors.black87),),
               ),
               Container(
@@ -136,18 +136,18 @@ class KanjiScreen extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
               blurRadius: 6,
-              offset: Offset(0, -5), // Đổ bóng phía trên
+              offset: const Offset(0, -5), // Đổ bóng phía trên
             ),
           ],
         ),
         child: Row(
           children: [
-            SizedBox(width: 20,),
-            Text(
+            const SizedBox(width: 20,),
+            const Text(
               'Kiểm tra!',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             ElevatedButton.icon(
               onPressed: () => _navigateToTestScreen(context),
               icon: Icon(Icons.play_arrow, color: Colors.grey[200],),
@@ -155,8 +155,8 @@ class KanjiScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12), // Giảm padding
-                textStyle: TextStyle(fontSize: 15), // Giảm font nếu cần
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), // Giảm padding
+                textStyle: const TextStyle(fontSize: 15), // Giảm font nếu cần
               ),
             ),
           ],

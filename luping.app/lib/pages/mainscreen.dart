@@ -34,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
       const Notebook(),
       const FlashcardPage(),
       const Profile(),
-      ChatBotLobby(),
+      const ChatBotLobby(),
     ]);
   }
 

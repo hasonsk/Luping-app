@@ -44,7 +44,7 @@ class BookPage extends StatelessWidget {
                   _buildSectionTitle(Icons.list, 'Mục lục : (${book.lessons.length} bài học)'),
                   const SizedBox(height: 10),
                   _buildProgressSection(0, book.lessons.length),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 20),
                   ...book.lessons.map((lesson) => LessonItem(lesson: lesson)).toList(),
                 ],
               ),

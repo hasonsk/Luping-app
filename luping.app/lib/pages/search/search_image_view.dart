@@ -4,7 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 class SearchImageView extends StatelessWidget {
   final List<String> list;
 
-  const SearchImageView({Key? key, required this.list}) : super(key: key);
+  const SearchImageView({super.key, required this.list});
 
   @override
   Widget build(BuildContext context) {

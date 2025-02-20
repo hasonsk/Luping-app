@@ -5,7 +5,7 @@ import 'chatbot_screen_appbar.dart';
 import 'chatbot_screen_bottomsheet.dart';
 
 class ChatBotScreen extends StatefulWidget {
-  const ChatBotScreen({Key? key}) : super(key: key);
+  const ChatBotScreen({super.key});
 
   @override
   _ChatBotScreenState createState() => _ChatBotScreenState();
@@ -96,7 +96,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                       },
                       child: Row(
                         mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           if (!isUser)
                             const CircleAvatar(
@@ -128,7 +128,16 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
-                            ),
+                            ),),
+                            if (!isUser)
+                              IconButton(
+                                icon: const Icon(Icons.more_vert, color: Colors.grey),
+                                onPressed: () {
+                                  showChatBotBottomSheet(context, _messages[index]);
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                splashRadius: 24,
                           ),
                           if (isUser)
                             const CircleAvatar(

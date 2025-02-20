@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'chatbot_screen.dart';
 
 class ChatBotLobby extends StatefulWidget {
-  const ChatBotLobby({Key? key}) : super(key: key);
+  const ChatBotLobby({super.key});
 
   @override
   _ChatBotLobbyState createState() => _ChatBotLobbyState();
@@ -23,6 +23,8 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
     "Bạn: Xin chào! 🤖",
     "Bot: Chào bạn! Tôi có thể giúp gì?",
     "Bạn: Hôm nay thời tiết thế nào?",
+    "Bot: Hôm nay trời nắng đẹp! 🌞",
+    "Bạn: Cảm ơn nhé!",
     "Bot: Hôm nay trời nắng đẹp! 🌞",
     "Bạn: Cảm ơn nhé!",
   ];
@@ -152,7 +154,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
             ),
           ),
         ),
-        SizedBox(height: 30,)
+        SizedBox(height: 10,)
       ],
     );
   }
@@ -220,7 +222,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+                          padding: EdgeInsets.symmetric(vertical: 8),
                           child: TabBar(
                             labelColor: primaryColor,
                             unselectedLabelColor: Colors.black54,

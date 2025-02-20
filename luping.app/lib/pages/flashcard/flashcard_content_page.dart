@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 
 class FlashcardContentPage extends StatefulWidget {
+  const FlashcardContentPage({super.key});
+
   @override
   _FlashcardContentPageState createState() => _FlashcardContentPageState();
 }
@@ -22,15 +24,15 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('${_currentIndex + 1}/${flashcards.length}', style: TextStyle(fontSize: 18)),
+        title: Text('${_currentIndex + 1}/${flashcards.length}', style: const TextStyle(fontSize: 18)),
         centerTitle: true,
         elevation: 6,
         shadowColor: Colors.black54,
         backgroundColor: Colors.white,
-        systemOverlayStyle: SystemUiOverlayStyle(
+        systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.dark,
         ),
@@ -65,7 +67,7 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
                   onPressed: _currentIndex > 0
                       ? () {
                     _pageController.previousPage(
-                      duration: Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                     );
                   }
@@ -85,13 +87,13 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
                   onPressed: () {
                     // TODO: Xử lý mở màn hình chi tiết
                   },
-                  icon: Icon(Icons.info_outline, color: Colors.black),
-                  label: Text(
+                  icon: const Icon(Icons.info_outline, color: Colors.black),
+                  label: const Text(
                     "Chi tiết",
                     style: TextStyle(color: Colors.black),
                   ),
                   style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                   ),
@@ -100,7 +102,7 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
                   onPressed: _currentIndex < flashcards.length - 1
                       ? () {
                     _pageController.nextPage(
-                      duration: Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                     );
                   }
@@ -130,12 +132,12 @@ class FlashCard extends StatefulWidget {
   final String frontText;
   final String backText;
 
-  FlashCard({
-    Key? key,
+  const FlashCard({
+    super.key,
     required this.index,
     required this.frontText,
     required this.backText,
-  }) : super(key: key);
+  });
 
   @override
   _FlashCardState createState() => _FlashCardState();
@@ -151,7 +153,7 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 400),
     );
     _animation = Tween<double>(begin: 0, end: pi).animate(_controller);
   }
@@ -208,7 +210,7 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 10,
@@ -224,7 +226,7 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
               top: 8,
               left: 12,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.white, // Đặt màu nền nếu cần
                   borderRadius: BorderRadius.circular(8),
@@ -232,14 +234,14 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
                 ),
                 child: Text(
                   "#${widget.index}", // Số thứ tự
-                  style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
           Center(
             child: Text(
               text,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
           ),

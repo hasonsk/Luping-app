@@ -9,7 +9,7 @@ import '../../models/lesson.dart';
 class LessonItem extends StatelessWidget {
   final Lesson lesson;
 
-  const LessonItem({Key? key, required this.lesson}) : super(key: key);
+  const LessonItem({super.key, required this.lesson});
 
   void _navigateToKanjiScreen(BuildContext context) {
     Navigator.push(

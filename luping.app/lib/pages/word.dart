@@ -17,7 +17,7 @@ class WordInfo extends StatefulWidget {
 }
 
 class _WordInfoState extends State<WordInfo> {
-  static const primaryColor = Color(0xFF96D962);
+  // static const primaryColor = Color(0xFF96D962);
   static const noteColor = Color(0xFFE8FED4);
   final hanzi = Get.arguments as String; // Cast tham số thành String
 

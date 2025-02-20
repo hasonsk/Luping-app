@@ -120,11 +120,11 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         );
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                        side: MaterialStateProperty.all<BorderSide>(
+                        backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                        side: WidgetStateProperty.all<BorderSide>(
                           const BorderSide(color: Colors.grey, width: 0.5),
                         ),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

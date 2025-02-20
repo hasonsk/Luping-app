@@ -4,7 +4,7 @@ import '../../models/lesson.dart';
 class VocabularyScreen extends StatelessWidget {
   final Lesson lesson;
 
-  const VocabularyScreen({Key? key, required this.lesson}) : super(key: key);
+  const VocabularyScreen({super.key, required this.lesson});
 
   Widget _buildSectionTitle(String title, Color color) {
     return Row(

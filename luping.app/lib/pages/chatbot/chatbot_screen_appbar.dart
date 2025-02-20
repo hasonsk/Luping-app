@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ChatBotAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBack;
 
-  const ChatBotAppBar({Key? key, this.onBack}) : super(key: key);
+  const ChatBotAppBar({super.key, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -43,18 +43,18 @@ class ChatBotAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
             ),
           ),
-          Expanded(
+          const Expanded(
             child: Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     backgroundColor: Colors.white,
                     radius: 15,
                     child: Icon(Icons.android, color: Colors.green, size: 18),
                   ),
-                  const SizedBox(width: 8),
-                  const Text(
+                  SizedBox(width: 8),
+                  Text(
                     "Chatbot",
                     style: TextStyle(
                       color: Colors.white,
