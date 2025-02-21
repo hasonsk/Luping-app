@@ -54,6 +54,9 @@ void main() async {
     Hive.registerAdapter(ChatSessionAdapter());
   }
 
+  // Khởi tạo Hive box cho chat session
+  await ChatbotService().initHive();
+
   // Khởi chạy ứng dụng
   runApp(const MyApp());
 }

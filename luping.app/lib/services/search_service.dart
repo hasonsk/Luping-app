@@ -333,6 +333,7 @@ class SearchService {
       return [];
     }
   }
+
   Future<List<HintStory>> getStoryHint(String query) async {
     try {
       final db = await _db;
@@ -374,6 +375,25 @@ class SearchService {
     } catch (e) {
       logger.e("Error in getStoryHint: $e");
       return [];
+    }
+  }
+
+  Future<Story?> getStoryDetails(String character) async {
+    try {
+      final db = await _db;
+      final results = await db.query(
+        'Storys',
+        columns: ['id', 'character', 'pinyin', 'hanviet', 'meaning', 'image'],
+        where: 'character = ?',
+        whereArgs: [character],
+      );
+      if (results.isNotEmpty) {
+        return Story.fromMap(results.first);
+      }
+      return null;
+    } catch (e) {
+      logger.e("Error in getStoryDetails: $e");
+      return null;
     }
   }
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive/hive.dart';
+import 'package:rxdart/rxdart.dart';
 import '../models/chat_message.dart';
 import '../models/chatbot_response.dart';
 import '../models/chat_session.dart';
@@ -19,9 +20,23 @@ class ChatbotService {
 
   Box<ChatSession> get sessionBox => _sessionBox;
 
+  // Create a BehaviorSubject to hold and stream the current session
+  final _currentSessionSubject = BehaviorSubject<ChatSession?>.seeded(null);
+  Stream<ChatSession?> get currentSessionStream =>
+      _currentSessionSubject.stream;
+
+  /// Retrieve the current chat session.
+  ChatSession? get currentSession => _sessionBox.get('current_session');
+
   /// Initialize Hive and open the chat session box.
   Future<void> initHive() async {
     _sessionBox = await Hive.openBox<ChatSession>('chatSession');
+    // Listen to changes on the 'current_session' and update the stream
+    _sessionBox.watch(key: 'current_session').listen((event) {
+      _currentSessionSubject.add(_sessionBox.get('current_session'));
+    });
+    //Initial load
+    _currentSessionSubject.add(_sessionBox.get('current_session'));
   }
 
   /// Initialize a new chat session (clearing any previous session).
@@ -38,9 +53,6 @@ class ChatbotService {
     );
     await _sessionBox.put('current_session', session);
   }
-
-  /// Retrieve the current chat session.
-  ChatSession? get currentSession => _sessionBox.get('current_session');
 
   /// Add a message to the current session.
   // Updated to accept optional pinyin and meaningVN
