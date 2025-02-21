@@ -8,6 +8,11 @@ import logger from "../configs/logger.js";
 ffmpeg.setFfmpegPath(ffmpegStatic);
 
 const convertToWav = async (inputFilePath) => {
+  const fileExtension = path.extname(inputFilePath).toLowerCase();
+  if (fileExtension === ".wav") {
+    return inputFilePath; // Skip conversion
+  }
+
   return new Promise((resolve, reject) => {
     const outputFilePath = path.join(
       "uploads",
