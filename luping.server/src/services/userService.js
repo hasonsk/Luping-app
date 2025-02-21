@@ -172,13 +172,13 @@ const registerAdmin = async (data) => {
   const admin = new User({ email, password, profile, role: "admin" });
   const savedAdmin = await admin.save();
   const accessToken = generateToken(
-    savedUser._id,
-    savedUser.role,
+    savedAdmin._id,
+    savedAdmin.role,
     JWT_EXPIRATION,
   );
   const refreshToken = generateToken(
-    savedUser._id,
-    savedUser.role,
+    savedAdmin._id,
+    savedAdmin.role,
     JWT_REFRESH_EXPIRATION,
   );
 
