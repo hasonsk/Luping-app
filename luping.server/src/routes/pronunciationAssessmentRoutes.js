@@ -110,6 +110,11 @@ const upload = multer({ dest: "uploads/" });
  *                   type: string
  *                   example: "Internal server error"
  */
-router.post("/", authenticate, upload.single("audio"), assessPronunciation);
+router.post(
+  "/",
+  // authenticate,
+  upload.single("audio"),
+  assessPronunciation
+);
 
 export default router;
