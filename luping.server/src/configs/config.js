@@ -25,6 +25,9 @@ export const IFLYTEK_API_KEY = process.env.IFLYTEK_API_KEY;
 export const IFLYTEK_API_SECRET = process.env.IFLYTEK_API_SECRET;
 export const IFLYTEK_API_URL = process.env.IFLYTEK_API_URL;
 
+export const AZURE_SPEECH_SERVICE_SUBSCRIPTION_KEY = process.env.AZURE_SPEECH_SERVICE_SUBSCRIPTION_KEY;
+export const AZURE_SPEECH_SERVICE_REGION = process.env.AZURE_SPEECH_SERVICE_REGION;
+
 export const mailConfig = {
   service: process.env.MAIL_SERVICE,
   host: process.env.MAIL_HOST,

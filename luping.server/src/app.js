@@ -2,6 +2,8 @@ import express from "express";
 import connectDB from "./configs/db.js";
 import cors from "cors";
 import http from "http";
+import fs from 'fs/promises';
+import path from 'path';
 
 import { PORT, NODE_ENV } from "./configs/config.js";
 import loggerMiddlware from "./middlewares/logger.js";
@@ -12,6 +14,7 @@ import logger from "./configs/logger.js";
 import userRoutes from "./routes/userRoutes.js";
 import chatBotRoutes from "./routes/chatBotRoutes.js";
 import pronunciationAssessmentRoutes from "./routes/pronunciationAssessmentRoutes.js";
+import textToSpeechRoutes from "./routes/textToSpeechRoutes.js";
 
 // Swagger setup
 import swaggerUi from "swagger-ui-express";
@@ -54,6 +57,7 @@ app.get("/api", (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/chatbot", chatBotRoutes);
 app.use("/api/pronunciation-assessment", pronunciationAssessmentRoutes);
+app.use("/api/text-to-speech", textToSpeechRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
@@ -62,6 +66,20 @@ app.use((req, res, next) => {
 
 // Centralized error handling middleware
 app.use(errorHandler);
+
+const TTS_DIRECTORY = path.join(".", "tts"); // Use '.' for the root
+
+const setupDirectories = async () => {
+  try {
+    fs.mkdir(TTS_DIRECTORY, { recursive: true }); // recursive: true creates parent directories if needed
+    console.log(`TTS directory ensured: ${TTS_DIRECTORY}`);
+  } catch (error) {
+    console.error(`Error creating TTS directory: ${error.message}`);
+    process.exit(1); // Exit if directory creation fails.  Critical error.
+  }
+};
+
+await setupDirectories();
 
 // Connect to MongoDB and start the server only if not in test
 if (NODE_ENV !== "test") {
