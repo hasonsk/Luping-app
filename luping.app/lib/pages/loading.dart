@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart'; // Thêm GetX
-import 'package:hanjii/pages/mainscreen.dart'; // Nhập trang MainScreen
+import 'package:get/get.dart';
+import 'package:hanjii/pages/main_screen.dart';
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
