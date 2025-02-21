@@ -6,26 +6,25 @@ import '../../../models/lesson.dart';
 import '../../../models/word.dart';
 
 class VocabularyScreen extends StatelessWidget {
-  final Lesson lesson;
-  final String title; // Thêm tham số title
+  final int lessonPosition;
+  final List<Word> vocabularies;
+  final String title;
 
-  const VocabularyScreen({Key? key, required this.lesson, required this.title}) : super(key: key);
+  const VocabularyScreen({Key? key, required this.lessonPosition, required this.vocabularies, required this.title}) : super(key: key);
 
   void _navigateToLearnScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => KanjivocabLearnScreen()),
+      MaterialPageRoute(builder: (context) => KanjivocabLearnScreen(vocabularies: vocabularies)),
     );
   }
 
   void _navigateToTestScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => KanjivocabTestScreen()),
+      MaterialPageRoute(builder: (context) => KanjivocabTestScreen(vocabularies: vocabularies)),
     );
   }
-
-
 
   Widget _buildSectionTitle(String title, Color color) {
     return Row(
@@ -64,7 +63,7 @@ class VocabularyScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Bài ${lesson.lessonId} / Chuẩn bị',
+            'Bài ${lessonPosition} / Chuẩn bị',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 17,
@@ -95,7 +94,7 @@ class VocabularyScreen extends StatelessWidget {
                     _buildActionButton(context, Icons.school, 'Học', () => _navigateToLearnScreen(context)),
                     const SizedBox(width: 20,),
                     // _buildActionButton(context, Icons.edit, 'Luyện tập', () {}),
-                    // _buildActionButton(context, Icons.check, 'Kiểm tra', () => _navigateToTestScreen(context)),
+                    _buildActionButton(context, Icons.check, 'Kiểm tra', () => _navigateToTestScreen(context)),
                   ],
                 ),
                 const SizedBox(height: 25),
@@ -119,9 +118,9 @@ class VocabularyScreen extends StatelessWidget {
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
-                    itemCount: lesson.vocabulary.length,
+                    itemCount: vocabularies.length,
                     itemBuilder: (context, index) {
-                      return _buildVocabularyCard(lesson.vocabulary[index].word, index + 1);
+                      return _buildVocabularyCard(vocabularies[index].word, index + 1);
                     },
                   ),
                 ),
@@ -183,8 +182,6 @@ class VocabularyScreen extends StatelessWidget {
       ),
     );
   }
-
-
 
   Widget _buildVocabularyCard(String vocab, int index) {
     return Card(

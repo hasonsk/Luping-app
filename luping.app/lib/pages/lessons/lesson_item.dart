@@ -24,10 +24,17 @@ class _LessonItemState extends State<LessonItem> {
     });
   }
 
+  void _navigateToKanjiScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => VocabularyScreen(lessonPosition: widget.lesson.lessonPosition, vocabularies: widget.lesson.kanji, title: "Hán tự",)),
+    );
+  }
+
   void _navigateToVocabularyScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VocabularyScreen(lesson: widget.lesson, title: "Từ vựng",)),
+      MaterialPageRoute(builder: (context) => VocabularyScreen(lessonPosition: widget.lesson.lessonPosition, vocabularies: widget.lesson.vocabulary, title: "Từ vựng",)),
     );
   }
 
@@ -91,7 +98,7 @@ class _LessonItemState extends State<LessonItem> {
                   _buildSection(
                     title: '1.1 Chuẩn bị bài',
                     buttons: [
-                      _buildButton(context, 'Chuẩn bị', () => _navigateToVocabularyScreen(context)),
+                      _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
                       _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context)),
                     ],
                   ),

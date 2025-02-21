@@ -12,16 +12,16 @@ final List<Flashcard> flashcards = [
     isPublic: true,
     items: [
       FlashcardItem(
-        question: "谢谢 (xièxiè)",
-        answer: "Cảm ơn",
+        frontText: "谢谢 (xièxiè)",
+        backText: "Cảm ơn",
       ),
       FlashcardItem(
-        question: "不客气 (bú kèqì)",
-        answer: "Không có gì",
+        frontText: "不客气 (bú kèqì)",
+        backText: "Không có gì",
       ),
       FlashcardItem(
-        question: "你好 (nǐ hǎo)",
-        answer: "Xin chào",
+        frontText: "你好 (nǐ hǎo)",
+        backText: "Xin chào",
       ),
     ],
   ),
@@ -33,16 +33,16 @@ final List<Flashcard> flashcards = [
     isPublic: false,
     items: [
       FlashcardItem(
-        question: "今天 (jīntiān)",
-        answer: "Hôm nay",
+        frontText: "今天 (jīntiān)",
+        backText: "Hôm nay",
       ),
       FlashcardItem(
-        question: "明天 (míngtiān)",
-        answer: "Ngày mai",
+        frontText: "明天 (míngtiān)",
+        backText: "Ngày mai",
       ),
       FlashcardItem(
-        question: "昨天 (zuótiān)",
-        answer: "Hôm qua",
+        frontText: "昨天 (zuótiān)",
+        backText: "Hôm qua",
       ),
     ],
   ),
@@ -54,16 +54,16 @@ final List<Flashcard> flashcards = [
     isPublic: true,
     items: [
       FlashcardItem(
-        question: "请问 (qǐngwèn)",
-        answer: "Xin hỏi",
+        frontText: "请问 (qǐngwèn)",
+        backText: "Xin hỏi",
       ),
       FlashcardItem(
-        question: "对不起 (duìbuqǐ)",
-        answer: "Xin lỗi",
+        frontText: "对不起 (duìbuqǐ)",
+        backText: "Xin lỗi",
       ),
       FlashcardItem(
-        question: "没关系 (méi guānxi)",
-        answer: "Không sao",
+        frontText: "没关系 (méi guānxi)",
+        backText: "Không sao",
       ),
     ],
   ),

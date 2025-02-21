@@ -86,7 +86,7 @@ class _HomeState extends State<Home> {
                 icon: CircleAvatar(
                   backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
                       ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
-                      : AssetImage('assets/images/default_avatar.png'),
+                      : AssetImage('/images/default_avatar.png'),
                 ),
               ),
         const Expanded(child: SizedBox()),
