@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hanjii/pages/lessons/conversation_screen.dart';
-import 'package:hanjii/pages/lessons/kanji_screen.dart';
-import 'package:hanjii/pages/lessons/reference_screen.dart';
-import 'package:hanjii/pages/lessons/vocabulary_screen.dart';
-import 'package:hanjii/pages/lessons/audio_screen.dart';
+import 'package:hanjii/pages/lessons/conversation/conversation_screen.dart';
+import 'package:hanjii/pages/lessons/reference/reference_screen.dart';
+import 'package:hanjii/pages/lessons/vocabulary/vocabulary_screen.dart';
+import 'package:hanjii/pages/lessons/audio/audio_screen.dart';
 import '../../models/lesson.dart';
 
 class LessonItem extends StatefulWidget {
@@ -17,6 +16,7 @@ class LessonItem extends StatefulWidget {
 
 class _LessonItemState extends State<LessonItem> {
   bool _isExpanded = false;
+  bool _isChecked = false;
 
   void _toggleExpand() {
     setState(() {
@@ -24,17 +24,10 @@ class _LessonItemState extends State<LessonItem> {
     });
   }
 
-  void _navigateToKanjiScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => KanjiScreen(lesson: widget.lesson)),
-    );
-  }
-
   void _navigateToVocabularyScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VocabularyScreen(lesson: widget.lesson)),
+      MaterialPageRoute(builder: (context) => VocabularyScreen(lesson: widget.lesson, title: "Từ vựng",)),
     );
   }
 
@@ -66,82 +59,72 @@ class _LessonItemState extends State<LessonItem> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Tiêu đề bài học - Nhấn vào sẽ mở hoặc đóng danh sách
-            GestureDetector(
-              onTap: _toggleExpand,
-              child: Container(
-                color: Colors.grey[100],
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                child: Row(
-                  children: [
-                    Icon(
-                      _isExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right,
+            Container(
+              color: Colors.grey[100],
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+              child: Row(
+                children: [
+                  Text(
+                    'Bài ${widget.lesson.lessonPosition} :',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
                       color: Colors.green[700],
                     ),
-                    const SizedBox(width: 5),
-                    Text(
-                      'Bài ${widget.lesson.index} :',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[700],
-                      ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      widget.lesson.lessonName,
+                      style: const TextStyle(fontSize: 16),
+                      softWrap: true,
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        widget.lesson.title,
-                        style: const TextStyle(fontSize: 16),
-                        softWrap: true,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            // Chỉ hiển thị nếu _isExpanded == true
-            if (_isExpanded)
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildSection(
-                        title: '1.1 Chuẩn bị bài',
-                        buttons: [
-                          _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
-                          _buildButton(context, 'Từ mới', () => _navigateToKanjiScreen(context)),
-                        ],
-                      ),
-                      SizedBox(width: 20),
-                      _buildSection(
-                        title: '1.2 Học tại lớp',
-                        buttons: [
-                          _buildButton(context, 'Hội thoại', () => _navigateToConverScreen(context)),
-                        ],
-                      ),
-                      SizedBox(width: 20),
-                      _buildSection(
-                        title: '1.3 Ôn tại nhà',
-                        buttons: [
-                          _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
-                          _buildButton(context, 'Tham khảo', () => _navigateToReferScreen(context)),
-                        ],
-                      ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildSection(
+                    title: '1.1 Chuẩn bị bài',
+                    buttons: [
+                      _buildButton(context, 'Chuẩn bị', () => _navigateToVocabularyScreen(context)),
+                      _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context)),
                     ],
                   ),
-                ),
+                  SizedBox(width: 20),
+                  _buildSection(
+                    title: '1.2 Học tại lớp',
+                    buttons: [
+                      _buildButton(context, 'Hội thoại', () => _navigateToConverScreen(context)),
+                    ],
+                  ),
+                  SizedBox(width: 20),
+                  _buildSection(
+                    title: '1.3 Ôn tại nhà',
+                    buttons: [
+                      _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
+                      _buildButton(context, 'Tham khảo', () => _navigateToReferScreen(context)),
+                    ],
+                  ),
+                ],
               ),
+            )
           ],
         ),
         Positioned(
           top: 3,
           right: 0,
           child: Checkbox(
-            value: false,
-            onChanged: (bool? value) {},
+            value: _isChecked,
+            onChanged: (bool? value) {
+              setState(() {
+                _isChecked = value ?? false;
+              });
+            },
             activeColor: Colors.green,
           ),
         )

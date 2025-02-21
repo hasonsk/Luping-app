@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../models/lesson.dart';
+import '../../../models/lesson.dart';
 
 class ReferenceScreen extends StatelessWidget {
   final Lesson lesson;
@@ -12,7 +12,7 @@ class ReferenceScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Bài ${lesson.index} / Tham khảo',
+          'Bài ${lesson.lessonPosition} / Tham khảo',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 17,

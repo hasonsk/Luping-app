@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../models/lesson.dart';
+import '../../../models/lesson.dart';
+import '../../../models/word.dart';
 
 class VocabularyScreen extends StatelessWidget {
   final Lesson lesson;
+  final String title; // Thêm tham số title
 
-  const VocabularyScreen({super.key, required this.lesson});
+  const VocabularyScreen({Key? key, required this.lesson, required this.title}) : super(key: key);
 
   Widget _buildSectionTitle(String title, Color color) {
     return Row(
@@ -27,7 +29,7 @@ class VocabularyScreen extends StatelessWidget {
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
-        if (title == 'Từ vựng') // Add search icon only for "Từ vựng"
+        if (this.title == 'Từ vựng' && title == 'Từ vựng')
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.search, size: 20, color: Colors.grey),
@@ -40,7 +42,7 @@ class VocabularyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bài ${lesson.index} / Từ vựng'),
+        title: Text('Bài ${lesson.lessonPosition} / $title'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0.5,
@@ -81,7 +83,7 @@ class VocabularyScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              _buildSectionTitle('Từ vựng', Colors.yellow),
+              _buildSectionTitle(title, Colors.yellow),
               const SizedBox(height: 10),
               Expanded(
                 child: GridView.builder(
@@ -118,13 +120,13 @@ class VocabularyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVocabularyCard(String vocab, int index) {
+  Widget _buildVocabularyCard(Word vocab, int index) {
     return Card(
       color: Colors.white,
       elevation: 2,
       child: Center(
         child: Text(
-          vocab,
+          title == 'Hán tự' ? (vocab.pinyin ?? '') : (vocab.word ?? ''), // Hiển thị khác nhau dựa trên title
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),

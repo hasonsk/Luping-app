@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../models/lesson.dart';
+import '../../../models/lesson.dart';
 
 class ConversationScreen extends StatefulWidget {
   final Lesson lesson;
@@ -13,7 +13,6 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   int userScore = 0; // Biến lưu điểm số của người dùng
-  int wrongAnswers = 0;  // Biến lưu trữ số lỗi sai (ví dụ)
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +30,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.close, color: Colors.black, size: 20,),
+            icon: Icon(Icons.close, color: Colors.black),
             onPressed: () async {
               bool exit = await _showExitDialog(context);
               if (exit) Navigator.pop(context);
             },
           ),
           title: Text(
-            'Bài ${widget.lesson.index} / Hội thoại',
-            style: const TextStyle(
-              fontSize: 17,
+            'Bài ${widget.lesson.lessonPosition} / Hội thoại',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
             ),
           ),
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           elevation: 4,
           centerTitle: true,
-          shadowColor: Colors.black87,
-          systemOverlayStyle: const SystemUiOverlayStyle(
+          shadowColor: Colors.black26,
+          systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Colors.white,
             statusBarIconBrightness: Brightness.dark,
           ),
@@ -66,7 +66,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   bool isUser = index % 2 != 0;
 
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12), // Tăng khoảng cách trên dưới
+                    padding: const EdgeInsets.symmetric(vertical: 6),
                     child: Row(
                       mainAxisAlignment:
                       isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -96,20 +96,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (isUser)
-                                  GestureDetector(
-                                    onTap: () {
-                                      // TODO: Phát âm thanh tin nhắn
-                                    },
-                                    child: Icon(
-                                      Icons.play_arrow_rounded,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                  ),
-
-                                SizedBox(width: 8),
-
                                 Flexible(
                                   child: Text(
                                     messages[index],
@@ -119,22 +105,19 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     ),
                                   ),
                                 ),
-
-                                if (!isUser) ...[
-                                  SizedBox(width: 10),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        userScore += 10; // Tăng điểm khi người dùng nhấn nghe
-                                      });
-                                    },
-                                    child: Icon(
-                                      Icons.volume_up_rounded,
-                                      color: Colors.black54,
-                                      size: 18,
-                                    ),
+                                SizedBox(width: 10),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      userScore += 10; // Tăng điểm khi người dùng nhấn nghe
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.volume_up_rounded,
+                                    color: isUser ? Colors.white : Colors.black54,
+                                    size: 18,
                                   ),
-                                ],
+                                ),
                               ],
                             ),
                           ),
@@ -148,45 +131,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
               ),
             ),
 
-
             // Micro + Điểm
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 children: [
-                  // Số lỗi sai bên trái
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.red,  // Màu nền đỏ cho phần lỗi
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 6,
-                            offset: Offset(2, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.error, color: Colors.white, size: 24), // Biểu tượng lỗi
-                          SizedBox(width: 6),
-                          Text(
-                            '$wrongAnswers',  // Hiển thị số lỗi sai
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
+                  Expanded(child: SizedBox()),
                   // Micro ở giữa
                   Expanded(
                     child: Center(
@@ -206,10 +156,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                               ),
                             ],
                           ),
-                          child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 10),
+                          child: Padding(
                             padding: const EdgeInsets.all(12.0),
-                            child: Icon(Icons.mic, size: 40, color: Colors.white),
+                            child: Icon(Icons.mic, size: 50, color: Colors.white),
                           ),
                         ),
                       ),
@@ -232,15 +181,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         ],
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.star, color: Colors.white, size: 24),
                           SizedBox(width: 6),
                           Text(
-                            "0", // TODO: Thay số này bằng điểm thực tế
+                            "100", // TODO: Thay số này bằng điểm thực tế
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -263,33 +211,26 @@ class _ConversationScreenState extends State<ConversationScreen> {
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(
-          "Xác nhận thoát",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),  // Giảm cỡ chữ tiêu đề
-        ),
-        content: Text(
-          "Bạn chắc chắn muốn thoát ứng dụng? Tất cả tiến trình học hiện tại sẽ bị mất nếu bạn thoát.",
-          style: TextStyle(fontSize: 14),  // Giảm cỡ chữ nội dung
-        ),
+        title: Text("Xác nhận"),
+        content: Text("Bạn có chắc muốn thoát ra ? Nếu thoát ra sẽ mất toàn bộ quá trình học"),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false), // Không thoát
-            child: Text("Hủy", style: TextStyle(color: Colors.grey, fontSize: 14)),  // Giảm cỡ chữ nút
+            child: Text("Hủy"),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true), // Thoát
-            child: Text("Thoát", style: TextStyle(color: Colors.red, fontSize: 14)),  // Giảm cỡ chữ nút
+            child: Text("Thoát"),
           ),
         ],
       ),
     ) ?? false; // Mặc định không thoát nếu đóng hộp thoại mà không chọn gì
   }
 
-
   // Widget avatar (bot dùng ảnh logo.png, user dùng icon)
   Widget _buildAvatar(bool isUser) {
     return CircleAvatar(
-      radius: 20,
+      radius: 22,
       backgroundColor: isUser ? Colors.green : Colors.transparent,
       child: isUser
           ? Icon(Icons.person, color: Colors.white, size: 24)
@@ -298,8 +239,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
         child: Image.asset(
           'assets/logo.png',
           fit: BoxFit.cover,
-          width: 34,
-          height: 34,
+          width: 44,
+          height: 44,
         ),
       ),
     );
