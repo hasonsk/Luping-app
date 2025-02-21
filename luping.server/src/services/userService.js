@@ -79,8 +79,8 @@ const registerUser = async (data) => {
 };
 
 const loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ email });
-  if (!user || !(await user.matchPassword(password))) {
+  const savedUser = await User.findOne({ email });
+  if (!savedUser || !(await savedUser.matchPassword(password))) {
     const err = new Error("Invalid email or password.");
     err.status = 401;
     err.detail =
@@ -98,9 +98,9 @@ const loginUser = async ({ email, password }) => {
     JWT_REFRESH_EXPIRATION,
   );
   return {
-    _id: user._id,
-    email: user.email,
-    role: user.role,
+    _id: savedUser._id,
+    email: savedUser.email,
+    role: savedUser.role,
     accessToken,
     refreshToken,
   };
@@ -172,13 +172,13 @@ const registerAdmin = async (data) => {
   const admin = new User({ email, password, profile, role: "admin" });
   const savedAdmin = await admin.save();
   const accessToken = generateToken(
-    savedUser._id,
-    savedUser.role,
+    savedAdmin._id,
+    savedAdmin.role,
     JWT_EXPIRATION,
   );
   const refreshToken = generateToken(
-    savedUser._id,
-    savedUser.role,
+    savedAdmin._id,
+    savedAdmin.role,
     JWT_REFRESH_EXPIRATION,
   );
 

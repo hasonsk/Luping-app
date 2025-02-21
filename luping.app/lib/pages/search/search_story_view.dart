@@ -57,54 +57,75 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                   margin: const EdgeInsets.fromLTRB(8, 0, 8, 4),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Stack(
                       children: [
-                        Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              constraints: BoxConstraints(
-                                maxWidth: MediaQuery.of(context).size.width * 0.5,
-                              ),
-                              child: Text(
-                                item.character,
-                                style: const TextStyle(fontSize: 30, color: Colors.red),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.hanviet,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: const TextStyle(fontSize: 14, color: Colors.purple),
+                            Row(
+                              children: [
+                                Container(
+                                  constraints: BoxConstraints(
+                                    maxWidth: MediaQuery.of(context).size.width * 0.5,
                                   ),
-                                  Text(
-                                    item.pinyin,
-                                    style: const TextStyle(fontSize: 14, color: Colors.orange),
+                                  child: Text(
+                                    item.character,
+                                    style: const TextStyle(fontSize: 30, color: Colors.red),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.hanviet,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: const TextStyle(fontSize: 14, color: Colors.purple),
+                                      ),
+                                      Text(
+                                        item.pinyin,
+                                        style: const TextStyle(fontSize: 14, color: Colors.orange),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                              child: Icon(Icons.volume_up_outlined, size: 20, color: Colors.grey),
+                            Text(
+                              item.meaning[0],
+                              style: const TextStyle(fontSize: 14, color: Colors.black),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
                             ),
-                            const SizedBox(width: 5),
                           ],
                         ),
-                        Text(
-                          item.meaning as String,
-                          style: const TextStyle(fontSize: 14, color: Colors.black),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: Container(
+                            width: 100, // Chiều rộng của ảnh
+                            height: double.infinity, // Đảm bảo ảnh có chiều cao bằng với card
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey.shade400, // Màu sắc của border
+                                width: 0.5, // Độ dày của border
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4), // Bo góc cho ảnh nếu muốn
+                              child: Image.network(
+                                item.image,
+                                fit: BoxFit.contain, // Đảm bảo ảnh không bị biến dạng
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -116,6 +137,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
         ),
       ],
     );
+
   }
 
   Card buildCardDetailHan() {

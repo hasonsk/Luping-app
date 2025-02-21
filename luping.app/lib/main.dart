@@ -3,19 +3,17 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:get/get.dart'; // Import GetX
+import 'package:get/get.dart';
 import 'package:hanjii/data/database_helper.dart';
 import 'package:hanjii/services/chatbot_service.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'pages/loading.dart';
-// import 'pages/authpage.dart';
 import 'pages/auth/auth_page.dart';
 import 'pages/character.dart';
 import 'pages/word.dart';
 import 'pages/note.dart';
 import 'pages/gamescreen.dart';
-import 'pages/mainscreen.dart';
+import 'pages/main_screen.dart';
 
 import 'models/chat_message.dart';
 import 'models/chat_session.dart';
@@ -53,6 +51,9 @@ void main() async {
   if (!Hive.isAdapterRegistered(1)) {
     Hive.registerAdapter(ChatSessionAdapter());
   }
+
+  // Khởi tạo Hive box cho chat session
+  await ChatbotService().initHive();
 
   // Khởi chạy ứng dụng
   runApp(const MyApp());

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hanjii/data/database_helper.dart';
 import 'package:hanjii/services/search_service.dart';
@@ -216,7 +218,7 @@ void main() {
 
   group('Test getStoryDetail', () {
     test('Get story detail for "你" should return correct data', () async {
-      final story = await searchService.getStoryDetail('你');
+      final story = await searchService.getStoryDetails('你');
 
       print("Story Details for '你':");
       print("Character: ${story?.character}");
@@ -246,13 +248,13 @@ void main() {
 
     test('Get story detail for non-existent character should return null',
         () async {
-      final story = await searchService.getStoryDetail('龘'); // A rare character
+      final story = await searchService.getStoryDetails('龘'); // A rare character
       expect(story, isNull,
           reason: 'Should return null for non-existent story');
     });
 
     test('Get story detail with empty string should return null', () async {
-      final story = await searchService.getStoryDetail('');
+      final story = await searchService.getStoryDetails('');
       expect(story, isNull,
           reason: "Should return null for empty string input");
     });

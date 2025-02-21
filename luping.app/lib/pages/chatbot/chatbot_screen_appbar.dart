@@ -48,14 +48,8 @@ class ChatBotAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 15,
-                    child: Icon(Icons.android, color: Colors.green, size: 18),
-                  ),
-                  SizedBox(width: 8),
                   Text(
-                    "Chatbot",
+                    "AI Chat",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart'; // Import GetX
-import '../models/book.dart';
-import '../models/lesson.dart';
-import 'book/book_page.dart';
+import '../../models/book.dart';
+import '../../models/lesson.dart';
+import 'book_page.dart';
 
 class Notebook extends StatefulWidget {
   const Notebook({super.key});
@@ -133,7 +133,7 @@ class _NotebookState extends State<Notebook> with TickerProviderStateMixin {
                             children: [
                               Icon(Icons.flag_outlined),
                               SizedBox(width: 10),
-                              Text('Các đầu sách mới phát hành', style: TextStyle(fontSize: 15)),
+                              Text('Các đầu sách phát hành', style: TextStyle(fontSize: 15)),
                             ],
                           ),
                         ),

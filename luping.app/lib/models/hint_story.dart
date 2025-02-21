@@ -1,9 +1,11 @@
+import 'dart:convert';
 class HintStory {
   final int id;
   final String character;
   final String hanviet;
   final String pinyin;
   final List<String> meaning;
+  final String image;
 
   HintStory({
     required this.id,
@@ -11,6 +13,7 @@ class HintStory {
     required this.pinyin,
     required this.hanviet,
     required this.meaning,
+    required this.image,
   });
 
   factory HintStory.fromMap(Map<String, dynamic> map) {
@@ -19,7 +22,14 @@ class HintStory {
       if (value == null) return [];
       if (value is List) return List<String>.from(value);
       if (value is String) {
-        return value.split(',').map((e) => e.trim()).toList();
+        try {
+          // Nếu value là một chuỗi JSON dạng danh sách, giải mã nó
+          var decoded = jsonDecode(value);
+          if (decoded is List) return List<String>.from(decoded);
+        } catch (e) {
+          // Nếu không phải JSON hợp lệ, fallback về split(',')
+          return value.split(',').map((e) => e.trim()).toList();
+        }
       }
       return [];
     }
@@ -30,6 +40,7 @@ class HintStory {
       pinyin: map['pinyin'],
       hanviet: map['hanviet'],
       meaning: convertToList(map['meaning']),
+      image: map['image'],
     );
   }
 }
