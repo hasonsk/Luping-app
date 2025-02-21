@@ -16,9 +16,21 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
   String? _selectedLevel;
   String? _selectedTopic;
 
-  final List<String> targets = ["AI Chatbot", "Trợ lý học tập", "Hỗ trợ viên"];
+  final List<String> targets = [
+    "Nữ sinh viên Trung Quốc 22 tuổi",
+    "Nam hướng dẫn viên du lịch 30 tuổi",
+    "Giáo viên tiếng Trung 35 tuổi",
+    "Người bán hàng online 28 tuổi",
+    "Nhân viên văn phòng 29 tuổi"
+  ];
   final List<String> levels = ["Cơ bản", "Trung cấp", "Nâng cao"];
-  final List<String> topics = ["Công nghệ", "Kinh doanh", "Học tập", "Giải trí"];
+  final List<String> topics = [
+    "Học tiếng Trung",
+    "Giao tiếp hàng ngày",
+    "Văn hóa giao tiếp Trung Quốc",
+    "Lịch sử & Lễ hội Trung Quốc",
+    "Cuộc sống hàng ngày của người Trung Quốc"
+  ];
 
   final List<String> chatHistory = [
     "Bạn: Xin chào! 🤖",
@@ -106,6 +118,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
               ],
             ),
             child: DropdownButtonFormField<String>(
+              isExpanded: true,
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),

@@ -10,14 +10,13 @@ import 'package:hanjii/models/chat_session.dart';
 class ChatBotScreen extends StatefulWidget {
   final ChatbotService chatbotService;
 
-  const ChatBotScreen({Key? key, required this.chatbotService}) : super(key: key);
-
+  ChatBotScreen({Key? key, required this.chatbotService}) : super(key: key);
   @override
   _ChatBotScreenState createState() => _ChatBotScreenState();
 }
 
 class _ChatBotScreenState extends State<ChatBotScreen> {
-
+  final Map<int, bool> _translationVisibility = {};
   final TextEditingController _textController = TextEditingController();
   final List<String> _messages = [];
   final ScrollController _scrollController = ScrollController();
@@ -174,7 +173,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
           itemCount: messages.length,
           itemBuilder: (context, index) {
             final message = messages[index];
-            return _buildChatMessage(message); // Hàm tạo UI cho từng tin nhắn
+            return _buildChatMessage(message, index); // Hàm tạo UI cho từng tin nhắn
           },
         );
       },
@@ -182,76 +181,154 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   }
 
 // Hàm xây dựng UI cho từng tin nhắn
-  Widget _buildChatMessage(ChatMessage message) {
-    final bool isUser = message.sender == "User"; // Kiểm tra xem tin nhắn là của người dùng hay chatbot
+  Widget _buildChatMessage(ChatMessage message, int index) {
+    final bool isUser = message.sender == "User";
 
-    return Row(
-      mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (!isUser)
-          const CircleAvatar(
-            backgroundColor: Colors.green,
-            radius: 18,
-            child: Icon(Icons.android, color: Colors.white),
-          ),
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-          padding: const EdgeInsets.all(12),
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.7,
-          ),
-          decoration: BoxDecoration(
-            color: isUser ? Colors.blueAccent : Colors.green,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5,
-                offset: Offset(2, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool showTranslation = _translationVisibility[index] ?? false;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+          child: Row(
+            mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                message.sentence, // Nội dung câu
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+              // Avatar bot
+              if (!isUser)
+                const CircleAvatar(
+                  backgroundColor: Colors.green,
+                  radius: 20,
+                  child: ClipOval(
+                    child: Image(
+                      image: AssetImage('assets/female-chinese-student.webp'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
+
+              const SizedBox(width: 8), // Khoảng cách giữa avatar và tin nhắn
+
+              Column(
+                crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  // Bong bóng chat
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.7,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: isUser
+                          ? const LinearGradient(
+                        colors: [Color(0xFF4A90E2), Color(0xFF357ABD)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                          : const LinearGradient(
+                        colors: [Color(0xFF6ECF68), Color(0xFF4CAF50)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(18),
+                        topRight: const Radius.circular(18),
+                        bottomLeft: isUser ? const Radius.circular(18) : const Radius.circular(4),
+                        bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(18),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: const Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          message.sentence,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (showTranslation) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            message.pinyin,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            message.meaningVN,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+
+                  // Nút dịch nhỏ gọn hơn
+                  if (!isUser)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _translationVisibility[index] = !showTranslation;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          padding: const EdgeInsets.all(6), // Làm nhỏ lại
+                          decoration: BoxDecoration(
+                            color: showTranslation ? Colors.green[700] : Colors.grey[300],
+                            shape: BoxShape.circle, // Làm tròn hoàn toàn
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 4,
+                                offset: const Offset(1, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.language, // Icon thay đổi
+                            color: showTranslation ? Colors.white : Colors.black54,
+                            size: 18, // Kích thước nhỏ hơn
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              const SizedBox(height: 4),
-              Text(
-                message.pinyin, // Hiển thị phiên âm Pinyin
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                  fontStyle: FontStyle.italic,
+
+              const SizedBox(width: 8), // Khoảng cách giữa tin nhắn và avatar
+
+              // Avatar user
+              if (isUser)
+                const CircleAvatar(
+                  backgroundColor: Colors.blueAccent,
+                  radius: 20,
+                  child: Icon(Icons.person, color: Colors.white),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                message.meaningVN, // Hiển thị nghĩa tiếng Việt
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
-              ),
             ],
           ),
-        ),
-        if (isUser)
-          const CircleAvatar(
-            backgroundColor: Colors.blueAccent,
-            radius: 18,
-            child: Icon(Icons.person, color: Colors.white),
-          ),
-      ],
+        );
+      },
     );
   }
+
 
 
 

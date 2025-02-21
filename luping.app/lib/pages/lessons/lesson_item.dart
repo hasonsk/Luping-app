@@ -6,43 +6,56 @@ import 'package:hanjii/pages/lessons/vocabulary_screen.dart';
 import 'package:hanjii/pages/lessons/audio_screen.dart';
 import '../../models/lesson.dart';
 
-class LessonItem extends StatelessWidget {
+class LessonItem extends StatefulWidget {
   final Lesson lesson;
 
   const LessonItem({super.key, required this.lesson});
 
+  @override
+  _LessonItemState createState() => _LessonItemState();
+}
+
+class _LessonItemState extends State<LessonItem> {
+  bool _isExpanded = false;
+
+  void _toggleExpand() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+  }
+
   void _navigateToKanjiScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => KanjiScreen(lesson: lesson)),
+      MaterialPageRoute(builder: (context) => KanjiScreen(lesson: widget.lesson)),
     );
   }
 
   void _navigateToVocabularyScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VocabularyScreen(lesson: lesson)),
+      MaterialPageRoute(builder: (context) => VocabularyScreen(lesson: widget.lesson)),
     );
   }
 
   void _navigateToAudioScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AudioScreen(lesson: lesson)),
+      MaterialPageRoute(builder: (context) => AudioScreen(lesson: widget.lesson)),
     );
   }
 
   void _navigateToConverScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ConversationScreen(lesson: lesson)),
+      MaterialPageRoute(builder: (context) => ConversationScreen(lesson: widget.lesson)),
     );
   }
 
   void _navigateToReferScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ReferenceScreen(lesson: lesson)),
+      MaterialPageRoute(builder: (context) => ReferenceScreen(lesson: widget.lesson)),
     );
   }
 
@@ -53,60 +66,74 @@ class LessonItem extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              color: Colors.grey[100],
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-              child: Row(
-                children: [
-                  Text(
-                    'Bài ${lesson.index} :',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
+            // Tiêu đề bài học - Nhấn vào sẽ mở hoặc đóng danh sách
+            GestureDetector(
+              onTap: _toggleExpand,
+              child: Container(
+                color: Colors.grey[100],
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                child: Row(
+                  children: [
+                    Icon(
+                      _isExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right,
                       color: Colors.green[700],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      lesson.title,
-                      style: const TextStyle(fontSize: 16),
-                      softWrap: true,
+                    const SizedBox(width: 5),
+                    Text(
+                      'Bài ${widget.lesson.index} :',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green[700],
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        widget.lesson.title,
+                        style: const TextStyle(fontSize: 16),
+                        softWrap: true,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal, // Cuộn theo chiều ngang
-              child: Row(
-                children: [
-                  _buildSection(
-                    title: '1.1 Chuẩn bị bài',
-                    buttons: [
-                      _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
-                      _buildButton(context, 'Từ mới', () => _navigateToKanjiScreen(context)),
+            // Chỉ hiển thị nếu _isExpanded == true
+            if (_isExpanded)
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildSection(
+                        title: '1.1 Chuẩn bị bài',
+                        buttons: [
+                          _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
+                          _buildButton(context, 'Từ mới', () => _navigateToKanjiScreen(context)),
+                        ],
+                      ),
+                      SizedBox(width: 20),
+                      _buildSection(
+                        title: '1.2 Học tại lớp',
+                        buttons: [
+                          _buildButton(context, 'Hội thoại', () => _navigateToConverScreen(context)),
+                        ],
+                      ),
+                      SizedBox(width: 20),
+                      _buildSection(
+                        title: '1.3 Ôn tại nhà',
+                        buttons: [
+                          _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
+                          _buildButton(context, 'Tham khảo', () => _navigateToReferScreen(context)),
+                        ],
+                      ),
                     ],
                   ),
-                  SizedBox(width: 20), // Khoảng cách giữa các nhóm cột
-                  _buildSection(
-                    title: '1.2 Học tại lớp',
-                    buttons: [
-                      _buildButton(context, 'Hội thoại', () => _navigateToConverScreen(context)),
-                    ],
-                  ),
-                  SizedBox(width: 20),
-                  _buildSection(
-                    title: '1.3 Ôn tại nhà',
-                    buttons: [
-                      _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
-                      _buildButton(context, 'Tham khảo', () => _navigateToReferScreen(context)),
-                    ],
-                  ),
-                ],
+                ),
               ),
-            )
           ],
         ),
         Positioned(
@@ -142,46 +169,46 @@ class LessonItem extends StatelessWidget {
   Widget _buildTitle(String title) {
     return Row(
       children: [
-        Icon(Icons.add, color: Colors.green,size: 16),
+        Icon(Icons.star, color: Colors.orange, size: 16),
+        SizedBox(width: 5,),
         Text(
           title,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade600),
         ),
+        SizedBox(width: 16,)
       ],
     );
   }
 
-  // Hàm tạo khối có viền và hiệu ứng nổi
   Widget _buildSection({required String title, required List<Widget> buttons}) {
     return Container(
       padding: EdgeInsets.all(15),
       margin: EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white, // Màu nền
-        borderRadius: BorderRadius.circular(12), // Bo góc
-        border: Border.all(color: Colors.grey.shade300, width: 1), // Viền
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1), // Màu đổ bóng
-            blurRadius: 8, // Độ mờ của bóng
-            spreadRadius: 2, // Độ lan rộng của bóng
-            offset: Offset(2, 4), // Vị trí bóng đổ
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            spreadRadius: 2,
+            offset: Offset(2, 4),
           ),
         ],
       ),
       child: Column(
         children: [
           _buildTitle(title),
-          SizedBox(height: 5,),
+          SizedBox(height: 5),
           Row(
             children: [
               SizedBox(width: 10),
-              ...buttons.expand((button) => [button, SizedBox(width: 15)]).toList(), // Thêm khoảng cách giữa các button
+              ...buttons.expand((button) => [button, SizedBox(width: 15)]).toList(),
             ],
           ),
         ],
       ),
     );
   }
-
 }

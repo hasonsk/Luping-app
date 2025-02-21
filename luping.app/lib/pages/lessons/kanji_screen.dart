@@ -66,7 +66,6 @@ class KanjiScreen extends StatelessWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 17,
-              fontWeight: FontWeight.w600,
             ),
           ),
           backgroundColor: Colors.white, // Màu nền của AppBar
