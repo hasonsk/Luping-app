@@ -26,6 +26,7 @@
     "geolib": "^3.3.4",
     "jsonwebtoken": "^9.0.2",
     "kantan_lunch_api": "file:../kantan_lunch_api",
+    "microsoft-cognitiveservices-speech-sdk": "^1.42.0",
     "mongoose": "^8.8.2",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",

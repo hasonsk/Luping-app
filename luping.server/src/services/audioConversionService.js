@@ -11,7 +11,7 @@ const convertToWav = async (inputFilePath) => {
   return new Promise((resolve, reject) => {
     const outputFilePath = path.join(
       "uploads",
-      `${path.basename(inputFilePath, path.extname(inputFilePath))}.wav`,
+      `${path.basename(inputFilePath, path.extname(inputFilePath))}.wav`
     );
 
     ffmpeg(inputFilePath)

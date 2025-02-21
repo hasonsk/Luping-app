@@ -23,18 +23,6 @@ const assessPronunciation = async (req, res, next) => {
     await fs.unlink(audioFilePath);
     await fs.unlink(wavFilePath);
 
-    // Example usage:
-    console.log("Overall Score:", result.overallScore);
-    console.log("Target Text:", result.targetText);
-    console.log("Recognized Text:", result.recognizedText);
-
-    if (result.targetText !== result.recognizedText) {
-      console.log("--- Errors Detected ---");
-      console.log(result.errors);
-    } else {
-      console.log("No errors detected");
-    }
-
     res.status(200).json(result); // Send the full analysis
   } catch (error) {
     logger.error(`Pronunciation assessment error: ${error.message}`);
