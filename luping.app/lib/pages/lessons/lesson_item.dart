@@ -86,7 +86,7 @@ class LessonItem extends StatelessWidget {
                     title: '1.1 Chuẩn bị bài',
                     buttons: [
                       _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
-                      _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context)),
+                      _buildButton(context, 'Từ mới', () => _navigateToKanjiScreen(context)),
                     ],
                   ),
                   SizedBox(width: 20), // Khoảng cách giữa các nhóm cột
@@ -172,6 +172,7 @@ class LessonItem extends StatelessWidget {
       child: Column(
         children: [
           _buildTitle(title),
+          SizedBox(height: 5,),
           Row(
             children: [
               SizedBox(width: 10),

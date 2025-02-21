@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hanjii/services/chatbot_service.dart';
 import 'chatbot_screen.dart';
 
 class ChatBotLobby extends StatefulWidget {
@@ -25,31 +26,60 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
     "Bạn: Hôm nay thời tiết thế nào?",
     "Bot: Hôm nay trời nắng đẹp! 🌞",
     "Bạn: Cảm ơn nhé!",
-    "Bot: Hôm nay trời nắng đẹp! 🌞",
-    "Bạn: Cảm ơn nhé!",
   ];
+
+  Map<String, String> userOptions = {}; // Lưu trữ lựa chọn của người dùng
+
+  // Import Chatbot Service
+  final ChatbotService _chatbotService = ChatbotService();
+  bool _isLoading = false; // Thêm biến để hiển thị loading indicator
 
   @override
   void initState() {
     super.initState();
     // Đặt giá trị mặc định ngay khi mở màn hình
-    _selectedTarget = targets.isNotEmpty ? targets.first : null;
-    _selectedLevel = levels.isNotEmpty ? levels.first : null;
-    _selectedTopic = topics.isNotEmpty ? topics.first : null;
+    _selectedTarget = targets.first;
+    _selectedLevel = levels.first;
+    _selectedTopic = topics.first;
+
+    // Lưu vào userOptions với key hợp lý hơn
+    userOptions["role"] = _selectedTarget!;
+    userOptions["level"] = _selectedLevel!;
+    userOptions["topic"] = _selectedTopic!;
   }
 
-  void _startChat() {
-    if (_selectedTarget != null && _selectedLevel != null && _selectedTopic != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ChatBotScreen()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Vui lòng chọn đầy đủ thông tin trước khi bắt đầu chat!")),
-      );
+  Future<void> _initChat() async {
+    setState(() => _isLoading = true); // Bắt đầu loading
+
+    await _chatbotService.initChatSession(
+      role: userOptions["role"] ?? "AI Chatbot", // Giá trị mặc định
+      topic: userOptions["topic"] ?? "Công nghệ",
+      chineseLevel: userOptions["level"] ?? "Cơ bản",
+    );
+
+    setState(() => _isLoading = false); // Kết thúc loading
+
+    if (mounted) {
+      Navigator.of(context).push(_createRoute());
     }
+
+    print('Start chat screen');
   }
+
+  /// Tạo hiệu ứng fade transition mượt mà
+  Route _createRoute() {
+    return PageRouteBuilder(
+      transitionDuration: const Duration(milliseconds: 500), // Thời gian hiệu ứng
+      pageBuilder: (context, animation, secondaryAnimation) => ChatBotScreen(chatbotService: _chatbotService),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+    );
+  }
+
 
   Widget _buildDropdown(String label, List<String> items, String? selectedItem, Function(String?) onChanged) {
     return Padding(
@@ -82,7 +112,17 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
               ),
               value: selectedItem,
               onChanged: (val) {
-                setState(() => onChanged(val));
+                setState(() {
+                  onChanged(val);
+                  if (label == "🎯 Chọn đối tượng") {
+                    userOptions["role"] = val ?? '';
+                  } else if (label == "📖 Trình độ") {
+                    userOptions["level"] = val ?? '';
+                  } else if (label == "📌 Chủ đề") {
+                    userOptions["topic"] = val ?? '';
+                  }
+                  print("Lựa chọn hiện tại: $userOptions");
+                });
               },
               dropdownColor: Colors.white,
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87),
@@ -154,7 +194,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
             ),
           ),
         ),
-        SizedBox(height: 10,)
+        SizedBox(height: 40,)
       ],
     );
   }
@@ -222,7 +262,7 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18),
                           child: TabBar(
                             labelColor: primaryColor,
                             unselectedLabelColor: Colors.black54,
@@ -269,9 +309,11 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                 ),
                 const SizedBox(height: 15),
                 GestureDetector(
-                  onTap: _startChat,
+                  onTap: _isLoading ? null : _initChat, // Vô hiệu hóa khi đang loading
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    width: 160, // Đặt chiều rộng cố định
+                    height: 45, // Đặt chiều cao cố định
+                    alignment: Alignment.center, // Căn giữa nội dung bên trong
                     decoration: BoxDecoration(
                       color: primaryColor,
                       borderRadius: BorderRadius.circular(40),
@@ -279,13 +321,26 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                         BoxShadow(
                           color: Colors.green.shade400,
                           blurRadius: 10,
-                          offset: Offset(3, 3),
+                          offset: const Offset(3, 3),
                         ),
                       ],
                     ),
-                    child: const Text(
+                    child: _isLoading
+                        ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                        : const Text(
                       "Bắt đầu chat",
-                      style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
