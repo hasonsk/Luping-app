@@ -1,6 +1,6 @@
 class Word {
   final int id;
-  final String? word;
+  final String word;
   final String? pinyin;
   final List<String>? meaning;
   final String? hanviet;

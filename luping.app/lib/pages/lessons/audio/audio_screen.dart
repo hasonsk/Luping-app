@@ -13,7 +13,7 @@ class AudioScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Bài ${lesson.lessonPosition} / File nghe' , style: TextStyle(fontSize: 17)),
+        title: Text('Bài ${lesson.lessonId} / File nghe', style: const TextStyle(fontSize: 17)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 4,
@@ -26,23 +26,47 @@ class AudioScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10,),
-            Row(
-              children: [
-                const Icon(Icons.book, color: Colors.green, size: 20),
-                const SizedBox(width: 10),
-                Text(
-                  'Bài ${lesson.lessonPosition} : ${lesson.lessonName}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-            Expanded(
-              child: ListView.builder(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              // Row(
+              //   children: [
+              //     const Icon(Icons.add_circle_outline, color: Colors.green, size: 20),
+              //     const SizedBox(width: 10),
+              //     Text(
+              //       'Bài ${lesson.index} :',
+              //       style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              //     ),
+              //     SizedBox(width: 10,),
+              //     Text(
+              //       '${lesson.title}',
+              //       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              //     )
+              //   ],
+              // ),
+              Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 20,
+                    color: Colors.green,
+                  ),
+                  SizedBox(width: 10,),
+                  const Text('Hướng dẫn :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: const Text('Trong phần này, các em sẽ nghe các đoạn âm thanh trong bài học. '
+                    'Hãy lắng nghe và đồng thời mở sách để nhẩm theo nhé!', style: TextStyle(fontSize: 13),),
+              ),
+              const Divider(),
+              const SizedBox(height: 20),
+              ListView.builder(
+                shrinkWrap: true, // Quan trọng để tránh lỗi cuộn vô hạn
+                physics: const NeverScrollableScrollPhysics(), // Ngăn ListView cuộn riêng biệt
                 itemCount: lesson.lessonListening.length,
                 itemBuilder: (context, index) {
                   final audioFile = lesson.lessonListening[index];
@@ -54,8 +78,8 @@ class AudioScreen extends StatelessWidget {
                   );
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -137,8 +161,8 @@ class _AudioListItemState extends State<AudioListItem> {
         Row(
           children: [
             Container(
-              width: 24,
-              height: 24,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.grey.shade400, width: 0.5),
@@ -146,27 +170,41 @@ class _AudioListItemState extends State<AudioListItem> {
               child: Center(
                 child: Image.asset(
                   'assets/logo.png',
-                  width: 16,
-                  height: 16,
+                  width: 24,
+                  height: 24,
                   fit: BoxFit.contain,
                 ),
               ),
             ),
             const SizedBox(width: 10),
-            Text(
-              '${widget.index}.',
-              style: const TextStyle(color: Colors.black, fontSize: 13),
-            ),
-            const SizedBox(width: 10),
             Expanded(
-              child: Text(
-                widget.title,
-                style: const TextStyle(fontSize: 13),
+              child: Container(
+                padding: const EdgeInsets.all(8), // Thêm padding để trông đẹp hơn
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200, // Màu xám nhẹ
+                  borderRadius: BorderRadius.circular(8), // Bo góc nhẹ cho đẹp
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      '${widget.index}.',
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+            Expanded(child: SizedBox()),
           ],
         ),
-        const SizedBox(height: 25),
+        const SizedBox(height: 15),
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
