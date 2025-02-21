@@ -25,7 +25,7 @@ class BookPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(right: 25),
             child: Text(
-              book.title,
+              book.bookName,
               style: const TextStyle(fontSize: 17),
             ),
           ),

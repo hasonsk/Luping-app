@@ -1,4 +1,3 @@
-// word.dart
 class Word {
   final int id;
   final String? word;
