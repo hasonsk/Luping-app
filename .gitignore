@@ -1,0 +1,4 @@
+/macos
+.flutter-plugins
+.flutter-plugins-dependencies
+.env
