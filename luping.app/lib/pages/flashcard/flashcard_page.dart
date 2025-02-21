@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../models/flashcard.dart';
 import '../../models/flashcard_item.dart';
+import '../../widgets/show_login_required_dialog.dart';
 import 'flashcard_list_page.dart';
 
 class FlashcardPage extends StatefulWidget {

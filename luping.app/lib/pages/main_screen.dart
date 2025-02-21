@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Thêm dòng này
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hanjii/pages/chatbot/chatbot_lobby.dart';
-import 'home.dart';
+import 'home/home.dart';
 import 'profile.dart';
 import 'book/notebook.dart';
 import 'flashcard/flashcard_page.dart';
