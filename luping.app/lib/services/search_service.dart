@@ -410,16 +410,15 @@ class SearchService {
             .trim();
       }
 
+      if (wordList.isEmpty) throw Exception('Empty wordList');
+
       for (int i = 0; i < wordList.length; i++) {
         wordList[i] = normalizeText(wordList[i]);
       }
 
       String generateWhereClause(List<String> wordList) {
-        // Return empty if no words provided
-        if (wordList.isEmpty) return '';
-
         String formattedWords = wordList.map((word) => "'$word'").join(', ');
-        return "word IN ($formattedWords)";
+        return "WHERE word IN ($formattedWords)";
       }
 
       final String whereClause = generateWhereClause(wordList);
@@ -427,9 +426,7 @@ class SearchService {
       final String sql = """
       SELECT 
         *
-      FROM Words
-      WHERE 
-        $whereClause
+      FROM Words $whereClause
       """;
 
       // 6. Thực thi truy vấn
