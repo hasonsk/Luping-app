@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hanjii/pages/lessons/conversation_screen.dart';
-import 'package:hanjii/pages/lessons/kanji_screen.dart';
-import 'package:hanjii/pages/lessons/reference_screen.dart';
-import 'package:hanjii/pages/lessons/vocabulary_screen.dart';
-import 'package:hanjii/pages/lessons/audio_screen.dart';
+import 'package:hanjii/pages/lessons/conversation/conversation_screen.dart';
+import 'package:hanjii/pages/lessons/reference/reference_screen.dart';
+import 'package:hanjii/pages/lessons/vocabulary/vocabulary_screen.dart';
+import 'package:hanjii/pages/lessons/audio/audio_screen.dart';
 import '../../models/lesson.dart';
 
 class LessonItem extends StatefulWidget {
@@ -17,6 +16,7 @@ class LessonItem extends StatefulWidget {
 
 class _LessonItemState extends State<LessonItem> {
   bool _isExpanded = false;
+  bool _isChecked = false;
 
   void _toggleExpand() {
     setState(() {
@@ -27,14 +27,14 @@ class _LessonItemState extends State<LessonItem> {
   void _navigateToKanjiScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => KanjiScreen(lesson: widget.lesson)),
+      MaterialPageRoute(builder: (context) => VocabularyScreen(lessonPosition: widget.lesson.lessonPosition, vocabularies: widget.lesson.kanji, title: "Hán tự",)),
     );
   }
 
   void _navigateToVocabularyScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VocabularyScreen(lesson: widget.lesson)),
+      MaterialPageRoute(builder: (context) => VocabularyScreen(lessonPosition: widget.lesson.lessonPosition, vocabularies: widget.lesson.vocabulary, title: "Từ vựng",)),
     );
   }
 
@@ -81,7 +81,7 @@ class _LessonItemState extends State<LessonItem> {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      'Bài ${widget.lesson.index} :',
+                      'Bài ${widget.lesson.lessonPosition} :',
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
@@ -91,7 +91,7 @@ class _LessonItemState extends State<LessonItem> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        widget.lesson.title,
+                        widget.lesson.lessonName,
                         style: const TextStyle(fontSize: 16),
                         softWrap: true,
                       ),
@@ -112,7 +112,7 @@ class _LessonItemState extends State<LessonItem> {
                         title: '1.1 Chuẩn bị bài',
                         buttons: [
                           _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
-                          _buildButton(context, 'Từ mới', () => _navigateToKanjiScreen(context)),
+                          _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context)),
                         ],
                       ),
                       SizedBox(width: 20),

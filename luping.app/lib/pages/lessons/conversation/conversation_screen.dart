@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../models/lesson.dart';
+import '../../../models/lesson.dart';
 
 class ConversationScreen extends StatefulWidget {
   final Lesson lesson;
@@ -38,7 +38,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             },
           ),
           title: Text(
-            'Bài ${widget.lesson.index} / Hội thoại',
+            'Bài ${widget.lesson.lessonId} / Hội thoại',
             style: const TextStyle(
               fontSize: 17,
             ),

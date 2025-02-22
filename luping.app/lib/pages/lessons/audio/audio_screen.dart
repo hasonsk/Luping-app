@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
-import '../../models/lesson.dart';
+import '../../../models/lesson.dart';
 
 class AudioScreen extends StatelessWidget {
   final Lesson lesson;
@@ -13,7 +13,7 @@ class AudioScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Bài ${lesson.index} / File nghe', style: const TextStyle(fontSize: 17)),
+        title: Text('Bài ${lesson.lessonId} / File nghe', style: const TextStyle(fontSize: 17)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 4,
@@ -67,14 +67,14 @@ class AudioScreen extends StatelessWidget {
               ListView.builder(
                 shrinkWrap: true, // Quan trọng để tránh lỗi cuộn vô hạn
                 physics: const NeverScrollableScrollPhysics(), // Ngăn ListView cuộn riêng biệt
-                itemCount: lesson.audioFiles.length,
+                itemCount: lesson.lessonListening.length,
                 itemBuilder: (context, index) {
-                  final audioFile = lesson.audioFiles[index];
+                  final audioFile = lesson.lessonListening[index];
                   return AudioListItem(
                     index: index + 1,
                     title: audioFile.title,
                     audioPath: audioFile.filePath,
-                    isLast: index == lesson.audioFiles.length - 1,
+                    isLast: index == lesson.lessonListening.length - 1,
                   );
                 },
               ),

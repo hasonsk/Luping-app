@@ -1,7 +1,6 @@
-// word.dart
 class Word {
   final int id;
-  final String? word;
+  final String word;
   final String? pinyin;
   final List<String>? meaning;
   final String? hanviet;
@@ -47,5 +46,20 @@ class Word {
       shortMeaning: map['shortMeaning'],
       hskLevel: map['hskLevel'],
     );
+  }
+
+  Map<String, String> toMap() {
+    return {
+      'id': id.toString(),
+      'word': word,
+      'pinyin': pinyin ?? '',
+      'meaning': meaning?.join(', ') ?? '',
+      'hanviet': hanviet ?? '',
+      'cannghia': cannghia?.join(', ') ?? '',
+      'trainghia': trainghia?.join(', ') ?? '',
+      'image': image ?? '',
+      'shortMeaning': shortMeaning ?? '',
+      'hskLevel': hskLevel ?? '',
+    };
   }
 }
