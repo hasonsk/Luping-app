@@ -5,6 +5,7 @@ import 'package:hanjii/models/pronunciation_assessment_result.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -51,8 +52,19 @@ class PronunciationAssessmentService {
       await _initRecorder();
     }
 
-    final directory = await Directory.systemTemp.createTemp();
-    _filePath = '${directory.path}/recording.wav';
+    // Clean up any existing temp files
+    await _cleanupTempFile();
+
+    // Get app documents directory
+    final directory = await getApplicationDocumentsDirectory();
+    final tempAudioDir = Directory('${directory.path}/temp-audio');
+
+    // Ensure the directory exists
+    if (!(await tempAudioDir.exists())) {
+      await tempAudioDir.create(recursive: true);
+    }
+
+    _filePath = '${tempAudioDir.path}/recording.wav';
 
     await _audioRecorder!.startRecorder(
       toFile: _filePath,
@@ -67,6 +79,7 @@ class PronunciationAssessmentService {
 
   Future<void> stopRecording() async {
     await _audioRecorder?.stopRecorder();
+    logger.d('Recording stopped, audio file: $_filePath');
     _recordingStateSubject
         .add(RecordingState.stopped); // Update recording state
   }

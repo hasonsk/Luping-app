@@ -5,8 +5,7 @@ import '/services/pronunciation_assessment_service.dart';
 class PronunciationAssessmentWidget extends StatefulWidget {
   final String textToPronounce;
 
-  const PronunciationAssessmentWidget({Key? key, required this.textToPronounce})
-      : super(key: key);
+  const PronunciationAssessmentWidget({super.key, required this.textToPronounce});
 
   @override
   _PronunciationAssessmentWidgetState createState() =>
