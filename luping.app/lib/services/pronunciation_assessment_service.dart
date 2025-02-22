@@ -5,10 +5,10 @@ import 'package:hanjii/models/pronunciation_assessment_result.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter_sound/flutter_sound.dart'; 
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-enum RecordingState { idle, recording, stopped } 
+enum RecordingState { idle, recording, stopped }
 
 class PronunciationAssessmentService {
   static final logger = Logger();
@@ -37,7 +37,8 @@ class PronunciationAssessmentService {
   Future<void> _initRecorder() async {
     _audioRecorder = FlutterSoundRecorder();
     await _audioRecorder!.openRecorder();
-    _audioRecorder!.setSubscriptionDuration(const Duration(milliseconds: 100)); // Update state periodically
+    _audioRecorder!.setSubscriptionDuration(
+        const Duration(milliseconds: 100)); // Update state periodically
   }
 
   Future<void> startRecording() async {
@@ -60,12 +61,30 @@ class PronunciationAssessmentService {
       numChannels: 1,
     );
 
-    _recordingStateSubject.add(RecordingState.recording); // Update recording state
+    _recordingStateSubject
+        .add(RecordingState.recording); // Update recording state
   }
 
   Future<void> stopRecording() async {
     await _audioRecorder?.stopRecorder();
-    _recordingStateSubject.add(RecordingState.stopped); // Update recording state
+    _recordingStateSubject
+        .add(RecordingState.stopped); // Update recording state
+  }
+
+  Future<void> _cleanupTempFile() async {
+    if (_filePath != null) {
+      try {
+        final file = File(_filePath!);
+        if (await file.exists()) {
+          await file.delete();
+          logger.d('Temporary audio file cleaned up: $_filePath');
+        }
+      } catch (e) {
+        logger.e('Error cleaning up temporary audio file: $e');
+      } finally {
+        _filePath = null;
+      }
+    }
   }
 
   Future<PronunciationAssessmentResult?> fetchAssessment(
@@ -85,6 +104,9 @@ class PronunciationAssessmentService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
+      // Clean up the temp file after sending the request
+      await _cleanupTempFile();
+
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         final assessmentResult =
@@ -99,8 +121,11 @@ class PronunciationAssessmentService {
         return null;
       }
     } catch (e) {
-      logger.e("Network error: $e");
-      _assessmentResultSubject.addError(e); // Add error to the stream
+      // Ensure cleanup happens even if request fails
+      await _cleanupTempFile();
+      logger.e("Error sending request: $e");
+      _assessmentResultSubject
+          .addError(e.toString()); // Add error to the stream
       return null;
     }
   }
