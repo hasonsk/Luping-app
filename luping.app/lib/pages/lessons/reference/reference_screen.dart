@@ -10,13 +10,13 @@ class ReferenceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Bài ${lesson.lessonPosition} / Tham khảo',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 17,
-            fontWeight: FontWeight.w600,
           ),
         ),
         backgroundColor: Colors.white, // Màu nền của AppBar

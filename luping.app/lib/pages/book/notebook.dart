@@ -331,16 +331,14 @@ class CustomImageWidget extends StatelessWidget {
           lessonPosition: 1,
           lessonName: '你好 - Xin chào',
           vocabulary: [
-            Word(id:1,word:'你',pinyin:'nǐ',meaning:['Bạn, cậu, anh,..'], hanviet: 'Chào bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-            Word(id:2,word:'你好',pinyin:'nǐ hǎo',meaning:['Chào bạn, cậu, anh,..'], hanviet: 'Tôi', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-            Word(id:3,word:'好',pinyin:'hǎo',meaning:['Tốt, khỏe'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-            Word(id:4,word:'好吗?',pinyin:'hǎo ma?',meaning:['Tốt không?'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-            Word(id:5,word:'不好。',pinyin:'bù hǎo.',meaning:['Không tốt.'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-            Word(id:6,word:'您',pinyin:'nín',meaning:['Ngài (Người lớn tuổi hơn)'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id:1,word:'你',pinyin:'nǐ',meaning:['Bạn, cậu, anh,..'], hanviet: 'Chào bạn', cannghia: [], trainghia: [], image: 'https://assets.hanzii.net/img_word/df1fd9101108b40d26977a8d0bb9fd1e_h.jpg', shortMeaning: null, hskLevel: '1'),
+            Word(id:2,word:'你好',pinyin:'nǐ hǎo',meaning:['Chào bạn, cậu, anh,..'], hanviet: 'Tôi', cannghia: [], trainghia: [], image: 'https://assets.hanzii.net/img_word/7eca689f0d3389d9dea66ae112e5cfd7_h.jpg', shortMeaning: null, hskLevel: '1'),
+            Word(id:3,word:'好',pinyin:'hǎo',meaning:['Tốt, khỏe'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: 'https://assets.hanzii.net/img_word/ac2c8f13c6e60810197b19d683f5f184_h.jpg', shortMeaning: null, hskLevel: '1'),
+            Word(id:4,word:'您',pinyin:'nín',meaning:['Ngài (Người lớn tuổi hơn)'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: 'https://assets.hanzii.net/img_word/6e2d1fbf2362dcb5e4bcad4315f96ad0_h.jpg', shortMeaning: null, hskLevel: '1'),
           ],
           kanji: [
-            Word(id: 1, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-            Word(id: 2, word: '好', pinyin: 'hǎo', meaning: ['Tốt'], hanviet: 'Tốt', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id: 1, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: 'https://luping.com.vn/word_media/Luping_minhhoa_webp/%E4%BD%A0.webp', shortMeaning: null, hskLevel: '1'),
+            Word(id: 2, word: '好', pinyin: 'hǎo', meaning: ['Tốt'], hanviet: 'Tốt', cannghia: [], trainghia: [], image: 'https://luping.com.vn/word_media/Luping_minhhoa_webp/%E5%A5%BD.webp', shortMeaning: null, hskLevel: '1'),
           ],
           lessonConversation: ["你好", "我叫", "我来自", "我今年"],
           lessonListening: [
@@ -358,8 +356,8 @@ class CustomImageWidget extends StatelessWidget {
           lessonPosition: 2,
           lessonName: '谢谢你 - Cảm ơn bạn',
           vocabulary: [
-            Word(id: 4, word: '谢谢', pinyin: 'xièxiè', meaning: ['Cảm ơn'], hanviet: 'Cảm ơn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-            Word(id: 5, word: '不客气', pinyin: 'bú kèqì', meaning: ['Không có gì'], hanviet: 'Không có gì', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id: 4, word: '谢谢', pinyin: 'xièxiè', meaning: ['Cảm ơn'], hanviet: 'Cảm ơn', cannghia: [], trainghia: [], image: 'https://assets.hanzii.net/img_word/a34490b593cdc390c77104721ba7eb39_h.jpg', shortMeaning: null, hskLevel: '1'),
+            Word(id: 5, word: '不客气', pinyin: 'bú kèqì', meaning: ['Không có gì'], hanviet: 'Không có gì', cannghia: [], trainghia: [], image: 'https://assets.hanzii.net/img_word/be672ad54806f817f7c3d08d128f9da6_h.jpg', shortMeaning: null, hskLevel: '1'),
           ],
           kanji: [],
           lessonConversation: ["你好吗？", "最近怎么样？", "祝你身体健康！"],

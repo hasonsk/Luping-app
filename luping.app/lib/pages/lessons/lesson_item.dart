@@ -128,8 +128,8 @@ class _LessonItemState extends State<LessonItem> {
                       _buildSection(
                         title: '1.1 Chuẩn bị bài',
                         buttons: [
-                          _buildButton(context, 'Chuẩn bị', () => _navigateToKanjiScreen(context)),
-                          _buildButton(context, 'Từ mới', () => _navigateToVocabularyScreen(context)),
+                          _buildButton(context, 'Hán tự', () => _navigateToKanjiScreen(context)),
+                          _buildButton(context, 'Từ vựng', () => _navigateToVocabularyScreen(context)),
                         ],
                       ),
                       SizedBox(width: 20),

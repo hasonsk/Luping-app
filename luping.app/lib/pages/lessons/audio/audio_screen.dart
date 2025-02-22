@@ -112,7 +112,7 @@ class _AudioListItemState extends State<AudioListItem> {
       }
     }).catchError((_) {
       setState(() {
-        _isInitialized = true; // Tránh loading mãi nếu lỗi
+        _isInitialized = true;
       });
     });
   }
@@ -125,18 +125,15 @@ class _AudioListItemState extends State<AudioListItem> {
 
   void _togglePlayPause() async {
     if (_isPlaying) {
-      // Nếu bài này đang phát, thì dừng nó
       await _audioPlayer.pause();
       if (_currentlyPlayingPlayer == _audioPlayer) {
         _currentlyPlayingPlayer = null;
       }
     } else {
-      // Nếu đang có bài khác phát, thì dừng nó
       if (_currentlyPlayingPlayer != null && _currentlyPlayingPlayer != _audioPlayer) {
         await _currentlyPlayingPlayer!.stop();
       }
 
-      // Cập nhật player hiện tại
       _currentlyPlayingPlayer = _audioPlayer;
 
       if (!_isInitialized) {
@@ -144,9 +141,7 @@ class _AudioListItemState extends State<AudioListItem> {
         try {
           await _audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(widget.audioPath)));
           _isInitialized = true;
-        } catch (_) {
-          // Xử lý lỗi nếu cần
-        }
+        } catch (_) {}
         setState(() => _isLoading = false);
       }
 
@@ -156,57 +151,53 @@ class _AudioListItemState extends State<AudioListItem> {
     setState(() => _isPlaying = !_isPlaying);
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Text('${widget.index}. ${widget.title}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text('${widget.index}. ${widget.title}',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                ),
+                IconButton(
+                  onPressed: _togglePlayPause,
+                  icon: _isLoading
+                      ? const CircularProgressIndicator(strokeWidth: 2)
+                      : Icon(_isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                      size: 30, color: Colors.green),
+                ),
+              ],
             ),
-            IconButton(
-              onPressed: _togglePlayPause,
-              icon: _isLoading
-                  ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-                  : Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: Colors.green,
+                inactiveTrackColor: Colors.green.withOpacity(0.3),
+                thumbColor: Colors.green,
+                trackHeight: 3,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+              ),
+              child: Slider(
+                value: _currentPosition.inSeconds.toDouble(),
+                min: 0,
+                max: _totalDuration.inSeconds.toDouble(),
+                onChanged: (value) async {
+                  await _audioPlayer.seek(Duration(seconds: value.toInt()));
+                },
+              ),
             ),
           ],
         ),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: Colors.green,
-            inactiveTrackColor: Colors.green.withOpacity(0.3),
-            thumbColor: Colors.green,
-            trackHeight: 2,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-          ),
-          child: Slider(
-            value: _currentPosition.inSeconds.toDouble(),
-            min: 0,
-            max: _totalDuration.inSeconds.toDouble(),
-            onChanged: (value) async {
-              await _audioPlayer.seek(Duration(seconds: value.toInt()));
-
-              // Nếu chưa phát bài này, thì bật lên và dừng bài cũ
-              if (!_isPlaying) {
-                if (_currentlyPlayingPlayer != null && _currentlyPlayingPlayer != _audioPlayer) {
-                  await _currentlyPlayingPlayer!.stop();
-                }
-
-                await _audioPlayer.play();
-                _currentlyPlayingPlayer = _audioPlayer;
-                setState(() => _isPlaying = true);
-              }
-            },
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

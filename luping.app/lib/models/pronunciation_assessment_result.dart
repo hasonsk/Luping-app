@@ -16,6 +16,13 @@ class PronunciationAssessmentResult {
           [],
     );
   }
+  // 🛠 Thêm phương thức toJson()
+  Map<String, dynamic> toJson() {
+    return {
+      'DisplayText': displayText,
+      'NBest': nBest.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
 class NBest {
@@ -51,6 +58,18 @@ class NBest {
               .toList() ?? [],
     );
   }
+  // 🛠 Thêm phương thức toJson()
+  Map<String, dynamic> toJson() {
+    return {
+      'Confidence': confidence,
+      'Lexical': lexical,
+      'ITN': itn,
+      'MaskedITN': maskedITN,
+      'Display': display,
+      'PronunciationAssessment': pronunciationAssessment.toJson(),
+      'Words': words.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
 class PronunciationAssessment {
@@ -74,6 +93,15 @@ class PronunciationAssessment {
       pronScore: (json['PronScore'] as num?)?.toDouble() ?? 0.0,
     );
   }
+  // 🛠 Thêm phương thức toJson()
+  Map<String, dynamic> toJson() {
+    return {
+      'AccuracyScore': accuracyScore,
+      'FluencyScore': fluencyScore,
+      'CompletenessScore': completenessScore,
+      'PronScore': pronScore,
+    };
+  }
 }
 
 class WordAssessment {
@@ -82,7 +110,7 @@ class WordAssessment {
   final int duration;
   final WordPronunciationAssessment pronunciationAssessment;
   final List<SyllableAssessment> syllables;
-  final List<PhonemeAssessment> phonemes; // Added phonemes
+  final List<PhonemeAssessment> phonemes;
 
   WordAssessment({
     required this.word,
@@ -101,16 +129,28 @@ class WordAssessment {
       pronunciationAssessment: WordPronunciationAssessment.fromJson(
           json['PronunciationAssessment'] as Map<String, dynamic>? ?? {}),
       syllables: (json['Syllables'] as List<dynamic>?)
-              ?.map(
-                  (e) => SyllableAssessment.fromJson(e as Map<String, dynamic>))
-              .toList() ??
+          ?.map((e) => SyllableAssessment.fromJson(e as Map<String, dynamic>))
+          .toList() ??
           [],
       phonemes: (json['Phonemes'] as List<dynamic>?)
-              ?.map(
-                  (e) => PhonemeAssessment.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [], // Initialize phonemes
+          ?.map((e) => PhonemeAssessment.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+          [],
     );
+  }
+
+  // 🛠 Thêm phương thức `toJson()`
+  Map<String, dynamic> toJson() {
+    return {
+      'Word': word,
+      'Offset': offset,
+      'Duration': duration,
+      'AccuracyScore': pronunciationAssessment.accuracyScore, // ✅ Lấy từ pronunciationAssessment
+      'ErrorType': pronunciationAssessment.errorType, // ✅ Lấy từ pronunciationAssessment
+      'SyllableCount': syllables.length, // ✅ Đếm số lượng âm tiết
+      'Syllables': syllables.map((s) => s.toJson()).toList(),
+      'Phonemes': phonemes.map((p) => p.toJson()).toList(),
+    };
   }
 }
 
@@ -133,27 +173,37 @@ class WordPronunciationAssessment {
 
 class SyllableAssessment {
   final String syllable;
-  final SyllablePronunciationAssessment pronunciationAssessment;
   final int offset;
   final int duration;
+  final double accuracyScore;
 
   SyllableAssessment({
     required this.syllable,
-    required this.pronunciationAssessment,
     required this.offset,
     required this.duration,
+    required this.accuracyScore,
   });
 
   factory SyllableAssessment.fromJson(Map<String, dynamic> json) {
     return SyllableAssessment(
       syllable: json['Syllable'] ?? '',
-      pronunciationAssessment: SyllablePronunciationAssessment.fromJson(
-          json['PronunciationAssessment'] as Map<String, dynamic>? ?? {}),
       offset: json['Offset'] ?? 0,
       duration: json['Duration'] ?? 0,
+      accuracyScore: (json['AccuracyScore'] ?? 0).toDouble(),
     );
   }
+
+  // 🛠 Thêm phương thức toJson()
+  Map<String, dynamic> toJson() {
+    return {
+      'Syllable': syllable,
+      'Offset': offset,
+      'Duration': duration,
+      'AccuracyScore': accuracyScore,
+    };
+  }
 }
+
 
 class SyllablePronunciationAssessment {
   final double accuracyScore;
@@ -172,27 +222,37 @@ class SyllablePronunciationAssessment {
 // Added PhonemeAssessment class
 class PhonemeAssessment {
   final String phoneme;
-  final PhonemePronunciationAssessment pronunciationAssessment;
   final int offset;
   final int duration;
+  final double accuracyScore;
 
   PhonemeAssessment({
     required this.phoneme,
-    required this.pronunciationAssessment,
     required this.offset,
     required this.duration,
+    required this.accuracyScore,
   });
 
   factory PhonemeAssessment.fromJson(Map<String, dynamic> json) {
     return PhonemeAssessment(
       phoneme: json['Phoneme'] ?? '',
-      pronunciationAssessment: PhonemePronunciationAssessment.fromJson(
-          json['PronunciationAssessment'] as Map<String, dynamic>? ?? {}),
       offset: json['Offset'] ?? 0,
       duration: json['Duration'] ?? 0,
+      accuracyScore: (json['AccuracyScore'] ?? 0).toDouble(),
     );
   }
+
+  // 🛠 Thêm phương thức toJson()
+  Map<String, dynamic> toJson() {
+    return {
+      'Phoneme': phoneme,
+      'Offset': offset,
+      'Duration': duration,
+      'AccuracyScore': accuracyScore,
+    };
+  }
 }
+
 
 class PhonemePronunciationAssessment {
   final double accuracyScore;

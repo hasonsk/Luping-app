@@ -63,7 +63,7 @@ class VocabularyScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Bài ${lessonPosition} / Chuẩn bị',
+            'Bài ${lessonPosition} / $title',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 17,
@@ -99,9 +99,14 @@ class VocabularyScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 25),
                 _buildSectionTitle('Hướng dẫn :', Colors.green),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                  child: Text('Ở phần này chúng ta hãy cùng nhau chuẩn bị các Hán tự cần thiết cho bài mới nhé.', style: TextStyle(color: Colors.black87),),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  child: Text(
+                    title.contains("Hán tự")
+                        ? 'Ở phần này chúng ta hãy cùng nhau chuẩn bị các Hán tự cần thiết cho bài mới nhé.'
+                        : 'Ở phần này chúng ta sẽ tìm hiểu các từ vựng quan trọng của bài học.',
+                    style: const TextStyle(color: Colors.black87),
+                  ),
                 ),
                 Container(
                   width: double.infinity, // Chiều ngang tối đa
@@ -120,7 +125,7 @@ class VocabularyScreen extends StatelessWidget {
                     ),
                     itemCount: vocabularies.length,
                     itemBuilder: (context, index) {
-                      return _buildVocabularyCard(vocabularies[index].word, index + 1);
+                      return _buildVocabularyCard(vocabularies[index], index + 1);
                     },
                   ),
                 ),
@@ -183,20 +188,63 @@ class VocabularyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVocabularyCard(String vocab, int index) {
-    return Card(
-      color: Colors.white,
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.0), // Giảm border radius xuống 4
-      ),
-      child: Center(
-        child: Text(
-          vocab,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
+  Widget _buildVocabularyCard( Word word,int index) {
+    return Stack(
+      children: [
+        Card(
+          color: Colors.white,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  Expanded(child: SizedBox()),
+                  Text(
+                    word.word,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+
+                  ),
+                  SizedBox(height: 4,),
+                  Text(
+                    word.pinyin ?? '', // Giả sử word.pinyin chứa Pinyin của từ vựng
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600], // Màu xám nhẹ giúp Pinyin rõ ràng nhưng không quá nổi bật
+                      fontStyle: FontStyle.italic, // Làm cho Pinyin trông nhẹ nhàng hơn
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Expanded(child: SizedBox()),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
+        Positioned(
+          top: 4,
+          left: 4,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.green.shade100, // Màu xanh lá nhạt
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '${index}',
+              style: TextStyle(
+                color: Colors.green.shade700, // Màu chữ đậm hơn một chút
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
+
 }
