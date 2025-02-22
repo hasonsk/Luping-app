@@ -6,8 +6,6 @@ import '../../models/book.dart';
 import '../../models/lesson.dart';
 import '../../models/word.dart';
 import 'book_page.dart';
-import 'fakedata.dart';
-
 
 class Notebook extends StatefulWidget {
   const Notebook({super.key});
@@ -320,6 +318,134 @@ class CustomImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Book selectedBook = Book(
+      bookId: 1,
+      bookName: 'Giáo trình Hán ngữ chuẩn HSK 1',
+      bookAuthor: 'Liu Xun',
+      bookImageUrl: 'assets/chuanhanngu_1.png',
+      bookDifficult: 1,
+      vocabCount: 3,
+      lessons: [
+        Lesson(
+          lessonId: 1,
+          lessonPosition: 1,
+          lessonName: '你好 - Xin chào',
+          vocabulary: [
+            Word(id: 1, word: '你好', pinyin: 'nǐ hǎo', meaning: ['Xin chào'], hanviet: 'Chào bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id: 2, word: '我', pinyin: 'wǒ', meaning: ['Tôi'], hanviet: 'Tôi', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id: 3, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+          ],
+          kanji: [
+            Word(id: 1, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id: 2, word: '好', pinyin: 'hǎo', meaning: ['Tốt'], hanviet: 'Tốt', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+          ],
+          lessonConversation: ["你好", "我叫", "我来自", "我今年"],
+          lessonListening: [
+            AudioFile(title: 'Hội thoại', filePath: 'assets/audio/01-1.mp3'),
+            AudioFile(title: 'Từ vựng 1', filePath: 'assets/audio/01-2.mp3'),
+            AudioFile(title: 'Bài tập 1', filePath: 'assets/audio/01-3.mp3'),
+          ],
+          lessonReference: [],
+        ),
+        Lesson(
+          lessonId: 2,
+          lessonPosition: 2,
+          lessonName: '谢谢你 - Cảm ơn bạn',
+          vocabulary: [
+            Word(id: 4, word: '谢谢', pinyin: 'xièxiè', meaning: ['Cảm ơn'], hanviet: 'Cảm ơn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id: 5, word: '不客气', pinyin: 'bú kèqì', meaning: ['Không có gì'], hanviet: 'Không có gì', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+          ],
+          kanji: [],
+          lessonConversation: ["你好吗？", "最近怎么样？", "祝你身体健康！"],
+          lessonListening: [
+            AudioFile(title: 'Hội thoại', filePath: 'audio/hsk1_lesson2_1.mp3'),
+            AudioFile(title: 'Từ vựng 1', filePath: 'audio/hsk1_lesson2_2.mp3'),
+            AudioFile(title: 'Bài tập 1', filePath: 'audio/hsk1_lesson2_3.mp3'),
+          ],
+          lessonReference: [],
+        ),
+        Lesson(
+          lessonId: 3,
+          lessonPosition: 3,
+          lessonName: '你叫什么名字？Cô tên là gì?',
+          vocabulary: [],
+          kanji: [],
+          lessonConversation: [],
+          lessonListening: [],
+          lessonReference: [],
+        ),
+        Lesson(
+          lessonId: 4,
+          lessonPosition: 4,
+          lessonName: '她是我的汉语老师 - Cô ấy là giáo viên tiếng Trung của tôi',
+          vocabulary: [],
+          kanji: [],
+          lessonConversation: [],
+          lessonListening: [],
+          lessonReference: [],
+        ),
+        Lesson(
+          lessonId: 5,
+          lessonPosition: 5,
+          lessonName: '她女儿今年二十岁 - Con gái cô ấy năm nay 20 tuổi',
+          vocabulary: [],
+          kanji: [],
+          lessonConversation: [],
+          lessonListening: [],
+          lessonReference: [],
+        ),
+        Lesson(
+          lessonId: 6,
+          lessonPosition: 6,
+          lessonName: '我会说汉语 - Tôi biết nói Tiếng Trung',
+          vocabulary: [],
+          kanji: [],
+          lessonConversation: [],
+          lessonListening: [],
+          lessonReference: [],
+        ),
+        Lesson(
+          lessonId: 7,
+          lessonPosition: 7,
+          lessonName: '今天几号？ - Hôm nay là ngày mấy?',
+          vocabulary: [],
+          kanji: [],
+          lessonConversation: [],
+          lessonListening: [],
+          lessonReference: [],
+        ),
+        Lesson(
+          lessonId: 8,
+          lessonPosition: 8,
+          lessonName: '我想喝茶。 - Tôi muốn uống trà',
+          vocabulary: [],
+          kanji: [],
+          lessonConversation: [],
+          lessonListening: [],
+          lessonReference: [],
+        ),
+        Lesson(
+          lessonId: 9,
+          lessonPosition: 9,
+          lessonName: '你儿子在哪工作？- Con trai anh làm việc ở đâu?',
+          vocabulary: [],
+          kanji: [],
+          lessonConversation: [],
+          lessonListening: [],
+          lessonReference: [],
+        ),
+        Lesson(
+          lessonId: 10,
+          lessonPosition: 10,
+          lessonName: '我能坐这儿吗？- Tôi có thể ngồi ở đây được không?',
+          vocabulary: [],
+          kanji: [],
+          lessonConversation: [],
+          lessonListening: [],
+          lessonReference: [],
+        ),
+      ],
+    );
     return InkWell(
       onTap: () {
         Navigator.of(context).push(

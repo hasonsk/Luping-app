@@ -96,6 +96,7 @@ class _LessonItemState extends State<LessonItem> {
                         softWrap: true,
                       ),
                     ),
+                    SizedBox(width: 35,)
                   ],
                 ),
               ),
