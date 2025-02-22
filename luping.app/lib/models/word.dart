@@ -47,4 +47,19 @@ class Word {
       hskLevel: map['hskLevel'],
     );
   }
+
+  Map<String, String> toMap() {
+    return {
+      'id': id.toString(),
+      'word': word,
+      'pinyin': pinyin ?? '',
+      'meaning': meaning?.join(', ') ?? '',
+      'hanviet': hanviet ?? '',
+      'cannghia': cannghia?.join(', ') ?? '',
+      'trainghia': trainghia?.join(', ') ?? '',
+      'image': image ?? '',
+      'shortMeaning': shortMeaning ?? '',
+      'hskLevel': hskLevel ?? '',
+    };
+  }
 }

@@ -20,11 +20,12 @@ class Flashcard {
 }
 
 class FlashcardItem {
-  final String question;
-  final String answer;
+  final String frontText;
+  final String backText;
+  final bool status = false; // Mặc định là chưa học
 
   FlashcardItem({
-    required this.question,
-    required this.answer,
+    required this.frontText,
+    required this.backText,
   });
 }
