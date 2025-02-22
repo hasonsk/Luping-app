@@ -331,9 +331,12 @@ class CustomImageWidget extends StatelessWidget {
           lessonPosition: 1,
           lessonName: '你好 - Xin chào',
           vocabulary: [
-            Word(id: 1, word: '你好', pinyin: 'nǐ hǎo', meaning: ['Xin chào'], hanviet: 'Chào bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-            Word(id: 2, word: '我', pinyin: 'wǒ', meaning: ['Tôi'], hanviet: 'Tôi', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-            Word(id: 3, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id:1,word:'你',pinyin:'nǐ',meaning:['Bạn, cậu, anh,..'], hanviet: 'Chào bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id:2,word:'你好',pinyin:'nǐ hǎo',meaning:['Chào bạn, cậu, anh,..'], hanviet: 'Tôi', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id:3,word:'好',pinyin:'hǎo',meaning:['Tốt, khỏe'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id:4,word:'好吗?',pinyin:'hǎo ma?',meaning:['Tốt không?'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id:5,word:'不好。',pinyin:'bù hǎo.',meaning:['Không tốt.'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+            Word(id:6,word:'您',pinyin:'nín',meaning:['Ngài (Người lớn tuổi hơn)'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
           ],
           kanji: [
             Word(id: 1, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
@@ -341,9 +344,12 @@ class CustomImageWidget extends StatelessWidget {
           ],
           lessonConversation: ["你好", "我叫", "我来自", "我今年"],
           lessonListening: [
-            AudioFile(title: 'Hội thoại', filePath: 'assets/audio/01-1.mp3'),
-            AudioFile(title: 'Từ vựng 1', filePath: 'assets/audio/01-2.mp3'),
-            AudioFile(title: 'Bài tập 1', filePath: 'assets/audio/01-3.mp3'),
+            AudioFile(title: 'Hội thoại', filePath: 'https://drive.google.com/file/d/1UzLcSm-Z8X75Xvh8CHQhUfRHciZLRxEE/view?usp=sharing'),
+            AudioFile(title: 'Từ vựng 1', filePath: 'https://drive.google.com/file/d/1x4FGSCyNiJji9XoeZm-AEOdc0tcdbSq3/view?usp=drive_link'),
+            AudioFile(title: 'Từ vựng 2', filePath: 'https://drive.google.com/file/d/12Zpj_d2r7bsAd8RxhUd1sO9M64IcUqbv/view?usp=sharing'),
+            AudioFile(title: 'Bài tập 1', filePath: 'https://drive.google.com/file/d/12JmQY4736jZqQxV_PJy54mjnYzJfYoRg/view?usp=drive_link'),
+            AudioFile(title: 'Bài tập 2', filePath: 'https://drive.google.com/file/d/1iEGgaarnYj2_lZTof5d78oRLAw8AFN7i/view?usp=drive_link'),
+            AudioFile(title: 'Bài tập 3', filePath: 'https://drive.google.com/file/d/1_DiBXE-eH6tsrZPOUEly9RKailBttQLx/view?usp=drive_link'),
           ],
           lessonReference: [],
         ),
@@ -358,9 +364,12 @@ class CustomImageWidget extends StatelessWidget {
           kanji: [],
           lessonConversation: ["你好吗？", "最近怎么样？", "祝你身体健康！"],
           lessonListening: [
-            AudioFile(title: 'Hội thoại', filePath: 'audio/hsk1_lesson2_1.mp3'),
-            AudioFile(title: 'Từ vựng 1', filePath: 'audio/hsk1_lesson2_2.mp3'),
-            AudioFile(title: 'Bài tập 1', filePath: 'audio/hsk1_lesson2_3.mp3'),
+            AudioFile(title: 'Hội thoại', filePath: 'https://drive.google.com/file/d/1UzLcSm-Z8X75Xvh8CHQhUfRHciZLRxEE/view?usp=sharing'),
+            AudioFile(title: 'Từ vựng 1', filePath: 'https://drive.google.com/file/d/1x4FGSCyNiJji9XoeZm-AEOdc0tcdbSq3/view?usp=drive_link'),
+            AudioFile(title: 'Từ vựng 2', filePath: 'https://drive.google.com/file/d/12Zpj_d2r7bsAd8RxhUd1sO9M64IcUqbv/view?usp=sharing'),
+            AudioFile(title: 'Bài tập 1', filePath: 'https://drive.google.com/file/d/12JmQY4736jZqQxV_PJy54mjnYzJfYoRg/view?usp=drive_link'),
+            AudioFile(title: 'Bài tập 2', filePath: 'https://drive.google.com/file/d/1iEGgaarnYj2_lZTof5d78oRLAw8AFN7i/view?usp=drive_link'),
+            AudioFile(title: 'Bài tập 3', filePath: 'https://drive.google.com/file/d/1_DiBXE-eH6tsrZPOUEly9RKailBttQLx/view?usp=drive_link'),
           ],
           lessonReference: [],
         ),
@@ -381,7 +390,14 @@ class CustomImageWidget extends StatelessWidget {
           vocabulary: [],
           kanji: [],
           lessonConversation: [],
-          lessonListening: [],
+          lessonListening: [
+            AudioFile(title: 'Hội thoại', filePath: 'https://drive.google.com/file/d/1UzLcSm-Z8X75Xvh8CHQhUfRHciZLRxEE/view?usp=sharing'),
+            AudioFile(title: 'Từ vựng 1', filePath: 'https://drive.google.com/file/d/1x4FGSCyNiJji9XoeZm-AEOdc0tcdbSq3/view?usp=drive_link'),
+            AudioFile(title: 'Từ vựng 2', filePath: 'https://drive.google.com/file/d/12Zpj_d2r7bsAd8RxhUd1sO9M64IcUqbv/view?usp=sharing'),
+            AudioFile(title: 'Bài tập 1', filePath: 'https://drive.google.com/file/d/12JmQY4736jZqQxV_PJy54mjnYzJfYoRg/view?usp=drive_link'),
+            AudioFile(title: 'Bài tập 2', filePath: 'https://drive.google.com/file/d/1iEGgaarnYj2_lZTof5d78oRLAw8AFN7i/view?usp=drive_link'),
+            AudioFile(title: 'Bài tập 3', filePath: 'https://drive.google.com/file/d/1_DiBXE-eH6tsrZPOUEly9RKailBttQLx/view?usp=drive_link'),
+          ],
           lessonReference: [],
         ),
         Lesson(
@@ -453,31 +469,29 @@ class CustomImageWidget extends StatelessWidget {
             transitionDuration: const Duration(milliseconds: 1200),
             pageBuilder: (context, animation, secondaryAnimation) => BookPage(book: selectedBook),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              // Define the slide transition for forward navigation
-              var tween = Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).chain(CurveTween(curve: Curves.ease));
-              var slideAnimation = animation.drive(tween);
+              if (animation.status == AnimationStatus.reverse) {
+                // Khi quay về, dùng hiệu ứng hiện dần (FadeTransition)
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              } else {
+                // Khi đi tới, dùng hiệu ứng trượt (SlideTransition)
+                var tween = Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).chain(CurveTween(curve: Curves.ease));
 
-              // Define the slide transition for backward navigation
-              var reverseTween = Tween<Offset>(
-                begin: Offset.zero,
-                end: const Offset(-1.0, 0.0),
-              ).chain(CurveTween(curve: Curves.ease));
-              var reverseSlideAnimation = secondaryAnimation.drive(reverseTween);
+                var slideAnimation = animation.drive(tween);
 
-              // Choose the appropriate animation based on the status
-              var currentAnimation = secondaryAnimation.status == AnimationStatus.reverse
-                  ? reverseSlideAnimation
-                  : slideAnimation;
-
-              return SlideTransition(
-                position: currentAnimation,
-                child: child,
-              );
+                return SlideTransition(
+                  position: slideAnimation,
+                  child: child,
+                );
+              }
             },
           ),
+
         );
       },
       child: Column(
