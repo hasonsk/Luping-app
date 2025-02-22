@@ -259,4 +259,19 @@ void main() {
           reason: "Should return null for empty string input");
     });
   });
+
+  group('Test fetchWordList', () {
+    test('Get WordList for "你" should return correct data', () async {
+      final wordList = await searchService.fetchWordList(['焵', '涙']);
+
+      if (wordList == null) {
+        print('wordList empty');
+        return;
+      }
+
+      for (var word in wordList) {
+        print("Word Details for '${word.word}':");
+      }
+    });
+  });
 }
