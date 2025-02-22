@@ -16,7 +16,7 @@ class LessonItem extends StatefulWidget {
 
 class _LessonItemState extends State<LessonItem> {
   bool _isExpanded = false;
-  bool _isChecked = false;
+  // bool _isChecked = false;
 
   void _toggleExpand() {
     setState(() {

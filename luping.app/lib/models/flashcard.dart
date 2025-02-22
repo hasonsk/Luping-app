@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hanjii/models/word.dart';
 import 'flashcard_item.dart';
 
 class Flashcard {
   final String id;
-  final String title;
   final DateTime createdAt;
   final String ownerId;
-  final List<FlashcardItem> items;
+  final List<Word> items;
   final bool isPublic;
+  String title;
 
   Flashcard({
     required this.id,
@@ -16,16 +17,5 @@ class Flashcard {
     required this.ownerId,
     required this.items,
     this.isPublic = false, // Mặc định là riêng tư
-  });
-}
-
-class FlashcardItem {
-  final String frontText;
-  final String backText;
-  final bool status = false; // Mặc định là chưa học
-
-  FlashcardItem({
-    required this.frontText,
-    required this.backText,
   });
 }

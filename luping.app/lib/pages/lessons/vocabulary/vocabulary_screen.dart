@@ -26,22 +26,6 @@ class VocabularyScreen extends StatelessWidget {
     );
   }
 
-  void _navigateToLearnScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => KanjivocabLearnScreen()),
-    );
-  }
-
-  void _navigateToTestScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => KanjivocabTestScreen()),
-    );
-  }
-
-
-
   Widget _buildSectionTitle(String title, Color color) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,

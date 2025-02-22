@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hanjii/models/word.dart';
+import 'package:hanjii/pages/flashcard/flashcard_content_page.dart';
+import 'package:hanjii/services/search_service.dart';
 import '../../models/flashcard.dart';
 import '../../models/flashcard_item.dart';
 import '../../widgets/show_login_required_dialog.dart';
@@ -14,7 +19,8 @@ class FlashcardPage extends StatefulWidget {
 }
 
 class _FlashcardPageState extends State<FlashcardPage> {
-  final FocusNode _focusNode = FocusNode(); // FocusNode để kiểm soát focus của TextField
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _contentController = TextEditingController();
 
   final List<Flashcard> flashcards = [
     Flashcard(
@@ -42,6 +48,61 @@ class _FlashcardPageState extends State<FlashcardPage> {
       items: [],
     ),
   ];
+
+  void _createFlashcard() async {
+    if (_contentController.text.isNotEmpty) {
+      // Hiển thị lớp loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
+      // 1. Tách nội dung thành danh sách từ
+      List<String> wordList = _contentController.text
+          .split(',')
+          .map((word) => word.trim())
+          .where((word) => word.isNotEmpty)
+          .toList();
+
+      // 2. Gọi fetchWordList để lấy dữ liệu từ database
+      final searchService = SearchService();
+      List<Word>? words = await searchService.fetchWordList(wordList);
+
+      // Đóng lớp loading
+      Navigator.of(context).pop();
+
+      if (words == null || words.isEmpty) {
+        // Hiển thị thông báo nếu không tìm thấy từ nào trong database
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Không tìm thấy từ nào trong database")),
+        );
+        return;
+      }
+
+      // 3. Tạo Flashcard mới
+      final newFlashcard = Flashcard(
+        id: "flashcard_${DateTime.now().millisecondsSinceEpoch}",
+        title: "Flashcard mới",
+        createdAt: DateTime.now(),
+        ownerId: "user_123",
+        isPublic: false,
+        items: words,
+      );
+
+      // 4. Chuyển sang FlashcardContentPage và truyền danh sách từ
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FlashcardContentPage(flashcard: newFlashcard),
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -147,7 +208,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     const Expanded(child: SizedBox()),
                     TextButton(
                       onPressed: () {
-                        _unfocusTextField(); // Hủy focus khi nhấn vào nút "Tạo"
+                        _createFlashcard();
+                        _unfocusTextField();
                       },
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
@@ -158,6 +220,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         ],
                       ),
                     )
+
                   ],
                 ),
                 const SizedBox(height: 15),
@@ -177,9 +240,10 @@ class _FlashcardPageState extends State<FlashcardPage> {
                       ],
                     ),
                     child: TextField(
-                      focusNode: _focusNode, // Gán FocusNode vào TextField để kiểm soát focus
+                      controller: _contentController,
+                      focusNode: _focusNode,
                       decoration: InputDecoration(
-                        hintText: 'Ví dụ : 跑步, 运动, 游泳  ',
+                        hintText: 'Ví dụ : 跑步, 运动, 游泳',
                         hintStyle: TextStyle(
                           fontSize: 18,
                           color: Colors.grey[600],
