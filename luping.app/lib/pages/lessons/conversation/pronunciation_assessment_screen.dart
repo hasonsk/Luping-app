@@ -14,11 +14,8 @@ class PronunciationAssessmentWidget extends StatefulWidget {
 
 class _PronunciationAssessmentWidgetState
     extends State<PronunciationAssessmentWidget> {
-  final PronunciationAssessmentService _assessmentService =
-  PronunciationAssessmentService();
-  bool _isRecording = false;
-  bool _isProcessing = false;
-  PronunciationAssessmentResult? _assessmentResult;
+  final PronunciationAssessmentService _assessmentService = PronunciationAssessmentService();
+  bool _assessmentFetched = false;
 
   @override
   void dispose() {
@@ -26,32 +23,15 @@ class _PronunciationAssessmentWidgetState
     super.dispose();
   }
 
-  Future<void> _handleRecording() async {
-    if (_isRecording) {
-      // Dừng ghi âm
-      await _assessmentService.stopRecording();
-      setState(() {
-        _isRecording = false;
-        _isProcessing = true; // Loading khi xử lý đánh giá
-      });
-      await _fetchAssessment();
-    } else {
-      // Xóa file âm thanh cũ và bắt đầu ghi âm mới
+  void _handleRecording(RecordingState recordingState) async {
+    if (recordingState == RecordingState.idle) {
       await _assessmentService.startRecording();
       setState(() {
-        _isRecording = true;
-        _assessmentResult = null; // Xóa kết quả cũ khi ghi âm lại
+        _assessmentFetched = false;
       });
+    } else if (recordingState == RecordingState.recording) {
+      await _assessmentService.stopRecording();
     }
-  }
-
-  Future<void> _fetchAssessment() async {
-    final result =
-    await _assessmentService.fetchAssessment(text: widget.textToPronounce);
-    setState(() {
-      _assessmentResult = result;
-      _isProcessing = false; // Dừng loading khi có kết quả
-    });
   }
 
   @override
@@ -66,33 +46,57 @@ class _PronunciationAssessmentWidgetState
         ),
         const SizedBox(height: 10),
 
-        // 🎙 Nút ghi âm
-        if (_isProcessing)
-          const CircularProgressIndicator() // Loading khi gửi dữ liệu
-        else
-          ElevatedButton(
-            onPressed: _handleRecording,
-            child: Text(_isRecording ? '⏹ Dừng Ghi âm' : '🎙 Bắt đầu Ghi âm'),
-          ),
+        // 🎙 Nút bấm ghi âm
+        StreamBuilder<RecordingState>(
+          stream: _assessmentService.recordingStateStream,
+          builder: (context, snapshot) {
+            final recordingState = snapshot.data ?? RecordingState.idle;
+
+            if (recordingState == RecordingState.stopped && !_assessmentFetched) {
+              _assessmentFetched = true;
+              _assessmentService.fetchAssessment(text: widget.textToPronounce);
+            }
+
+            return ElevatedButton(
+              onPressed: () => _handleRecording(recordingState),
+              child: Text(
+                recordingState == RecordingState.recording
+                    ? 'Dừng Ghi âm'
+                    : 'Bắt đầu Ghi âm',
+              ),
+            );
+          },
+        ),
 
         const SizedBox(height: 10),
 
         // 📊 Hiển thị kết quả đánh giá
-        if (_assessmentResult != null)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Điểm tổng: ${_assessmentResult!.nBest.isNotEmpty ? _assessmentResult!.nBest[0].pronunciationAssessment.pronScore : "N/A"}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _handleRecording,
-                child: const Text('🔄 Ghi âm lại'),
-              ),
-            ],
-          ),
+        StreamBuilder<PronunciationAssessmentResult?>(
+          stream: _assessmentService.assessmentResultStream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            if (snapshot.hasError) {
+              return Text('Lỗi: ${snapshot.error}');
+            }
+            if (snapshot.hasData) {
+              final result = snapshot.data!;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Điểm tổng: ${result.nBest.isNotEmpty ? result.nBest[0].pronunciationAssessment.pronScore : "N/A"}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  // Text("Chi tiết: ${result.toJson()}"),
+                ],
+              );
+            }
+
+            return const Text('Chưa có kết quả');
+          },
+        ),
       ],
     );
   }
