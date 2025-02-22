@@ -17,13 +17,13 @@ final List<Book> books = [
         lessonPosition: 1,
         lessonName: '你好 - Xin chào',
         vocabulary: [
-          Word(id: 1, word: '你好', pinyin: 'nǐ hǎo', meaning: ['Xin chào'], hanviet: 'Chào bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-          Word(id: 2, word: '我', pinyin: 'wǒ', meaning: ['Tôi'], hanviet: 'Tôi', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-          Word(id: 3, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+          Word(id: 1, word: '你好', pinyin: 'nǐ hǎo', meaning: ['Xin chào'], hanviet: 'Chào bạn', cannghia: [], trainghia: [], image: null, shortmeaning: "Xin chào", hskLevel: '1'),
+          Word(id: 2, word: '我', pinyin: 'wǒ', meaning: ['Tôi'], hanviet: 'Tôi', cannghia: [], trainghia: [], image: null, shortmeaning: "Tôi", hskLevel: '1'),
+          Word(id: 3, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortmeaning: "Bạn", hskLevel: '1'),
         ],
         kanji: [
-          Word(id: 1, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-          Word(id: 2, word: '好', pinyin: 'hǎo', meaning: ['Tốt'], hanviet: 'Tốt', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+          Word(id: 1, word: '你', pinyin: 'nǐ', meaning: ['Bạn'], hanviet: 'Bạn', cannghia: [], trainghia: [], image: null, shortmeaning: "Bạn", hskLevel: '1'),
+          Word(id: 2, word: '好', pinyin: 'hǎo', meaning: ['Tốt'], hanviet: 'Tốt', cannghia: [], trainghia: [], image: null, shortmeaning: "Tôi", hskLevel: '1'),
         ],
         lessonConversation: ["今天天气怎么样？", "有点冷。", "下雨了。"],
         lessonListening: [
@@ -38,8 +38,8 @@ final List<Book> books = [
         lessonPosition: 2,
         lessonName: '谢谢你 - Cảm ơn bạn',
         vocabulary: [
-          Word(id: 4, word: '谢谢', pinyin: 'xièxiè', meaning: ['Cảm ơn'], hanviet: 'Cảm ơn', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
-          Word(id: 5, word: '不客气', pinyin: 'bú kèqì', meaning: ['Không có gì'], hanviet: 'Không có gì', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '1'),
+          Word(id: 4, word: '谢谢', pinyin: 'xièxiè', meaning: ['Cảm ơn'], hanviet: 'Cảm ơn', cannghia: [], trainghia: [], image: null, shortmeaning: "Cảm ơn", hskLevel: '1'),
+          Word(id: 5, word: '不客气', pinyin: 'bú kèqì', meaning: ['Không có gì'], hanviet: 'Không có gì', cannghia: [], trainghia: [], image: null, shortmeaning: "Không có gì", hskLevel: '1'),
         ],
         kanji: [],
         lessonConversation: ["今天天气怎么样？", "有点冷。", "下雨了。"],
@@ -65,8 +65,8 @@ final List<Book> books = [
         lessonPosition: 1,
         lessonName: '今天几号 - Hôm nay ngày mấy?',
         vocabulary: [
-          Word(id: 6, word: '今天', pinyin: 'jīntiān', meaning: ['Hôm nay'], hanviet: 'Hôm nay', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '2'),
-          Word(id: 7, word: '几号', pinyin: 'jǐ hào', meaning: ['Ngày mấy'], hanviet: 'Ngày mấy', cannghia: [], trainghia: [], image: null, shortMeaning: null, hskLevel: '2'),
+          Word(id: 6, word: '今天', pinyin: 'jīntiān', meaning: ['Hôm nay'], hanviet: 'Hôm nay', cannghia: [], trainghia: [], image: null, shortmeaning: "Hôm nay", hskLevel: '2'),
+          Word(id: 7, word: '几号', pinyin: 'jǐ hào', meaning: ['Ngày mấy'], hanviet: 'Ngày mấy', cannghia: [], trainghia: [], image: null, shortmeaning: "Ngày mấy", hskLevel: '2'),
         ],
         kanji: [],
         lessonConversation: ["你要喝什么？", "我们去哪里？", "请给我这个。"],

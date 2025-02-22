@@ -102,7 +102,7 @@ class _SearchWordViewState extends State<SearchWordView> {
                           ],
                         ),
                         Text(
-                          item.shortMeaning,
+                          item.shortmeaning,
                           style: const TextStyle(fontSize: 14, color: Colors.black),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,

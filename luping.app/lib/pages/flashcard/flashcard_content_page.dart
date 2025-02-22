@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:hanjii/models/flashcard.dart';
+import 'package:hanjii/pages/flashcard/flashcard_list_page.dart';
+import 'package:hanjii/services/flashcard_service.dart';
 
 class FlashcardContentPage extends StatefulWidget {
-  const FlashcardContentPage({super.key});
+  final Flashcard flashcard;
 
+  const FlashcardContentPage({super.key, required this.flashcard});
   @override
   _FlashcardContentPageState createState() => _FlashcardContentPageState();
 }
@@ -12,12 +16,6 @@ class FlashcardContentPage extends StatefulWidget {
 class _FlashcardContentPageState extends State<FlashcardContentPage> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-
-  final List<Map<String, dynamic>> flashcards = [
-    {"word": "你好", "meaning": "Xin chào", "status": false},
-    {"word": "谢谢", "meaning": "Cảm ơn", "status": false},
-    {"word": "再见", "meaning": "Tạm biệt", "status": false},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +25,7 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('${_currentIndex + 1}/${flashcards.length}', style: const TextStyle(fontSize: 18)),
+        title: Text('${_currentIndex + 1}/${widget.flashcard.items.length}', style: const TextStyle(fontSize: 18)),
         centerTitle: true,
         elevation: 6,
         shadowColor: Colors.black54,
@@ -36,13 +34,21 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
           statusBarBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.dark,
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              _showSaveDialog(context);
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
             child: PageView.builder(
               controller: _pageController,
-              itemCount: flashcards.length,
+              itemCount: widget.flashcard.items.length,
               onPageChanged: (index) {
                 setState(() {
                   _currentIndex = index;
@@ -51,9 +57,9 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
               itemBuilder: (context, index) {
                 return FlashCard(
                   key: PageStorageKey(index),
-                  index: index + 1, // Số thứ tự bắt đầu từ 1
-                  frontText: flashcards[index]["word"]!,
-                  backText: flashcards[index]["meaning"]!,
+                  index: index + 1,
+                  frontText: widget.flashcard.items[index].word,
+                  backText: widget.flashcard.items[index].shortmeaning,
                 );
               },
             ),
@@ -99,7 +105,7 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
                   ),
                 ),
                 TextButton.icon(
-                  onPressed: _currentIndex < flashcards.length - 1
+                  onPressed: _currentIndex < widget.flashcard.items.length - 1
                       ? () {
                     _pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
@@ -109,12 +115,12 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
                       : null,
                   icon: Icon(
                     Icons.arrow_forward,
-                    color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey,
+                    color: _currentIndex < widget.flashcard.items.length - 1 ? Colors.black : Colors.grey,
                   ),
                   label: Text(
                     "Sau",
                     style: TextStyle(
-                      color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey,
+                      color: _currentIndex < widget.flashcard.items.length - 1 ? Colors.black : Colors.grey,
                     ),
                   ),
                 ),
@@ -123,6 +129,46 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showSaveDialog(BuildContext context) {
+    final TextEditingController _nameController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Lưu Flashcard'),
+          content: TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(hintText: 'Nhập tên flashcard'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Hủy'),
+              onPressed: () {
+                flashcards.remove(widget.flashcard);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Lưu'),
+              onPressed: () {
+              setState(() {
+                widget.flashcard.title = _nameController.text;
+                flashcards.add(widget.flashcard);
+              });
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => FlashcardListPage(flashcards: flashcards),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

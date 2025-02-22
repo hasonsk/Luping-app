@@ -30,7 +30,7 @@ void main() {
       print('\n=== Results for "ni hao" search ===');
       for (var hint in results) {
         print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}');
+          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
       }
       print('Total results: ${results.length}\n');
 
@@ -51,7 +51,7 @@ void main() {
       print('\n=== Results for "你" search ===');
       for (var hint in results) {
         print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}');
+          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
       }
       print('Total results: ${results.length}\n');
 
@@ -72,7 +72,7 @@ void main() {
       print('\n=== Results for "hao" search ===');
       for (var hint in results) {
         print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}');
+          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
       }
       print('Total results: ${results.length}\n');
 
@@ -91,7 +91,7 @@ void main() {
       print('\n=== Results for "xin chào" search ===');
       for (var hint in results) {
         print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}');
+          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
       }
       print('Total results: ${results.length}\n');
 
@@ -117,7 +117,7 @@ void main() {
       final word = await searchService.getWord('你好');
 
       print(
-          'Word: ${word?.word}, Pinyin: ${word?.pinyin}, HanViet: ${word?.hanviet}, Meaning: ${word?.meaning}, ShortMeaning: ${word?.shortMeaning}');
+          'Word: ${word?.word}, Pinyin: ${word?.pinyin}, HanViet: ${word?.hanviet}, Meaning: ${word?.meaning}, shortmeaning: ${word?.shortmeaning}');
 
       expect(word, isNotNull, reason: "Không tìm thấy từ '你好'");
       expect(word?.word, equals('你好'));

@@ -48,7 +48,7 @@ class DatabaseService {
         hanzi: data['Hanzi'] ?? '',
         pinyin: data['Pinyin'] ?? '',
         hanViet: hanViet,
-        shortMeaning: data['ShortMeaning'] ?? '',
+        shortmeaning: data['shortmeaning'] ?? '',
       ));
       if (resultSet.length >= 10) {
         break;  // Stop processing if we have reached the limit of 10 documents

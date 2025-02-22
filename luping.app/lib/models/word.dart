@@ -7,7 +7,7 @@ class Word {
   final List<String>? cannghia;
   final List<String>? trainghia;
   final String? image;
-  final String? shortMeaning; // Đổi tên tham số thành shortMeaning
+  final String shortmeaning;
   final String? hskLevel;
 
   Word({
@@ -19,7 +19,7 @@ class Word {
     required this.cannghia,
     required this.trainghia,
     required this.image,
-    required this.shortMeaning, // Đổi tên tham số thành shortMeaning
+    required this.shortmeaning,
     required this.hskLevel,
   });
 
@@ -43,7 +43,7 @@ class Word {
       cannghia: convertToList(map['cannghia']),
       trainghia: convertToList(map['trainghia']),
       image: map['image'],
-      shortMeaning: map['shortMeaning'],
+      shortmeaning: map['shortmeaning'] ?? '',
       hskLevel: map['hskLevel'],
     );
   }
@@ -58,7 +58,7 @@ class Word {
       'cannghia': cannghia?.join(', ') ?? '',
       'trainghia': trainghia?.join(', ') ?? '',
       'image': image ?? '',
-      'shortMeaning': shortMeaning ?? '',
+      'shortmeaning': shortmeaning,
       'hskLevel': hskLevel ?? '',
     };
   }

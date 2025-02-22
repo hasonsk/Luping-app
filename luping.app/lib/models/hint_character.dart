@@ -4,13 +4,13 @@ class HintCharacter {
   final String hanzi;
   final String pinyin;
   final String hanViet;
-  final String shortMeaning;
+  final String shortmeaning;
 
   HintCharacter({
     required this.hanzi,
     required this.pinyin,
     required this.hanViet,
-    required this.shortMeaning,
+    required this.shortmeaning,
   });
 
   // Factory constructor to create a hintCharacter from Firestore document
@@ -20,7 +20,7 @@ class HintCharacter {
       hanzi: data['Hanzi'] ?? '',
       pinyin: data['Pinyin'] ?? '',
       hanViet: data['HanViet'] ?? '',
-      shortMeaning: data['ShortMeaning'] ?? '',
+      shortmeaning: data['shortmeaning'] ?? '',
     );
   }
 
@@ -29,7 +29,7 @@ class HintCharacter {
       hanzi: map['word'] ?? '',
       pinyin: map['pinyin'] ?? '',
       hanViet: map['hanviet'] ?? '',
-      shortMeaning: map['shortmeaning'] ?? '',
+      shortmeaning: map['shortmeaning'] ?? '',
     );
   }
 

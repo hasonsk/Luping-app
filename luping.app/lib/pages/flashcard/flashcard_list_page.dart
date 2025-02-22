@@ -13,7 +13,7 @@ class FlashcardListPage extends StatelessWidget {
   void _navigateToFlashcardPage(BuildContext context, Flashcard flashcard) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FlashcardContentPage()),
+      MaterialPageRoute(builder: (context) => FlashcardContentPage(flashcard: flashcard)),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/flashcard.dart';
+import 'package:hanjii/models/flashcard.dart';
+import '../models/word.dart';
 
 const String userId = "user_123";
 
@@ -11,17 +12,41 @@ final List<Flashcard> flashcards = [
     ownerId: userId,
     isPublic: true,
     items: [
-      FlashcardItem(
-        frontText: "谢谢 (xièxiè)",
-        backText: "Cảm ơn",
+      Word(
+        id: 1,
+        word: "谢谢",
+        pinyin: "xièxiè",
+        meaning: ["Cảm ơn"],
+        hanviet: "Tạ tạ",
+        cannghia: ["Đa tạ"],
+        trainghia: ["Không có gì"],
+        image: null,
+        shortmeaning: "Cảm ơn",
+        hskLevel: "1",
       ),
-      FlashcardItem(
-        frontText: "不客气 (bú kèqì)",
-        backText: "Không có gì",
+      Word(
+        id: 2,
+        word: "不客气",
+        pinyin: "bú kèqì",
+        meaning: ["Không có gì"],
+        hanviet: "Bất khách khí",
+        cannghia: ["Đừng khách sáo"],
+        trainghia: ["Cảm ơn"],
+        image: null,
+        shortmeaning: "Không có gì",
+        hskLevel: "1",
       ),
-      FlashcardItem(
-        frontText: "你好 (nǐ hǎo)",
-        backText: "Xin chào",
+      Word(
+        id: 3,
+        word: "你好",
+        pinyin: "nǐ hǎo",
+        meaning: ["Xin chào"],
+        hanviet: "Nhĩ hảo",
+        cannghia: ["Chào"],
+        trainghia: [],
+        image: null,
+        shortmeaning: "Xin chào",
+        hskLevel: "1",
       ),
     ],
   ),
@@ -32,38 +57,29 @@ final List<Flashcard> flashcards = [
     ownerId: userId,
     isPublic: false,
     items: [
-      FlashcardItem(
-        frontText: "今天 (jīntiān)",
-        backText: "Hôm nay",
+      Word(
+        id: 4,
+        word: "今天",
+        pinyin: "jīntiān",
+        meaning: ["Hôm nay"],
+        hanviet: "Kim thiên",
+        cannghia: ["Ngày này"],
+        trainghia: ["Hôm qua"],
+        image: null,
+        shortmeaning: "Hôm nay",
+        hskLevel: "2",
       ),
-      FlashcardItem(
-        frontText: "明天 (míngtiān)",
-        backText: "Ngày mai",
-      ),
-      FlashcardItem(
-        frontText: "昨天 (zuótiān)",
-        backText: "Hôm qua",
-      ),
-    ],
-  ),
-  Flashcard(
-    id: "flashcard_003",
-    title: "Basic Chinese Phrases",
-    createdAt: DateTime.now().subtract(const Duration(days: 30)),
-    ownerId: "user_456", // Một user khác
-    isPublic: true,
-    items: [
-      FlashcardItem(
-        frontText: "请问 (qǐngwèn)",
-        backText: "Xin hỏi",
-      ),
-      FlashcardItem(
-        frontText: "对不起 (duìbuqǐ)",
-        backText: "Xin lỗi",
-      ),
-      FlashcardItem(
-        frontText: "没关系 (méi guānxi)",
-        backText: "Không sao",
+      Word(
+        id: 5,
+        word: "明天",
+        pinyin: "míngtiān",
+        meaning: ["Ngày mai"],
+        hanviet: "Minh thiên",
+        cannghia: ["Tương lai"],
+        trainghia: ["Hôm qua"],
+        image: null,
+        shortmeaning: "Ngày mai",
+        hskLevel: "2",
       ),
     ],
   ),

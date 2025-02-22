@@ -23,7 +23,7 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
     flashcards = widget.vocabularies.map((word) {
       return {
         "word": word.word,
-        "meaning": word.shortMeaning ?? (word.meaning?.join(", ") ?? ""),
+        "meaning": word.shortmeaning,
         "status": false,
       };
     }).toList();

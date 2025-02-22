@@ -50,18 +50,18 @@ class SearchService {
       // Mỗi trường nếu khớp chính xác với chuỗi tìm kiếm không khoảng trắng sẽ nhận bonus cao
       final String exactBonusClause = """
       (
-        CASE WHEN REPLACE(word, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyinQuery, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
+        CASE WHEN REPLACE(word, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
+        CASE WHEN REPLACE(pinyinQuery, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
+        CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
         CASE WHEN REPLACE(hanviet, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END
       )
       """;
 
       final String partialBonusClause = """
       (
-        CASE WHEN REPLACE(word, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyinQuery, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
+        CASE WHEN REPLACE(word, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
+        CASE WHEN REPLACE(pinyinQuery, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
+        CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
         CASE WHEN REPLACE(hanviet, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END
       )
       """;
@@ -73,32 +73,32 @@ class SearchService {
       // - Substring match: nếu trường chứa token, điểm số thấp nhất
       final List<String> scoreParts = tokens.map((token) => """
       (
-        CASE 
-          WHEN REPLACE(word, '​', '') = '$token' THEN 20 
-          WHEN REPLACE(word, '​', '') LIKE '$token%' THEN 15 
-          WHEN REPLACE(word, '​', '') LIKE '%$token%' THEN 10 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(word, '​', '') = '$token' THEN 20
+          WHEN REPLACE(word, '​', '') LIKE '$token%' THEN 15
+          WHEN REPLACE(word, '​', '') LIKE '%$token%' THEN 10
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(pinyinQuery, '​', '') = '$token' THEN 16 
-          WHEN REPLACE(pinyinQuery, '​', '') LIKE '$token%' THEN 12 
-          WHEN REPLACE(pinyinQuery, '​', '') LIKE '%$token%' THEN 8 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(pinyinQuery, '​', '') = '$token' THEN 16
+          WHEN REPLACE(pinyinQuery, '​', '') LIKE '$token%' THEN 12
+          WHEN REPLACE(pinyinQuery, '​', '') LIKE '%$token%' THEN 8
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(meaning, '​', '') = '$token' THEN 12 
-          WHEN REPLACE(meaning, '​', '') LIKE '$token%' THEN 9 
-          WHEN REPLACE(meaning, '​', '') LIKE '%$token%' THEN 6 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(meaning, '​', '') = '$token' THEN 12
+          WHEN REPLACE(meaning, '​', '') LIKE '$token%' THEN 9
+          WHEN REPLACE(meaning, '​', '') LIKE '%$token%' THEN 6
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(hanviet, '​', '') = '$token' THEN 10 
-          WHEN REPLACE(hanviet, '​', '') LIKE '$token%' THEN 7 
-          WHEN REPLACE(hanviet, '​', '') LIKE '%$token%' THEN 5 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(hanviet, '​', '') = '$token' THEN 10
+          WHEN REPLACE(hanviet, '​', '') LIKE '$token%' THEN 7
+          WHEN REPLACE(hanviet, '​', '') LIKE '%$token%' THEN 5
+          ELSE 0
         END
       )
       """).toList();
@@ -123,11 +123,11 @@ class SearchService {
 
       // 5. Tạo câu truy vấn SQL với proper formatting
       final String sql = """
-      SELECT 
+      SELECT
         *,
         $totalScoreClause AS relevance
       FROM Words
-      WHERE 
+      WHERE
         $whereClause
       ORDER BY relevance DESC
       LIMIT $MAX_RESULTS
@@ -243,18 +243,18 @@ class SearchService {
       // Mỗi trường nếu khớp chính xác với chuỗi tìm kiếm không khoảng trắng sẽ nhận bonus cao
       final String exactBonusClause = """
       (
-        CASE WHEN REPLACE(sentence, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyin, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
+        CASE WHEN REPLACE(sentence, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
+        CASE WHEN REPLACE(pinyin, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
+        CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
         CASE WHEN REPLACE(searchquery, '​', ' ') = '$normalizedQuery' THEN 150 ELSE 0 END
       )
       """;
 
       final String partialBonusClause = """
       (
-        CASE WHEN REPLACE(sentence, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyin, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
+        CASE WHEN REPLACE(sentence, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
+        CASE WHEN REPLACE(pinyin, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
+        CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
         CASE WHEN REPLACE(searchquery, '​', ' ') LIKE '%$normalizedQuery%' THEN 100 ELSE 0 END
       )
       """;
@@ -266,32 +266,32 @@ class SearchService {
       // - Substring match: nếu trường chứa token, điểm số thấp nhất
       final List<String> scoreParts = tokens.map((token) => """
       (
-        CASE 
-          WHEN REPLACE(sentence, '​', '') = '$token' THEN 20 
-          WHEN REPLACE(sentence, '​', '') LIKE '$token%' THEN 15 
-          WHEN REPLACE(sentence, '​', '') LIKE '%$token%' THEN 10 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(sentence, '​', '') = '$token' THEN 20
+          WHEN REPLACE(sentence, '​', '') LIKE '$token%' THEN 15
+          WHEN REPLACE(sentence, '​', '') LIKE '%$token%' THEN 10
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(pinyin, '​', '') = '$token' THEN 16 
-          WHEN REPLACE(pinyin, '​', '') LIKE '$token%' THEN 12 
-          WHEN REPLACE(pinyin, '​', '') LIKE '%$token%' THEN 8 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(pinyin, '​', '') = '$token' THEN 16
+          WHEN REPLACE(pinyin, '​', '') LIKE '$token%' THEN 12
+          WHEN REPLACE(pinyin, '​', '') LIKE '%$token%' THEN 8
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(meaning, '​', '') = '$token' THEN 12 
-          WHEN REPLACE(meaning, '​', '') LIKE '$token%' THEN 9 
-          WHEN REPLACE(meaning, '​', '') LIKE '%$token%' THEN 6 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(meaning, '​', '') = '$token' THEN 12
+          WHEN REPLACE(meaning, '​', '') LIKE '$token%' THEN 9
+          WHEN REPLACE(meaning, '​', '') LIKE '%$token%' THEN 6
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(searchquery, '​', '') = '$token' THEN 30 
-          WHEN REPLACE(searchquery, '​', '') LIKE '$token%' THEN 25 
-          WHEN REPLACE(searchquery, '​', '') LIKE '%$token%' THEN 20 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(searchquery, '​', '') = '$token' THEN 30
+          WHEN REPLACE(searchquery, '​', '') LIKE '$token%' THEN 25
+          WHEN REPLACE(searchquery, '​', '') LIKE '%$token%' THEN 20
+          ELSE 0
         END
       )
       """).toList();
@@ -316,11 +316,11 @@ class SearchService {
 
       // 5. Tạo câu truy vấn SQL với proper formatting
       final String sql = """
-      SELECT 
+      SELECT
         *,
         $totalScoreClause AS relevance
       FROM Sentences
-      WHERE 
+      WHERE
         $whereClause
       ORDER BY relevance DESC
       LIMIT $MAX_RESULTS
@@ -398,6 +398,7 @@ class SearchService {
   }
 
   Future<List<Word>?> fetchWordList(List<String> wordList) async {
+    print(wordList);
     try {
       final db = await _db;
 
@@ -424,7 +425,7 @@ class SearchService {
       final String whereClause = generateWhereClause(wordList);
 
       final String sql = """
-      SELECT 
+      SELECT
         *
       FROM Words $whereClause
       """;
