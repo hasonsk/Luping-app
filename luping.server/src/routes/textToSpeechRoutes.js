@@ -34,8 +34,6 @@ const router = Router();
  *             schema:
  *               type: string
  *               format: binary
- *             example:
- *               $ref: '#/components/examples/audioFile'
  *       400:
  *         description: Bad request (e.g., missing text)
  *       500:

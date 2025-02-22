@@ -31,21 +31,6 @@ class AudioScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 10),
-              // Row(
-              //   children: [
-              //     const Icon(Icons.add_circle_outline, color: Colors.green, size: 20),
-              //     const SizedBox(width: 10),
-              //     Text(
-              //       'Bài ${lesson.index} :',
-              //       style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              //     ),
-              //     SizedBox(width: 10,),
-              //     Text(
-              //       '${lesson.title}',
-              //       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              //     )
-              //   ],
-              // ),
               Row(
                 children: [
                   Container(

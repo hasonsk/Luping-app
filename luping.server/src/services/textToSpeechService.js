@@ -11,17 +11,17 @@ const sanitizeText = (text) => {
   // Unicode range for common CJK Unified Ideographs (covers most Chinese characters)
   const chineseRegex = /[\u4E00-\u9FA5]/;
 
-  let sanitized = '';
+  let sanitized = "";
   for (const char of text.toLowerCase()) {
-      if (/[a-z0-9]/.test(char) || chineseRegex.test(char)) {
-          sanitized += char;
-      } else {
-          sanitized += '-';
-      }
+    if (/[a-z0-9]/.test(char) || chineseRegex.test(char)) {
+      sanitized += char;
+    } else {
+      sanitized += "-";
+    }
   }
 
   // Remove leading/trailing hyphens and collapse multiple hyphens
-  sanitized = sanitized.replace(/^-+|-+$/g, '').replace(/-+/g, '-');
+  sanitized = sanitized.replace(/^-+|-+$/g, "").replace(/-+/g, "-");
   return sanitized;
 };
 
@@ -60,8 +60,11 @@ const textToSpeech = async (text) => {
           try {
             const stats = await fs.stat(filePath);
             logger.info(`WAV file size: ${stats.size}`);
-            if (stats.size < 100) { // Arbitrary threshold; adjust if needed
-              throw new Error("Synthesized audio file is too small or invalid.");
+            if (stats.size < 100) {
+              // Arbitrary threshold; adjust if needed
+              throw new Error(
+                "Synthesized audio file is too small or invalid."
+              );
             }
           } catch (statError) {
             logger.error(`WAV file validation error: ${statError.message}`);
