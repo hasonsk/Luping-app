@@ -5,14 +5,14 @@ class QuestionForm extends StatefulWidget {
   final Map<String, String> question;
   final List<Map<String, String>> allOptions;
   final Function(bool) onNextQuestion;
-  final bool showImages; // Trạng thái hiển thị ảnh
+  final bool showImages;
 
   const QuestionForm({
     super.key,
     required this.question,
     required this.allOptions,
     required this.onNextQuestion,
-    required this.showImages, // Nhận trạng thái từ `KanjivocabTestScreen`
+    required this.showImages,
   });
 
   @override
@@ -120,7 +120,7 @@ class _QuestionFormState extends State<QuestionForm> {
             'Từ nào sau đây có nghĩa là: "${widget.question["meaning"]!}"',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 20,),
+          const SizedBox(height: 20),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -138,7 +138,7 @@ class _QuestionFormState extends State<QuestionForm> {
               style: OutlinedButton.styleFrom(
                 side: BorderSide(
                   color: _selectedAnswer == _options[index]["word"] ? Colors.blue : Colors.grey,
-                  width: _selectedAnswer == _options[index]["word"] ? 2.5 : 1, // Tăng độ dày khi được chọn
+                  width: _selectedAnswer == _options[index]["word"] ? 2.5 : 1,
                 ),
                 padding: const EdgeInsets.all(12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -149,11 +149,11 @@ class _QuestionFormState extends State<QuestionForm> {
                     flex: 3,
                     child: widget.showImages
                         ? Image.network(
-                      _options[index]["imgURL"]!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 40, color: Colors.grey),
-                    )
-                        : const Icon(Icons.image_not_supported, size: 40, color: Colors.grey), // Nếu ẩn ảnh, hiển thị icon
+                            _options[index]["image"]!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                          )
+                        : const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
                   ),
                   Expanded(
                     flex: 1,
