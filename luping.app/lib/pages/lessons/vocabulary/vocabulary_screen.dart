@@ -196,7 +196,7 @@ class VocabularyScreen extends StatelessWidget {
       child: Center(
         child: Text(
           vocab,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
       ),
