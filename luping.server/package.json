@@ -42,6 +42,7 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "@types/morgan": "^1.9.9",
     "express-validator": "^7.2.0",
     "mongodb-memory-server": "^10.1.2",
     "nodemon": "^3.1.7",

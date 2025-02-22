@@ -6,11 +6,11 @@ services:
     container_name: mongodb
     restart: always
     ports:
-      - "27018:27017"
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: kantanlunch_db
+      MONGO_INITDB_DATABASE: luping_db
     volumes:
       - mongo-data:/data/db
 
@@ -38,5 +38,36 @@ services:
     volumes:
       - .:/usr/src/app
 
+  loki:
+    image: grafana/loki:2.9.1
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config/local-config.yaml:/etc/loki/local-config.yaml # Correctly mount Loki config
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.9.1
+    container_name: promtail
+    volumes:
+      - ./promtail-config/promtail-config.yaml:/etc/promtail/promtail-config.yaml # Correctly mount Promtail config
+      - ./logs:/var/log # Ensure logs directory is mounted
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    depends_on:
+      - loki
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - loki
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
 volumes:
   mongo-data:
+  grafana-data:
