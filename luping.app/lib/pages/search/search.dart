@@ -202,7 +202,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         setState(() {
           wordData = [];
           hanziData = [];
-          sentenceData = result;
+          sentenceData = result ?? [];
           imageData = [];
         });
         break;
@@ -246,7 +246,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         if (sentenceData.isEmpty) {
           var result = await _searchService.getSentence(text);
           setState(() {
-            sentenceData = result;
+            sentenceData = result ?? [];
           });
         }
         break;

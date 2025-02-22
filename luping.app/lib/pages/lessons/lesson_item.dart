@@ -137,13 +137,13 @@ class _LessonItemState extends State<LessonItem> {
                         title: '1.2 Học tại lớp',
                         buttons: [
                           _buildButton(context, 'Hội thoại', () => _navigateToConverScreen(context)),
+                          _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
                         ],
                       ),
                       SizedBox(width: 20),
                       _buildSection(
                         title: '1.3 Ôn tại nhà',
                         buttons: [
-                          _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
                           _buildButton(context, 'Tham khảo', () => _navigateToReferScreen(context)),
                         ],
                       ),
