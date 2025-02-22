@@ -25,39 +25,55 @@ class _LessonItemState extends State<LessonItem> {
   }
 
   void _navigateToKanjiScreen(BuildContext context) {
-    Navigator.push(
+    _navigateWithFadeTransition(
       context,
-      MaterialPageRoute(builder: (context) => VocabularyScreen(lessonPosition: widget.lesson.lessonPosition, vocabularies: widget.lesson.kanji, title: "Hán tự",)),
+      VocabularyScreen(
+        lessonPosition: widget.lesson.lessonPosition,
+        vocabularies: widget.lesson.kanji,
+        title: "Hán tự",
+      ),
     );
   }
 
   void _navigateToVocabularyScreen(BuildContext context) {
-    Navigator.push(
+    _navigateWithFadeTransition(
       context,
-      MaterialPageRoute(builder: (context) => VocabularyScreen(lessonPosition: widget.lesson.lessonPosition, vocabularies: widget.lesson.vocabulary, title: "Từ vựng",)),
+      VocabularyScreen(
+        lessonPosition: widget.lesson.lessonPosition,
+        vocabularies: widget.lesson.vocabulary,
+        title: "Từ vựng",
+      ),
     );
   }
 
   void _navigateToAudioScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AudioScreen(lesson: widget.lesson)),
-    );
+    _navigateWithFadeTransition(context, AudioScreen(lesson: widget.lesson));
   }
 
   void _navigateToConverScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ConversationScreen(lesson: widget.lesson)),
-    );
+    _navigateWithFadeTransition(context, ConversationScreen(lesson: widget.lesson));
   }
 
   void _navigateToReferScreen(BuildContext context) {
+    _navigateWithFadeTransition(context, ReferenceScreen(lesson: widget.lesson));
+  }
+
+// Hàm chung để thêm hiệu ứng fade-in khi chuyển màn hình
+  void _navigateWithFadeTransition(BuildContext context, Widget screen) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ReferenceScreen(lesson: widget.lesson)),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => screen,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+      ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -121,13 +137,13 @@ class _LessonItemState extends State<LessonItem> {
                         title: '1.2 Học tại lớp',
                         buttons: [
                           _buildButton(context, 'Hội thoại', () => _navigateToConverScreen(context)),
+                          _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
                         ],
                       ),
                       SizedBox(width: 20),
                       _buildSection(
                         title: '1.3 Ôn tại nhà',
                         buttons: [
-                          _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
                           _buildButton(context, 'Tham khảo', () => _navigateToReferScreen(context)),
                         ],
                       ),
