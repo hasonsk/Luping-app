@@ -261,8 +261,28 @@ void main() {
   });
 
   group('Test fetchWordList', () {
-    test('Get WordList for "你" should return correct data', () async {
+    test('Get WordList for "焵, 涙" should return correct data', () async {
       final wordList = await searchService.fetchWordList(['焵', '涙']);
+
+      if (wordList == null) {
+        print('wordList empty');
+        return;
+      }
+
+      for (var word in wordList) {
+        print("Word Details for '${word.word}':");
+        print("Pinyin: ${word?.pinyin}");
+        print("Meaning: ${word?.meaning}");
+        print("HanViet: ${word?.hanviet}");
+        print("Cannghia: ${word?.cannghia}");
+        print("Trainghia: ${word?.trainghia}");
+        print("Image: ${word?.image}");
+        print('');
+      }
+    });
+
+    test('Get WordList for "luping" should return null', () async {
+      final wordList = await searchService.fetchWordList(['luping']);
 
       if (wordList == null) {
         print('wordList empty');
