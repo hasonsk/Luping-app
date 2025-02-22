@@ -219,7 +219,7 @@ class SearchService {
     }
   }
 
-  Future<List<Sentence>> getSentence(String searchWord) async {
+  Future<List<Sentence>?> getSentence(String searchWord) async {
     try {
       final db = await _db;
 
@@ -394,6 +394,50 @@ class SearchService {
     } catch (e) {
       logger.e("Error in getStoryDetails: $e");
       return null;
+    }
+  }
+
+  Future<List<Word>?> fetchWordList(List<String> wordList) async {
+    try {
+      final db = await _db;
+
+      // sw
+      // 1. Chuẩn hóa input: loại bỏ ZWSP và khoảng trắng thừa
+      String normalizeText(String text) {
+        return text
+            .replaceAll('\u200B', '')
+            .replaceAll(RegExp(r'\s+'), ' ')
+            .trim();
+      }
+
+      for (int i = 0; i < wordList.length; i++) {
+        wordList[i] = normalizeText(wordList[i]);
+      }
+
+      String generateWhereClause(List<String> wordList) {
+        // Return empty if no words provided
+        if (wordList.isEmpty) return '';
+
+        String formattedWords = wordList.map((word) => "'$word'").join(', ');
+        return "word IN ($formattedWords)";
+      }
+
+      final String whereClause = generateWhereClause(wordList);
+
+      final String sql = """
+      SELECT 
+        *
+      FROM Words
+      WHERE 
+        $whereClause
+      """;
+
+      // 6. Thực thi truy vấn
+      final List<Map<String, dynamic>> results = await db.rawQuery(sql);
+      return results.map((row) => Word.fromMap(row)).toList();
+    } catch (e) {
+      logger.e('Error occurred while fetching word list: $e');
+      return [];
     }
   }
 
