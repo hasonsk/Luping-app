@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'auth_header.dart';
 import 'login_form.dart';
 import 'signup_form.dart';
 
 class AuthPage extends StatefulWidget {
-  final bool initialMode;
 
-  const AuthPage({super.key, this.initialMode = true});
+  const AuthPage({super.key});
 
   @override
   _AuthPageState createState() => _AuthPageState();
@@ -18,7 +19,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void initState() {
     super.initState();
-    _isLoginMode = widget.initialMode;
+    _isLoginMode = Get.arguments['isLoginMode'];
   }
 
   @override

@@ -262,7 +262,7 @@ void main() {
 
   group('Test fetchWordList', () {
     test('Get WordList for "焵, 涙" should return correct data', () async {
-      final wordList = await searchService.fetchWordList(['焵', '涙']);
+      final wordList = await searchService.fetchWordList(['焵', 'abc']);
 
       if (wordList == null) {
         print('wordList empty');
@@ -277,6 +277,7 @@ void main() {
         print("Cannghia: ${word?.cannghia}");
         print("Trainghia: ${word?.trainghia}");
         print("Image: ${word?.image}");
+        print("Short meaning: ${word.shortmeaning}");
         print('');
       }
     });
