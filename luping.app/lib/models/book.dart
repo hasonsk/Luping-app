@@ -1,4 +1,4 @@
-import 'package:hanjii/models/lesson.dart';
+import 'package:luping/models/lesson.dart';
 
 class Book {
   final int bookId;

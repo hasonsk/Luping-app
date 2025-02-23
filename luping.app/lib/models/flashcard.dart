@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hanjii/models/word.dart';
+import 'package:luping/models/word.dart';
 import 'flashcard_item.dart';
 
 class Flashcard {

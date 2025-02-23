@@ -4,13 +4,13 @@ import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hanjii/pages/profile.dart';
+import 'package:luping/pages/profile.dart';
 import '../../widgets/banner_slider.dart';
 import '../../widgets/search_container.dart';
 import '../../widgets/shimmer_image_grid.dart';
 import '../note.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:hanjii/pages/search/search.dart';
+import 'package:luping/pages/search/search.dart';
 
 class Home extends StatefulWidget {
   final ValueChanged<bool> onBottomNavVisibilityChanged;
@@ -51,12 +51,14 @@ class _HomeState extends State<Home> {
             ? Row(
                 children: [
                   _buildAppBarButton(
-                    onPressed: () => Get.toNamed('/authpage', arguments: {'isLoginMode': true}),
+                    onPressed: () => Get.toNamed('/authpage',
+                        arguments: {'isLoginMode': true}),
                     text: 'Đăng nhập',
                     isElevated: true,
                   ),
                   _buildAppBarButton(
-                    onPressed: () => Get.toNamed('/authpage', arguments: {'isLoginMode': false}),
+                    onPressed: () => Get.toNamed('/authpage',
+                        arguments: {'isLoginMode': false}),
                     text: 'Đăng ký',
                     isElevated: false,
                   ),
@@ -69,11 +71,11 @@ class _HomeState extends State<Home> {
                       context,
                       MaterialPageRoute(builder: (context) => Profile()),
                     );
-                    } else if (value == 'logout') {
+                  } else if (value == 'logout') {
                     FirebaseAuth.instance.signOut().then((_) {
                       Get.offAllNamed('/');
                     });
-                    }
+                  }
                 },
                 itemBuilder: (BuildContext context) {
                   return [
@@ -88,9 +90,11 @@ class _HomeState extends State<Home> {
                   ];
                 },
                 icon: CircleAvatar(
-                  backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
-                      ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
-                      : AssetImage('/images/default_avatar.png'),
+                  backgroundImage:
+                      FirebaseAuth.instance.currentUser?.photoURL != null
+                          ? NetworkImage(
+                              FirebaseAuth.instance.currentUser!.photoURL!)
+                          : AssetImage('/images/default_avatar.png'),
                 ),
               ),
         const Expanded(child: SizedBox()),
@@ -143,28 +147,31 @@ class _HomeState extends State<Home> {
       padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
       child: isElevated
           ? ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          minimumSize: const Size(30, 30),
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-        ),
-        child: Text(
-          text!,
-          style: const TextStyle(fontSize: 12.0, color: Colors.black),
-        ),
-      )
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                minimumSize: const Size(30, 30),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0)),
+              ),
+              child: Text(
+                text!,
+                style: const TextStyle(fontSize: 12.0, color: Colors.black),
+              ),
+            )
           : TextButton(
-        onPressed: onPressed,
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        ),
-        child: Text(
-          text!,
-          style: const TextStyle(fontSize: 12.0, color: Colors.black),
-        ),
-      ),
+              onPressed: onPressed,
+              style: TextButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              ),
+              child: Text(
+                text!,
+                style: const TextStyle(fontSize: 12.0, color: Colors.black),
+              ),
+            ),
     );
   }
 
@@ -260,14 +267,17 @@ class _HomeState extends State<Home> {
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4.0),
                         minimumSize: const Size(0, 30),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)),
                         backgroundColor: Colors.white,
                       ),
                       child: Text(
                         item,
-                        style: const TextStyle(fontSize: 12, color: Colors.black87),
+                        style: const TextStyle(
+                            fontSize: 12, color: Colors.black87),
                       ),
                     ),
                   );
@@ -300,11 +310,13 @@ class _HomeState extends State<Home> {
             const SizedBox(height: 20),
             const Text('Các chức năng khác', style: TextStyle(fontSize: 15)),
             const SizedBox(height: 20),
-            _buildSectionTitle('HSK', Colors.green, 'assets/twobird_ic (1).png'),
+            _buildSectionTitle(
+                'HSK', Colors.green, 'assets/twobird_ic (1).png'),
             const SizedBox(height: 15),
             const ShimmerImageGrid(),
             const SizedBox(height: 15),
-            _buildSectionTitle('Bạn bè', Colors.purple, 'assets/goccay_icon_1 (1).png'),
+            _buildSectionTitle(
+                'Bạn bè', Colors.purple, 'assets/goccay_icon_1 (1).png'),
             const SizedBox(height: 15),
             const SizedBox(height: 100),
             const Center(
@@ -371,9 +383,9 @@ class _HomeState extends State<Home> {
   }
 }
 
-
 class NoGlowScrollBehavior extends ScrollBehavior {
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
     return child;
   }
 }

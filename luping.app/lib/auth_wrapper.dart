@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hanjii/pages/auth/auth_page.dart';
-import 'package:hanjii/pages/main_screen.dart';
+import 'package:luping/pages/auth/auth_page.dart';
+import 'package:luping/pages/main_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
   @override

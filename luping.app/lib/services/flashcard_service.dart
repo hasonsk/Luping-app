@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hanjii/models/flashcard.dart';
+import 'package:luping/models/flashcard.dart';
 import '../models/word.dart';
 
 const String userId = "user_123";

@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hanjii/data/database_helper.dart';
-import 'package:hanjii/services/search_service.dart';
+import 'package:luping/data/database_helper.dart';
+import 'package:luping/services/search_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
@@ -30,7 +30,7 @@ void main() {
       print('\n=== Results for "ni hao" search ===');
       for (var hint in results) {
         print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
+            'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
       }
       print('Total results: ${results.length}\n');
 
@@ -51,7 +51,7 @@ void main() {
       print('\n=== Results for "你" search ===');
       for (var hint in results) {
         print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
+            'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
       }
       print('Total results: ${results.length}\n');
 
@@ -72,7 +72,7 @@ void main() {
       print('\n=== Results for "hao" search ===');
       for (var hint in results) {
         print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
+            'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
       }
       print('Total results: ${results.length}\n');
 
@@ -91,7 +91,7 @@ void main() {
       print('\n=== Results for "xin chào" search ===');
       for (var hint in results) {
         print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
+            'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
       }
       print('Total results: ${results.length}\n');
 
@@ -248,7 +248,8 @@ void main() {
 
     test('Get story detail for non-existent character should return null',
         () async {
-      final story = await searchService.getStoryDetails('龘'); // A rare character
+      final story =
+          await searchService.getStoryDetails('龘'); // A rare character
       expect(story, isNull,
           reason: 'Should return null for non-existent story');
     });

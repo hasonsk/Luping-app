@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hanjii/models/sentence.dart';
+import 'package:luping/models/sentence.dart';
 
 class SearchSentencesView extends StatelessWidget {
   final List<Sentence> list;
@@ -30,24 +30,30 @@ class SearchSentencesView extends StatelessWidget {
                           Expanded(
                             child: Text(
                               item.sentences,
-                              style: const TextStyle(fontSize: 18, color: Colors.red),
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.red),
                             ),
                           ),
                           const SizedBox(width: 10),
-                          const Icon(Icons.volume_up_outlined, size: 20, color: Colors.grey),
+                          const Icon(Icons.volume_up_outlined,
+                              size: 20, color: Colors.grey),
                         ],
                       ),
-                      const SizedBox(height: 4), // Khoảng cách giữa sentence và pinyin
+                      const SizedBox(
+                          height: 4), // Khoảng cách giữa sentence và pinyin
                       Text(
                         item.pinyin,
-                        style: const TextStyle(fontSize: 14, color: Colors.orange),
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.orange),
                       ),
-                      const SizedBox(height: 8), // Khoảng cách giữa Pinyin và Meaning
+                      const SizedBox(
+                          height: 8), // Khoảng cách giữa Pinyin và Meaning
 
                       /// Nghĩa tiếng Việt
                       Text(
                         item.meaning,
-                        style: const TextStyle(fontSize: 14, color: Colors.black),
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.black),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:hanjii/models/hint_story.dart';
+import 'package:luping/models/hint_story.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../models/hint_character.dart';
 import '../../models/story.dart';
@@ -62,7 +62,6 @@ class _SearchStoryViewState extends State<SearchStoryView> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -77,12 +76,13 @@ class _SearchStoryViewState extends State<SearchStoryView> {
               if (_selectedCards[index] == true) {
                 return _isLoading
                     ? Padding(
-                      padding: const EdgeInsets.all(.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    ) // Hiển thị loading khi gọi API
+                        padding: const EdgeInsets.all(.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      ) // Hiển thị loading khi gọi API
                     : _selectedStory != null
-                    ? buildCardDetailHan(_selectedStory!) // Hiển thị chi tiết khi có dữ liệu
-                    : const Center(child: Text("Không tìm thấy dữ liệu"));
+                        ? buildCardDetailHan(
+                            _selectedStory!) // Hiển thị chi tiết khi có dữ liệu
+                        : const Center(child: Text("Không tìm thấy dữ liệu"));
               }
 
               return InkWell(
@@ -101,11 +101,13 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                               children: [
                                 Container(
                                   constraints: BoxConstraints(
-                                    maxWidth: MediaQuery.of(context).size.width * 0.5,
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width * 0.5,
                                   ),
                                   child: Text(
                                     item.character,
-                                    style: const TextStyle(fontSize: 30, color: Colors.red),
+                                    style: const TextStyle(
+                                        fontSize: 30, color: Colors.red),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -113,17 +115,20 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                                 const SizedBox(width: 15),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         item.hanviet,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
-                                        style: const TextStyle(fontSize: 14, color: Colors.purple),
+                                        style: const TextStyle(
+                                            fontSize: 14, color: Colors.purple),
                                       ),
                                       Text(
                                         item.pinyin,
-                                        style: const TextStyle(fontSize: 14, color: Colors.orange),
+                                        style: const TextStyle(
+                                            fontSize: 14, color: Colors.orange),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                       ),
@@ -134,7 +139,8 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                             ),
                             Text(
                               item.meaning.join(', '),
-                              style: const TextStyle(fontSize: 14, color: Colors.black),
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.black),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
                             ),
@@ -174,7 +180,6 @@ class _SearchStoryViewState extends State<SearchStoryView> {
     );
   }
 
-
   Card buildCardDetailHan(Story story) {
     return Card(
       color: Colors.white,
@@ -198,17 +203,21 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                     height: 100,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/tian_black.png'), // Đặt đường dẫn ảnh
-                        fit: BoxFit.cover, // Căn chỉnh ảnh nền (cover, contain, fill,...)
+                        image: AssetImage(
+                            'assets/tian_black.png'), // Đặt đường dẫn ảnh
+                        fit: BoxFit
+                            .cover, // Căn chỉnh ảnh nền (cover, contain, fill,...)
                       ),
-                      border: Border.all(color: Colors.grey, width: 0.5), // Viền xung quanh
+                      border: Border.all(
+                          color: Colors.grey, width: 0.5), // Viền xung quanh
                       borderRadius: BorderRadius.circular(8), // Bo góc nếu cần
                     ),
                     padding: EdgeInsets.all(8), // Tạo khoảng cách với viền
                     child: Center(
                       child: Text(
                         '${story.character}',
-                        style: TextStyle(fontSize: 60, color: Colors.green.shade400),
+                        style: TextStyle(
+                            fontSize: 60, color: Colors.green.shade400),
                       ),
                     ),
                   ),
@@ -295,16 +304,20 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                         const SizedBox(height: 5),
                       ],
                       Column(
-                        children: (story.bothanhphan ?? []) // Nếu null, thay bằng danh sách rỗng
+                        children: (story.bothanhphan ??
+                                []) // Nếu null, thay bằng danh sách rỗng
                             .asMap()
-                            .map((index, value) => MapEntry(index, buildTProw(index + 1, value)))
+                            .map((index, value) =>
+                                MapEntry(index, buildTProw(index + 1, value)))
                             .values
                             .toList(),
                       ),
                       const SizedBox(height: 20),
                       Container(
                         margin: EdgeInsets.only(right: 100),
-                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 100), // Giới hạn chiều rộng tối đa
+                        constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width -
+                                100), // Giới hạn chiều rộng tối đa
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -326,10 +339,12 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                               padding: const EdgeInsets.only(bottom: 0.5),
                               child: Wrap(
                                 spacing: 8, // Khoảng cách giữa các phần tử
-                                runSpacing: 4, // Khoảng cách giữa các dòng khi xuống dòng
+                                runSpacing:
+                                    4, // Khoảng cách giữa các dòng khi xuống dòng
                                 children: (story.meaning ?? [])
                                     .asMap()
-                                    .map((index, value) => MapEntry(index, buildTProwMean(index + 1, value)))
+                                    .map((index, value) => MapEntry(index,
+                                        buildTProwMean(index + 1, value)))
                                     .values
                                     .toList(),
                               ),
@@ -337,34 +352,33 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           ],
                         ),
                       ),
-
                     ],
                   ),
                   Positioned(
                       bottom: 0,
                       right: 0,
                       child: Container(
-                        height: 80,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey, // Màu viền
-                            width: 0.5, // Độ dày viền
+                          height: 80,
+                          width: 80,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey, // Màu viền
+                              width: 0.5, // Độ dày viền
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(4.0), // Bo góc viền
                           ),
-                          borderRadius:
-                          BorderRadius.circular(4.0), // Bo góc viền
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0), // Bo góc cho ảnh
-                          child: Image.network(
-                            story.image ?? '', // Tránh lỗi nếu image là null
-                            width: 60,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const SizedBox(); // Ẩn ảnh nếu lỗi
-                            },
-                          ),
-                        )
-                      ))
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(8.0), // Bo góc cho ảnh
+                            child: Image.network(
+                              story.image ?? '', // Tránh lỗi nếu image là null
+                              width: 60,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const SizedBox(); // Ẩn ảnh nếu lỗi
+                              },
+                            ),
+                          )))
                 ],
               ),
               const SizedBox(
@@ -424,7 +438,8 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                 color: Colors.grey[100],
                 padding: EdgeInsets.all(8.0),
                 child: Html(
-                  data: '<span style="font-size: 12.5px;">${story.mnemonic_v_content}</span>',
+                  data:
+                      '<span style="font-size: 12.5px;">${story.mnemonic_v_content}</span>',
                   style: {
                     "span": Style(
                       fontSize: FontSize(12.5),
@@ -436,28 +451,28 @@ class _SearchStoryViewState extends State<SearchStoryView> {
               SizedBox(
                 height: 130,
                 child: Row(
-                  children: (story.mnemonic_v_media ?? []) // Nếu null, thay bằng danh sách rỗng
+                  children: (story.mnemonic_v_media ??
+                          []) // Nếu null, thay bằng danh sách rỗng
                       .map((url) => Image.network(
-                    url,
-                    height: 100, // Điều chỉnh kích thước ảnh
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox(); // Ẩn nếu ảnh lỗi
-                    },
-                  ))
+                            url,
+                            height: 100, // Điều chỉnh kích thước ảnh
+                            errorBuilder: (context, error, stackTrace) {
+                              return const SizedBox(); // Ẩn nếu ảnh lỗi
+                            },
+                          ))
                       .toList(),
                 ),
               ),
-              buildNguonGoc(
-                  'Trung',
-                  '${story.mnemonic_c_content}',
-                  ['https://luping.com.vn/word_media/nguongoc_result/${story.mnemonic_c_media}']),
+              buildNguonGoc('Trung', '${story.mnemonic_c_content}', [
+                'https://luping.com.vn/word_media/nguongoc_result/${story.mnemonic_c_media}'
+              ]),
               buildNguonGoc(
                   'Hàn',
                   story.mnemonic_k_content ?? '',
-                story.mnemonic_k_media != null ? [story.mnemonic_k_media!] : []),
-              buildNguonGoc(
-                  'Anh',
-                  '',
+                  story.mnemonic_k_media != null
+                      ? [story.mnemonic_k_media!]
+                      : []),
+              buildNguonGoc('Anh', '',
                   [
                   ]),
             ],
@@ -578,9 +593,11 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                             width: 130,
                             child: Center(
                               child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
                                     ? loadingProgress.cumulativeBytesLoaded /
-                                    (loadingProgress.expectedTotalBytes ?? 1)
+                                        (loadingProgress.expectedTotalBytes ??
+                                            1)
                                     : null,
                               ),
                             ),
@@ -590,7 +607,8 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           height: 130,
                           width: 130,
                           child: Center(
-                            child: Icon(Icons.broken_image, color: Colors.red, size: 40),
+                            child: Icon(Icons.broken_image,
+                                color: Colors.red, size: 40),
                           ),
                         ),
                       ),
@@ -610,10 +628,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
       ],
     );
   }
-
-
 }
-
 
 class MyExpandableContainer extends StatefulWidget {
   final String content;
@@ -665,4 +680,3 @@ class _MyExpandableContainerState extends State<MyExpandableContainer> {
     );
   }
 }
-

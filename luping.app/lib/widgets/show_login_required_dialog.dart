@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hanjii/pages/auth/auth_page.dart';
+import 'package:luping/pages/auth/auth_page.dart';
 
 void showLoginRequiredDialog(BuildContext context) {
   showDialog(
@@ -9,7 +9,8 @@ void showLoginRequiredDialog(BuildContext context) {
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text("Yêu cầu đăng nhập"),
-        content: const Text("Bạn cần đăng nhập để tiếp tục sử dụng tính năng này."),
+        content:
+            const Text("Bạn cần đăng nhập để tiếp tục sử dụng tính năng này."),
         actions: [
           TextButton(
             onPressed: () {
@@ -20,7 +21,8 @@ void showLoginRequiredDialog(BuildContext context) {
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const AuthPage()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => const AuthPage()));
             },
             child: const Text("Đăng nhập"),
           ),

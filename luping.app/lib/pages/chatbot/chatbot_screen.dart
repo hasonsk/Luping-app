@@ -5,9 +5,9 @@ import 'package:logger/logger.dart';
 
 import 'chatbot_screen_appbar.dart';
 import 'chatbot_screen_bottomsheet.dart';
-import 'package:hanjii/services/chatbot_service.dart';
-import 'package:hanjii/models/chat_message.dart';
-import 'package:hanjii/models/chat_session.dart';
+import 'package:luping/services/chatbot_service.dart';
+import 'package:luping/models/chat_message.dart';
+import 'package:luping/models/chat_session.dart';
 
 class ChatBotScreen extends StatefulWidget {
   final ChatbotService chatbotService;

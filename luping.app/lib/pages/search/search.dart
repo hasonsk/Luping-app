@@ -1,19 +1,19 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:hanjii/models/hint_character.dart';
-import 'package:hanjii/data/database_helper.dart';
-import 'package:hanjii/models/hint_story.dart';
-import 'package:hanjii/models/sentence.dart';
-import 'package:hanjii/pages/search/develop_announce_screen.dart';
-import 'package:hanjii/pages/search/drawingboard.dart';
-import 'package:hanjii/pages/search/search_image_view.dart';
-import 'package:hanjii/pages/search/search_lobby_view.dart';
-import 'package:hanjii/pages/search/search_sentence_view.dart';
+import 'package:luping/models/hint_character.dart';
+import 'package:luping/data/database_helper.dart';
+import 'package:luping/models/hint_story.dart';
+import 'package:luping/models/sentence.dart';
+import 'package:luping/pages/search/develop_announce_screen.dart';
+import 'package:luping/pages/search/drawingboard.dart';
+import 'package:luping/pages/search/search_image_view.dart';
+import 'package:luping/pages/search/search_lobby_view.dart';
+import 'package:luping/pages/search/search_sentence_view.dart';
 import 'dart:async';
-import 'package:hanjii/pages/search/search_story_view.dart';
-import 'package:hanjii/pages/search/search_triangle_icon.dart';
-import 'package:hanjii/pages/search/search_word_view.dart';
-import 'package:hanjii/services/search_service.dart';
+import 'package:luping/pages/search/search_story_view.dart';
+import 'package:luping/pages/search/search_triangle_icon.dart';
+import 'package:luping/pages/search/search_word_view.dart';
+import 'package:luping/services/search_service.dart';
 import 'handwriting.dart'; // Import lớp Handwriting
 
 class Search extends StatefulWidget {
@@ -32,7 +32,6 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
-
   // Import Search Service
   final SearchService _searchService = SearchService();
 
@@ -71,8 +70,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   List<Sentence> sentenceData = [];
   List<String> imageData = [];
 
-
-
 // Setter cho _selectedTabIndex để đồng bộ TabBar và PageView
   set selectedTabIndex(int index) {
     setState(() {
@@ -93,9 +90,10 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
     // Khi khởi tạo, đồng bộ TabBar và PageView theo _selectedTabIndex
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _tabController.animateTo(_selectedTabIndex.value); // Chọn tab tương ứng index
-      _pageController
-          .jumpToPage(_selectedTabIndex.value); // Hiển thị trang tương ứng index
+      _tabController
+          .animateTo(_selectedTabIndex.value); // Chọn tab tương ứng index
+      _pageController.jumpToPage(
+          _selectedTabIndex.value); // Hiển thị trang tương ứng index
       // Kiểm tra nếu pageIndex = 1 thì focus vào TextField
       if (widget.pageIndex == 1) {
         FocusScope.of(context).requestFocus(_focusNode);
@@ -138,9 +136,11 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     // Cập nhật _selectedTabIndex nếu widget.sharedIndex thay đổi
     if (oldWidget.sharedIndex != widget.sharedIndex) {
       setState(() {
-        _selectedTabIndex = ValueNotifier<int>(widget.sharedIndex); // Cập nhật từ sharedIndex
+        _selectedTabIndex =
+            ValueNotifier<int>(widget.sharedIndex); // Cập nhật từ sharedIndex
         _tabController.animateTo(_selectedTabIndex.value); // Cập nhật TabBar
-        _pageController.jumpToPage(_selectedTabIndex.value); // Cập nhật PageView
+        _pageController
+            .jumpToPage(_selectedTabIndex.value); // Cập nhật PageView
       });
     }
 
@@ -233,10 +233,10 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     }
   }
 
-
   // Cập nhât dữ liệu khi người dùng đổi tab
   Future<void> _updateData(String? text, int index) async {
-    if (text == null || text.trim().isEmpty) return; // Nếu text rỗng, không làm gì
+    if (text == null || text.trim().isEmpty)
+      return; // Nếu text rỗng, không làm gì
 
     setState(() {
       isLoading = true; // Bắt đầu tải dữ liệu
@@ -285,7 +285,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       });
     }
   }
-
 
   Future<bool> _onWillPop() async {
     // Nếu TextField đang focus, bỏ focus và không thoát ứng dụng
@@ -535,18 +534,17 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     // }
     // return SearchWordView(list: wordData);
     return DevelopAnnounceScreen();
-
   }
 
   Widget buildStoriesView() {
-    if(hanziData.isEmpty){
+    if (hanziData.isEmpty) {
       _updateData(_controller.text, 1);
     }
-    return SearchStoryView(list : hanziData);
+    return SearchStoryView(list: hanziData);
   }
 
   Widget buildSentencesView() {
-    if(sentenceData.isEmpty){
+    if (sentenceData.isEmpty) {
       // _updateData(_controller.text, 2);
     }
     // return SearchSentencesView(list: sentenceData);
@@ -560,7 +558,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     // return SearchImageView(list : imageData);
     return DevelopAnnounceScreen();
   }
-
 
   // Hàm này được gọi khi người dùng thay đổi nội dung TextField
   void _onSearchTextChanged(String newQuery) {
@@ -582,6 +579,4 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       }
     });
   }
-
-
 }
