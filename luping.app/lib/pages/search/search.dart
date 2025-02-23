@@ -546,19 +546,19 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   }
 
   Widget buildSentencesView() {
-    // if(sentenceData.isEmpty){
-    //   _updateData(_controller.text, 2);
-    // }
+    if(sentenceData.isEmpty){
+      // _updateData(_controller.text, 2);
+    }
     // return SearchSentencesView(list: sentenceData);
     return DevelopAnnounceScreen();
   }
 
   Widget buildImagesView() {
-    if(sentenceData.isEmpty){
-      _updateData(_controller.text, 3);
-    }
-    return SearchImageView(list : imageData);
-    // return DevelopAnnounceScreen();
+    // if(sentenceData.isEmpty){
+    //   _updateData(_controller.text, 3);
+    // }
+    // return SearchImageView(list : imageData);
+    return DevelopAnnounceScreen();
   }
 
 
