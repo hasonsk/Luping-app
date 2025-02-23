@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hanjii/pages/profile.dart';
 import '../../widgets/banner_slider.dart';
 import '../../widgets/search_container.dart';
 import '../../widgets/shimmer_image_grid.dart';
@@ -64,7 +65,10 @@ class _HomeState extends State<Home> {
             : PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'profile') {
-                    Get.toNamed('/profile');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Profile()),
+                    );
                     } else if (value == 'logout') {
                     FirebaseAuth.instance.signOut().then((_) {
                       Get.offAllNamed('/');

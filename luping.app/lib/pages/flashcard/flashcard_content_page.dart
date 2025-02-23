@@ -57,8 +57,8 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
               itemBuilder: (context, index) {
                 return FlashCard(
                   key: PageStorageKey(index),
-                  index: index + 1,
-                  frontText: widget.flashcard.items[index].word,
+                  index: index + 1, // Số thứ tự bắt đầu từ 1
+                  frontText: widget.flashcard.items[index].word!,
                   backText: widget.flashcard.items[index].shortmeaning,
                 );
               },
