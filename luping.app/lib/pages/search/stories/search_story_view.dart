@@ -435,7 +435,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
               buildNguonGoc(
                   'Trung',
                   '${story.mnemonic_c_content}',
-                  ['https://luping.com.vn/word_media/nguongoc_result/${story.mnemonic_c_media}']),
+                  ['https://luping.com.vn/word_media/nguongoc_result/${story.mnemonic_c_media}.webp', 'https://luping.com.vn/word_media/ziyuan/${story.mnemonic_c_media}.png']),
               buildNguonGoc(
                   'Hàn',
                   story.mnemonic_k_content ?? '',
