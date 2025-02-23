@@ -64,7 +64,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
 
       // 1. Tách nội dung thành danh sách từ
       List<String> wordList = _contentController.text
-          .split(',')
+          .split(RegExp(r'[,\uFF0C]')) // Thêm dấu phẩy tiếng Trung (U+FF0C))
           .map((word) => word.trim())
           .where((word) => word.isNotEmpty)
           .toList();

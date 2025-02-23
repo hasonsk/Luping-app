@@ -10,7 +10,7 @@ import 'package:luping/pages/search/search_image_view.dart';
 import 'package:luping/pages/search/search_lobby_view.dart';
 import 'package:luping/pages/search/search_sentence_view.dart';
 import 'dart:async';
-import 'package:luping/pages/search/search_story_view.dart';
+import 'package:luping/pages/search/stories/search_story_view.dart';
 import 'package:luping/pages/search/search_triangle_icon.dart';
 import 'package:luping/pages/search/search_word_view.dart';
 import 'package:luping/services/search_service.dart';
@@ -544,19 +544,19 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   }
 
   Widget buildSentencesView() {
-    if (sentenceData.isEmpty) {
-      // _updateData(_controller.text, 2);
-    }
+    // if(sentenceData.isEmpty){
+    //   _updateData(_controller.text, 2);
+    // }
     // return SearchSentencesView(list: sentenceData);
     return DevelopAnnounceScreen();
   }
 
   Widget buildImagesView() {
-    // if(sentenceData.isEmpty){
-    //   _updateData(_controller.text, 3);
-    // }
-    // return SearchImageView(list : imageData);
-    return DevelopAnnounceScreen();
+    if(sentenceData.isEmpty){
+      _updateData(_controller.text, 3);
+    }
+    return SearchImageView(list : imageData);
+    // return DevelopAnnounceScreen();
   }
 
   // Hàm này được gọi khi người dùng thay đổi nội dung TextField
