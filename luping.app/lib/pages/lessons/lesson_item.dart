@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hanjii/pages/lessons/conversation/conversation_screen.dart';
-import 'package:hanjii/pages/lessons/reference/reference_screen.dart';
-import 'package:hanjii/pages/lessons/vocabulary/vocabulary_screen.dart';
-import 'package:hanjii/pages/lessons/audio/audio_screen.dart';
+import 'package:luping/pages/lessons/conversation/conversation_screen.dart';
+import 'package:luping/pages/lessons/reference/reference_screen.dart';
+import 'package:luping/pages/lessons/vocabulary/vocabulary_screen.dart';
+import 'package:luping/pages/lessons/audio/audio_screen.dart';
 import '../../models/lesson.dart';
 
 class LessonItem extends StatefulWidget {
@@ -51,11 +51,13 @@ class _LessonItemState extends State<LessonItem> {
   }
 
   void _navigateToConverScreen(BuildContext context) {
-    _navigateWithFadeTransition(context, ConversationScreen(lesson: widget.lesson));
+    _navigateWithFadeTransition(
+        context, ConversationScreen(lesson: widget.lesson));
   }
 
   void _navigateToReferScreen(BuildContext context) {
-    _navigateWithFadeTransition(context, ReferenceScreen(lesson: widget.lesson));
+    _navigateWithFadeTransition(
+        context, ReferenceScreen(lesson: widget.lesson));
   }
 
 // Hàm chung để thêm hiệu ứng fade-in khi chuyển màn hình
@@ -74,7 +76,6 @@ class _LessonItemState extends State<LessonItem> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -88,11 +89,14 @@ class _LessonItemState extends State<LessonItem> {
               child: Container(
                 color: Colors.grey[100],
                 margin: const EdgeInsets.symmetric(vertical: 10),
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                 child: Row(
                   children: [
                     Icon(
-                      _isExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right,
+                      _isExpanded
+                          ? Icons.keyboard_arrow_down
+                          : Icons.keyboard_arrow_right,
                       color: Colors.green[700],
                     ),
                     const SizedBox(width: 5),
@@ -112,7 +116,9 @@ class _LessonItemState extends State<LessonItem> {
                         softWrap: true,
                       ),
                     ),
-                    SizedBox(width: 35,)
+                    SizedBox(
+                      width: 35,
+                    )
                   ],
                 ),
               ),
@@ -128,23 +134,28 @@ class _LessonItemState extends State<LessonItem> {
                       _buildSection(
                         title: '1.1 Chuẩn bị bài',
                         buttons: [
-                          _buildButton(context, 'Hán tự', () => _navigateToKanjiScreen(context)),
-                          _buildButton(context, 'Từ vựng', () => _navigateToVocabularyScreen(context)),
+                          _buildButton(context, 'Hán tự',
+                              () => _navigateToKanjiScreen(context)),
+                          _buildButton(context, 'Từ vựng',
+                              () => _navigateToVocabularyScreen(context)),
                         ],
                       ),
                       SizedBox(width: 20),
                       _buildSection(
                         title: '1.2 Học tại lớp',
                         buttons: [
-                          _buildButton(context, 'Hội thoại', () => _navigateToConverScreen(context)),
-                          _buildButton(context, 'File nghe', () => _navigateToAudioScreen(context)),
+                          _buildButton(context, 'Hội thoại',
+                              () => _navigateToConverScreen(context)),
+                          _buildButton(context, 'File nghe',
+                              () => _navigateToAudioScreen(context)),
                         ],
                       ),
                       SizedBox(width: 20),
                       _buildSection(
                         title: '1.3 Ôn tại nhà',
                         buttons: [
-                          _buildButton(context, 'Tham khảo', () => _navigateToReferScreen(context)),
+                          _buildButton(context, 'Tham khảo',
+                              () => _navigateToReferScreen(context)),
                         ],
                       ),
                     ],
@@ -166,7 +177,8 @@ class _LessonItemState extends State<LessonItem> {
     );
   }
 
-  Widget _buildButton(BuildContext context, String text, VoidCallback onPressed) {
+  Widget _buildButton(
+      BuildContext context, String text, VoidCallback onPressed) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
@@ -187,12 +199,17 @@ class _LessonItemState extends State<LessonItem> {
     return Row(
       children: [
         Icon(Icons.star, color: Colors.orange, size: 16),
-        SizedBox(width: 5,),
+        SizedBox(
+          width: 5,
+        ),
         Text(
           title,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade600),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.grey.shade600),
         ),
-        SizedBox(width: 16,)
+        SizedBox(
+          width: 16,
+        )
       ],
     );
   }
@@ -221,7 +238,9 @@ class _LessonItemState extends State<LessonItem> {
           Row(
             children: [
               SizedBox(width: 10),
-              ...buttons.expand((button) => [button, SizedBox(width: 15)]).toList(),
+              ...buttons
+                  .expand((button) => [button, SizedBox(width: 15)])
+                  .toList(),
             ],
           ),
         ],

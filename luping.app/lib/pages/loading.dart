@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hanjii/pages/main_screen.dart';
+import 'package:luping/pages/main_screen.dart';
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -71,7 +71,8 @@ class _LoadingState extends State<Loading> {
                   child: LinearProgressIndicator(
                     value: _progress,
                     minHeight: 10, // Chiều cao của progress bar
-                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.green), // Màu cho phần tiến độ
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                        Colors.green), // Màu cho phần tiến độ
                   ),
                 ),
               ),

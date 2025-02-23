@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hanjii/models/word.dart';
-import 'package:hanjii/pages/flashcard/flashcard_content_page.dart';
-import 'package:hanjii/services/search_service.dart';
+import 'package:luping/models/word.dart';
+import 'package:luping/pages/flashcard/flashcard_content_page.dart';
+import 'package:luping/services/search_service.dart';
 import '../../models/flashcard.dart';
 import '../../models/flashcard_item.dart';
 import '../../widgets/show_login_required_dialog.dart';
@@ -119,7 +119,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _unfocusTextField, // Khi nhấn vào bất kỳ đâu, bỏ focus khỏi TextField
+      onTap:
+          _unfocusTextField, // Khi nhấn vào bất kỳ đâu, bỏ focus khỏi TextField
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
@@ -178,12 +179,14 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => FlashcardListPage(flashcards: flashcards),
+                            builder: (context) =>
+                                FlashcardListPage(flashcards: flashcards),
                           ),
                         );
                       },
                       style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.white),
                         side: WidgetStateProperty.all<BorderSide>(
                           const BorderSide(color: Colors.grey, width: 0.5),
                         ),
@@ -220,7 +223,6 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         ],
                       ),
                     )
-
                   ],
                 ),
                 const SizedBox(height: 15),

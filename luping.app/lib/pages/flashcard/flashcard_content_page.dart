@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter/services.dart';
-import 'package:hanjii/models/flashcard.dart';
-import 'package:hanjii/pages/flashcard/flashcard_list_page.dart';
-import 'package:hanjii/services/flashcard_service.dart';
+import 'package:luping/models/flashcard.dart';
+import 'package:luping/pages/flashcard/flashcard_list_page.dart';
+import 'package:luping/services/flashcard_service.dart';
 
 class FlashcardContentPage extends StatefulWidget {
   final Flashcard flashcard;
@@ -25,7 +25,8 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('${_currentIndex + 1}/${widget.flashcard.items.length}', style: const TextStyle(fontSize: 18)),
+        title: Text('${_currentIndex + 1}/${widget.flashcard.items.length}',
+            style: const TextStyle(fontSize: 18)),
         centerTitle: true,
         elevation: 6,
         shadowColor: Colors.black54,
@@ -72,11 +73,11 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
                 TextButton.icon(
                   onPressed: _currentIndex > 0
                       ? () {
-                    _pageController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }
+                          _pageController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
                       : null,
                   icon: Icon(
                     Icons.arrow_back,
@@ -99,7 +100,8 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
                     style: TextStyle(color: Colors.black),
                   ),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                   ),
@@ -107,20 +109,24 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
                 TextButton.icon(
                   onPressed: _currentIndex < widget.flashcard.items.length - 1
                       ? () {
-                    _pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }
+                          _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
                       : null,
                   icon: Icon(
                     Icons.arrow_forward,
-                    color: _currentIndex < widget.flashcard.items.length - 1 ? Colors.black : Colors.grey,
+                    color: _currentIndex < widget.flashcard.items.length - 1
+                        ? Colors.black
+                        : Colors.grey,
                   ),
                   label: Text(
                     "Sau",
                     style: TextStyle(
-                      color: _currentIndex < widget.flashcard.items.length - 1 ? Colors.black : Colors.grey,
+                      color: _currentIndex < widget.flashcard.items.length - 1
+                          ? Colors.black
+                          : Colors.grey,
                     ),
                   ),
                 ),
@@ -155,13 +161,14 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
             TextButton(
               child: const Text('Lưu'),
               onPressed: () {
-              setState(() {
-                widget.flashcard.title = nameController.text;
-                flashcards.add(widget.flashcard);
-              });
+                setState(() {
+                  widget.flashcard.title = nameController.text;
+                  flashcards.add(widget.flashcard);
+                });
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => FlashcardListPage(flashcards: flashcards),
+                    builder: (context) =>
+                        FlashcardListPage(flashcards: flashcards),
                   ),
                 );
               },
@@ -189,7 +196,8 @@ class FlashCard extends StatefulWidget {
   _FlashCardState createState() => _FlashCardState();
 }
 
-class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMixin {
+class _FlashCardState extends State<FlashCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _isFlipped = false;
@@ -230,7 +238,8 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
         builder: (context, child) {
           return Transform(
             alignment: Alignment.center,
-            transform: Matrix4.rotationY(_animation.value)..setEntry(3, 2, 0.001),
+            transform: Matrix4.rotationY(_animation.value)
+              ..setEntry(3, 2, 0.001),
             child: IndexedStack(
               alignment: Alignment.center,
               index: _animation.value > pi / 2 ? 1 : 0,
@@ -239,7 +248,8 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
                 Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.rotationY(pi),
-                  child: _buildCard(widget.backText, isFront: false, showIndex: false),
+                  child: _buildCard(widget.backText,
+                      isFront: false, showIndex: false),
                 ),
               ],
             ),
@@ -249,7 +259,8 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
     );
   }
 
-  Widget _buildCard(String text, {bool isFront = false, required bool showIndex}) {
+  Widget _buildCard(String text,
+      {bool isFront = false, required bool showIndex}) {
     return Container(
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(20),
@@ -272,15 +283,21 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
               top: 8,
               left: 12,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.white, // Đặt màu nền nếu cần
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey, width: 1), // Thêm viền màu đen dày 2px
+                  border: Border.all(
+                      color: Colors.grey,
+                      width: 1), // Thêm viền màu đen dày 2px
                 ),
                 child: Text(
                   "#${widget.index}", // Số thứ tự
-                  style: const TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ),

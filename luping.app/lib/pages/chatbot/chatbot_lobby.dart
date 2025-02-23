@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hanjii/services/chatbot_service.dart';
+import 'package:luping/services/chatbot_service.dart';
 import 'chatbot_screen.dart';
 
 class ChatBotLobby extends StatefulWidget {
@@ -81,8 +81,10 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
   /// Tạo hiệu ứng fade transition mượt mà
   Route _createRoute() {
     return PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 500), // Thời gian hiệu ứng
-      pageBuilder: (context, animation, secondaryAnimation) => ChatBotScreen(chatbotService: _chatbotService),
+      transitionDuration:
+          const Duration(milliseconds: 500), // Thời gian hiệu ứng
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          ChatBotScreen(chatbotService: _chatbotService),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
@@ -92,8 +94,8 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
     );
   }
 
-
-  Widget _buildDropdown(String label, List<String> items, String? selectedItem, Function(String?) onChanged) {
+  Widget _buildDropdown(String label, List<String> items, String? selectedItem,
+      Function(String?) onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
@@ -101,7 +103,10 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+            style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87),
           ),
           const SizedBox(height: 4),
           Container(
@@ -121,7 +126,8 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
               isExpanded: true,
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 4, horizontal: 10),
               ),
               value: selectedItem,
               onChanged: (val) {
@@ -138,13 +144,18 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                 });
               },
               dropdownColor: Colors.white,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87),
               items: items.map((item) {
                 return DropdownMenuItem(
                   value: item,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Text(item, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                    child: Text(item,
+                        style: const TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.bold)),
                   ),
                 );
               }).toList(),
@@ -158,9 +169,12 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
   Widget _buildNewChatTab() {
     return Column(
       children: [
-        _buildDropdown("🎯 Chọn đối tượng", targets, _selectedTarget, (val) => _selectedTarget = val),
-        _buildDropdown("📖 Trình độ", levels, _selectedLevel, (val) => _selectedLevel = val),
-        _buildDropdown("📌 Chủ đề", topics, _selectedTopic, (val) => _selectedTopic = val),
+        _buildDropdown("🎯 Chọn đối tượng", targets, _selectedTarget,
+            (val) => _selectedTarget = val),
+        _buildDropdown("📖 Trình độ", levels, _selectedLevel,
+            (val) => _selectedLevel = val),
+        _buildDropdown(
+            "📌 Chủ đề", topics, _selectedTopic, (val) => _selectedTopic = val),
       ],
     );
   }
@@ -168,7 +182,9 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
   Widget _buildChatHistoryTab() {
     return Column(
       children: [
-        SizedBox(height: 10,),
+        SizedBox(
+          height: 10,
+        ),
         // Danh sách lịch sử chat (sẽ chiếm toàn bộ không gian trống)
         Expanded(
           child: ListView.separated(
@@ -207,12 +223,12 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
             ),
           ),
         ),
-        SizedBox(height: 40,)
+        SizedBox(
+          height: 40,
+        )
       ],
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +265,9 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 const CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.white,
@@ -275,7 +293,8 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+                          padding:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 18),
                           child: TabBar(
                             labelColor: primaryColor,
                             unselectedLabelColor: Colors.black54,
@@ -307,11 +326,13 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                         child: TabBarView(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: _buildNewChatTab(),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: _buildChatHistoryTab(),
                             ),
                           ],
@@ -322,7 +343,9 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                 ),
                 const SizedBox(height: 15),
                 GestureDetector(
-                  onTap: _isLoading ? null : _initChat, // Vô hiệu hóa khi đang loading
+                  onTap: _isLoading
+                      ? null
+                      : _initChat, // Vô hiệu hóa khi đang loading
                   child: Container(
                     width: 160, // Đặt chiều rộng cố định
                     height: 45, // Đặt chiều cao cố định
@@ -340,21 +363,22 @@ class _ChatBotLobbyState extends State<ChatBotLobby> {
                     ),
                     child: _isLoading
                         ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
                         : const Text(
-                      "Bắt đầu chat",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                            "Bắt đầu chat",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ),
               ],

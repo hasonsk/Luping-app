@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hanjii/pages/chatbot/chatbot_lobby.dart';
+import 'package:luping/pages/chatbot/chatbot_lobby.dart';
 import 'home/home.dart';
 import 'profile.dart';
 import 'book/notebook.dart';
@@ -27,7 +27,8 @@ class _MainScreenState extends State<MainScreen> {
       Home(
         onBottomNavVisibilityChanged: (bool isVisible) {
           setState(() {
-            _bottomShow = isVisible; // Cập nhật trạng thái ẩn/hiện BottomNavigationBar
+            _bottomShow =
+                isVisible; // Cập nhật trạng thái ẩn/hiện BottomNavigationBar
           });
         },
       ),
@@ -41,36 +42,48 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: _bottomShow? Container(
-        height: 54,
-        decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.black45,
-              width: 0.5,
-            ),
-          ),
-          color: Colors.white,
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _pages,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Expanded(child: _buildCustomBottomNavigationBarItem('assets/home.svg', 'Home', 0)),
-            Expanded(child: _buildCustomBottomNavigationBarItem('assets/notebook.svg', 'Tài liệu', 1)),
-            Expanded(child: _buildCustomBottomNavigationBarItem('assets/flashcard.svg', 'Thẻ nhớ', 2)),
-            Expanded(child: _buildCustomBottomNavigationBarItem('assets/chatbot.svg', 'AI Chat', 4)),
-            Expanded(child: _buildCustomBottomNavigationBarItem('assets/user.svg', 'Hồ sơ', 3)),
-          ],
-        ),
-      ) : null
-    );
+        bottomNavigationBar: _bottomShow
+            ? Container(
+                height: 54,
+                decoration: const BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: Colors.black45,
+                      width: 0.5,
+                    ),
+                  ),
+                  color: Colors.white,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Expanded(
+                        child: _buildCustomBottomNavigationBarItem(
+                            'assets/home.svg', 'Home', 0)),
+                    Expanded(
+                        child: _buildCustomBottomNavigationBarItem(
+                            'assets/notebook.svg', 'Tài liệu', 1)),
+                    Expanded(
+                        child: _buildCustomBottomNavigationBarItem(
+                            'assets/flashcard.svg', 'Thẻ nhớ', 2)),
+                    Expanded(
+                        child: _buildCustomBottomNavigationBarItem(
+                            'assets/chatbot.svg', 'AI Chat', 4)),
+                    Expanded(
+                        child: _buildCustomBottomNavigationBarItem(
+                            'assets/user.svg', 'Hồ sơ', 3)),
+                  ],
+                ),
+              )
+            : null);
   }
 
-  Widget _buildCustomBottomNavigationBarItem(String assetPath, String label, int index) {
+  Widget _buildCustomBottomNavigationBarItem(
+      String assetPath, String label, int index) {
     final bool isSelected = _currentIndex == index;
     return InkWell(
       onTap: () {

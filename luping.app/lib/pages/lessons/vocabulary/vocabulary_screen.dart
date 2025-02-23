@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hanjii/pages/lessons/vocabulary/kanjivocab_learn_screen.dart';
-import 'package:hanjii/pages/lessons/vocabulary/kanjivocab_test_screen.dart';
+import 'package:luping/pages/lessons/vocabulary/kanjivocab_learn_screen.dart';
+import 'package:luping/pages/lessons/vocabulary/kanjivocab_test_screen.dart';
 import '../../../models/lesson.dart';
 import '../../../models/word.dart';
 
@@ -10,19 +10,28 @@ class VocabularyScreen extends StatelessWidget {
   final List<Word> vocabularies;
   final String title;
 
-  const VocabularyScreen({Key? key, required this.lessonPosition, required this.vocabularies, required this.title}) : super(key: key);
+  const VocabularyScreen(
+      {Key? key,
+      required this.lessonPosition,
+      required this.vocabularies,
+      required this.title})
+      : super(key: key);
 
   void _navigateToLearnScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => KanjivocabLearnScreen(vocabularies: vocabularies)),
+      MaterialPageRoute(
+          builder: (context) =>
+              KanjivocabLearnScreen(vocabularies: vocabularies)),
     );
   }
 
   void _navigateToTestScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => KanjivocabTestScreen(vocabularies: vocabularies)),
+      MaterialPageRoute(
+          builder: (context) =>
+              KanjivocabTestScreen(vocabularies: vocabularies)),
     );
   }
 
@@ -75,8 +84,10 @@ class VocabularyScreen extends StatelessWidget {
           centerTitle: true,
           shadowColor: Colors.black,
           systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: Colors.white, // Đặt màu nền Status Bar trùng với AppBar
-            statusBarIconBrightness: Brightness.dark, // Giữ icon status bar màu tối
+            statusBarColor:
+                Colors.white, // Đặt màu nền Status Bar trùng với AppBar
+            statusBarIconBrightness:
+                Brightness.dark, // Giữ icon status bar màu tối
           ),
         ),
         body: Container(
@@ -91,16 +102,21 @@ class VocabularyScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    _buildActionButton(context, Icons.school, 'Học', () => _navigateToLearnScreen(context)),
-                    const SizedBox(width: 20,),
+                    _buildActionButton(context, Icons.school, 'Học',
+                        () => _navigateToLearnScreen(context)),
+                    const SizedBox(
+                      width: 20,
+                    ),
                     // _buildActionButton(context, Icons.edit, 'Luyện tập', () {}),
-                    _buildActionButton(context, Icons.check, 'Kiểm tra', () => _navigateToTestScreen(context)),
+                    _buildActionButton(context, Icons.check, 'Kiểm tra',
+                        () => _navigateToTestScreen(context)),
                   ],
                 ),
                 const SizedBox(height: 25),
                 _buildSectionTitle('Hướng dẫn :', Colors.green),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                   child: Text(
                     title.contains("Hán tự")
                         ? 'Ở phần này chúng ta hãy cùng nhau chuẩn bị các Hán tự cần thiết cho bài mới nhé.'
@@ -118,14 +134,16 @@ class VocabularyScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 Expanded(
                   child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
                     itemCount: vocabularies.length,
                     itemBuilder: (context, index) {
-                      return _buildVocabularyCard(context, vocabularies[index], index + 1);
+                      return _buildVocabularyCard(
+                          context, vocabularies[index], index + 1);
                     },
                   ),
                 ),
@@ -147,7 +165,9 @@ class VocabularyScreen extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const SizedBox(width: 20,),
+              const SizedBox(
+                width: 20,
+              ),
               const Text(
                 'Kiểm tra!',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -155,22 +175,28 @@ class VocabularyScreen extends StatelessWidget {
               const Expanded(child: SizedBox()),
               ElevatedButton.icon(
                 onPressed: () => _navigateToTestScreen(context),
-                icon: Icon(Icons.play_arrow, color: Colors.grey[200],),
-                label: Text('Bắt đầu', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[200])),
+                icon: Icon(
+                  Icons.play_arrow,
+                  color: Colors.grey[200],
+                ),
+                label: Text('Bắt đầu',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.grey[200])),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), // Giảm padding
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 6, horizontal: 12), // Giảm padding
                   textStyle: const TextStyle(fontSize: 15), // Giảm font nếu cần
                 ),
               ),
             ],
           ),
-        )
-    );
+        ));
   }
 
-  Widget _buildActionButton(BuildContext context, IconData icon, String label, VoidCallback onPressed) {
+  Widget _buildActionButton(BuildContext context, IconData icon, String label,
+      VoidCallback onPressed) {
     return ElevatedButton.icon(
       onPressed: onPressed, // Gọi hàm được truyền vào
       icon: Icon(icon, size: 14),
@@ -191,7 +217,7 @@ class VocabularyScreen extends StatelessWidget {
   Widget _buildVocabularyCard(BuildContext context, Word word, int index) {
     return GestureDetector(
       onTap: () {
-        showDetailWord(context, index-1); // Truyền context vào đây
+        showDetailWord(context, index - 1); // Truyền context vào đây
       },
       child: Stack(
         children: [
@@ -209,7 +235,8 @@ class VocabularyScreen extends StatelessWidget {
                     const Expanded(child: SizedBox()),
                     Text(
                       word.word,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 4),
@@ -265,7 +292,8 @@ class VocabularyScreen extends StatelessWidget {
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(20),
-          height: MediaQuery.of(context).size.height * 0.6, // Chiếm 60% màn hình
+          height:
+              MediaQuery.of(context).size.height * 0.6, // Chiếm 60% màn hình
           child: Column(
             children: [
               // Tiêu đề hiển thị số trang, dùng ValueListenableBuilder để cập nhật
@@ -274,7 +302,8 @@ class VocabularyScreen extends StatelessWidget {
                 builder: (context, currentIndex, child) {
                   return Text(
                     "Từ ${currentIndex + 1}/${vocabularies.length}",
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   );
                 },
               ),
@@ -286,7 +315,8 @@ class VocabularyScreen extends StatelessWidget {
                   controller: pageController,
                   itemCount: vocabularies.length,
                   onPageChanged: (index) {
-                    currentIndexNotifier.value = index; // Cập nhật index trong ValueNotifier
+                    currentIndexNotifier.value =
+                        index; // Cập nhật index trong ValueNotifier
                   },
                   itemBuilder: (context, index) {
                     Word word = vocabularies[index];
@@ -295,13 +325,17 @@ class VocabularyScreen extends StatelessWidget {
                       children: [
                         Text(
                           word.word,
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),
                         Text(
                           "Pinyin: ${word.pinyin}",
-                          style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Colors.grey),
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.grey),
                         ),
                         const SizedBox(height: 10),
                         Text(
@@ -333,26 +367,29 @@ class VocabularyScreen extends StatelessWidget {
                       IconButton(
                         onPressed: currentIndex > 0
                             ? () {
-                          pageController.previousPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        }
+                                pageController.previousPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
                             : null,
                         icon: Icon(Icons.arrow_back,
-                            color: currentIndex > 0 ? Colors.black : Colors.grey),
+                            color:
+                                currentIndex > 0 ? Colors.black : Colors.grey),
                       ),
                       IconButton(
                         onPressed: currentIndex < vocabularies.length - 1
                             ? () {
-                          pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        }
+                                pageController.nextPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
                             : null,
                         icon: Icon(Icons.arrow_forward,
-                            color: currentIndex < vocabularies.length - 1 ? Colors.black : Colors.grey),
+                            color: currentIndex < vocabularies.length - 1
+                                ? Colors.black
+                                : Colors.grey),
                       ),
                     ],
                   );
@@ -364,8 +401,4 @@ class VocabularyScreen extends StatelessWidget {
       },
     );
   }
-
-
-
-
 }

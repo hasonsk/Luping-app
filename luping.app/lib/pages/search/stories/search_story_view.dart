@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:hanjii/models/hint_story.dart';
+import 'package:luping/models/hint_story.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:hanjii/pages/search/stories/expandable_container.dart';
+import 'package:luping/pages/search/stories/expandable_container.dart';
 import '../../../models/hint_character.dart';
 import '../../../models/story.dart';
 import '../../../services/search_service.dart'; // Import service để gọi getStoryDetails()
@@ -88,8 +88,8 @@ class _SearchStoryViewState extends State<SearchStoryView> {
 
               if (_selectedCards[index] == true) {
                 return _isLoading
-                    ? Padding(
-                      padding: const EdgeInsets.all(.0),
+                    ? const Padding(
+                      padding: EdgeInsets.all(.0),
                       child: Center(child: CircularProgressIndicator()),
                     )
                     : _selectedStory != null
@@ -209,14 +209,14 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      image: DecorationImage(
+                      image: const DecorationImage(
                         image: AssetImage('assets/tian_black.png'),
                         fit: BoxFit.cover,
                       ),
                       border: Border.all(color: Colors.grey, width: 0.5),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: Center(
                       child: Text(
                         '${story.character}',
@@ -315,7 +315,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                       ),
                       const SizedBox(height: 20),
                       Container(
-                        margin: EdgeInsets.only(right: 100),
+                        margin: const EdgeInsets.only(right: 100),
                         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 100),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -396,7 +396,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
               ),
               Container(
                 color: Colors.grey[100],
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Html(
                   data: '<span style="font-size: 12.5px;">${story.mnemonic_v_content}</span>',
                   style: {
@@ -555,7 +555,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                             ),
                           );
                         },
-                        errorBuilder: (context, error, stackTrace) => SizedBox(
+                        errorBuilder: (context, error, stackTrace) => const SizedBox(
                           height: 130,
                           width: 130,
                           child: Center(

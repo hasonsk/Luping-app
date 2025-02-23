@@ -24,9 +24,9 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-002" });
 
 const generationConfig = {
-  temperature: 1,
+  temperature: 1.2,
   topP: 1,
-  topK: 32,
+  topK: 36,
   maxOutputTokens: 1000,
 };
 
@@ -59,19 +59,13 @@ const generateChatbotResponse = async (userInput) => {
   );
 
   // Basic input validation (prevent prompt injection),  handle null/undefined
-  const safeRole = userInput?.role
-    ? /^[a-zA-Z0-9\s]+$/.test(userInput.role)
-      ? userInput.role
-      : "Any role"
-    : "Any role";
-  const safeTopic = userInput?.topic
-    ? /^[a-zA-Z0-9\s]+$/.test(userInput.topic)
-      ? userInput.topic
-      : "Any topic"
-    : "Any topic";
+  const safeRole = userInput?.role ? userInput.role : "Any role";
+  const safeTopic = userInput?.topic ? userInput.topic : "Any topic";
   const safeChineseLevel = userInput?.chinese_level || "HSK 1"; //  default value
   const safeUserMessage = userInput?.user_message || ""; //  default value
   const safeChatHistory = userInput?.chat_history || ""; // default value
+
+  logger.info({ safeRole, safeTopic, safeChineseLevel, safeUserMessage, safeChatHistory });
 
   const prompt = promptTemplate
     .replace("{{$role}}", safeRole)

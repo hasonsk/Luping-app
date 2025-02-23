@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hanjii/models/word.dart';
+import 'package:luping/models/word.dart';
 import 'test_summary_screen.dart';
 import 'question_form.dart';
 import 'dart:async';
@@ -34,14 +34,14 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
           final img = Image.network(card.image!);
           final Completer<void> completer = Completer();
           img.image.resolve(const ImageConfiguration()).addListener(
-            ImageStreamListener(
-              (info, _) => completer.complete(),
-              onError: (error, stackTrace) {
-                print("Error loading image: ${card.image} - $error");
-                completer.complete();
-              },
-            ),
-          );
+                ImageStreamListener(
+                  (info, _) => completer.complete(),
+                  onError: (error, stackTrace) {
+                    print("Error loading image: ${card.image} - $error");
+                    completer.complete();
+                  },
+                ),
+              );
           await completer.future;
         } catch (e) {
           print("Error loading image: ${card.image} - $e");
@@ -57,7 +57,8 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
 
     if (_currentQuestionIndex < widget.vocabularies.length - 1) {
       setState(() => _currentQuestionIndex++);
-      _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.nextPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     } else {
       Navigator.pushReplacement(
         context,
@@ -74,16 +75,21 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
 
   Future<bool> _showExitConfirmation() async {
     return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Confirm"),
-        content: const Text("Do you want to exit the test?"),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("No")),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Yes")),
-        ],
-      ),
-    ) ?? false;
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Confirm"),
+            content: const Text("Do you want to exit the test?"),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text("No")),
+              TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text("Yes")),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   @override
@@ -108,7 +114,9 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
           ),
           actions: [
             IconButton(
-              icon: Icon(_showImages ? Icons.perm_media_rounded : Icons.visibility_off),
+              icon: Icon(_showImages
+                  ? Icons.perm_media_rounded
+                  : Icons.visibility_off),
               onPressed: () => setState(() => _showImages = !_showImages),
             ),
           ],
@@ -131,7 +139,9 @@ class _KanjivocabTestScreenState extends State<KanjivocabTestScreen> {
                 itemBuilder: (context, index) {
                   return QuestionForm(
                     question: widget.vocabularies[index].toMap(),
-                    allOptions: widget.vocabularies.map((word) => word.toMap()).toList(),
+                    allOptions: widget.vocabularies
+                        .map((word) => word.toMap())
+                        .toList(),
                     onNextQuestion: _nextQuestion,
                     showImages: _showImages,
                   );

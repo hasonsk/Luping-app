@@ -1,4 +1,4 @@
-package com.example.hanjii
+package com.example.luping
 
 import io.flutter.embedding.android.FlutterActivity
 

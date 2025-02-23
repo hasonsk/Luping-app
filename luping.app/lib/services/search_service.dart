@@ -1,6 +1,6 @@
-import 'package:hanjii/models/hint_story.dart';
-import 'package:hanjii/models/story.dart';
-import 'package:hanjii/models/word.dart';
+import 'package:luping/models/hint_story.dart';
+import 'package:luping/models/story.dart';
+import 'package:luping/models/word.dart';
 import 'package:logger/logger.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -191,7 +191,8 @@ class SearchService {
     };
 
     // Tạo URI chính xác
-    final uri = Uri.https('www.googleapis.com', '/customsearch/v1', queryParams);
+    final uri =
+        Uri.https('www.googleapis.com', '/customsearch/v1', queryParams);
 
     try {
       final response = await http.get(uri);
@@ -201,9 +202,8 @@ class SearchService {
 
         if (data.containsKey('items')) {
           // Lọc ra danh sách link hình ảnh từ kết quả API
-          List<String> imageLinks = List<String>.from(
-              data['items'].map((item) => item['link'])
-          );
+          List<String> imageLinks =
+              List<String>.from(data['items'].map((item) => item['link']));
 
           return imageLinks;
         } else {
@@ -339,7 +339,7 @@ class SearchService {
       final db = await _db;
       // 1. Lọc bỏ các ký tự không phải chữ Hán
       final hanziQuery =
-      query.replaceAll(RegExp(r'[^\p{Script=Han}]', unicode: true), '');
+          query.replaceAll(RegExp(r'[^\p{Script=Han}]', unicode: true), '');
 
       if (hanziQuery.isEmpty) {
         return [];
@@ -354,7 +354,14 @@ class SearchService {
       // 3. Truy vấn cơ sở dữ liệu, bao gồm trường 'image'
       final results = await db.query(
         'Storys',
-        columns: ['id', 'character', 'pinyin', 'hanviet', 'meaning', 'image'], // Cập nhật ở đây
+        columns: [
+          'id',
+          'character',
+          'pinyin',
+          'hanviet',
+          'meaning',
+          'image'
+        ], // Cập nhật ở đây
         where: 'character IN ($placeholders)',
         whereArgs: characters,
       );
@@ -364,7 +371,7 @@ class SearchService {
       for (final char in characters) {
         // Tìm story có character khớp với ký tự hiện tại
         final storyMap = results.firstWhere(
-              (map) => map['character'] == char,
+          (map) => map['character'] == char,
           orElse: () => {}, // Return empty map if no match
         );
 
@@ -394,7 +401,8 @@ class SearchService {
 
       if (results.isNotEmpty) {
         final story = Story.fromMap(results.first);
-        print("✅ Story tìm thấy: ${story.character}, ${story.pinyin}, ${story.mnemonic_c_media}");
+        print(
+            "✅ Story tìm thấy: ${story.character}, ${story.pinyin}, ${story.mnemonic_c_media}");
         return story;
       }
 
@@ -405,7 +413,6 @@ class SearchService {
       return null;
     }
   }
-
 
   Future<List<Word>?> fetchWordList(List<String> wordList) async {
     print(wordList);
@@ -448,5 +455,4 @@ class SearchService {
       return [];
     }
   }
-
 }

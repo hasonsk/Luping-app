@@ -105,6 +105,8 @@ class ChatbotService {
       timestamp: DateTime.now(),
     ));
 
+    logger.i("API request data: ${jsonEncode(requestData)}");
+
     try {
       final response = await http
           .post(
@@ -164,6 +166,8 @@ class ChatbotService {
       "user_message": "",
       "chat_history": [],
     };
+
+    logger.i("API request data: ${jsonEncode(requestData)}");
 
     try {
       final response = await http

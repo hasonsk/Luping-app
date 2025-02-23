@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hanjii/models/sentence.dart';
+import 'package:luping/models/sentence.dart';
 
 class SearchSentencesView extends StatelessWidget {
   final List<Sentence> list;

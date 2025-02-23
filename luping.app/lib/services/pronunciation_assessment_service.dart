@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hanjii/models/pronunciation_assessment_result.dart';
+import 'package:luping/models/pronunciation_assessment_result.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
@@ -151,8 +151,6 @@ class PronunciationAssessmentService {
     _filePath = null;
   }
 
-
-
   Future<void> cleanup() async {
     if (_recordingStateSubject.value == RecordingState.recording) {
       await stopRecording();
@@ -163,6 +161,4 @@ class PronunciationAssessmentService {
   void resetAssessment() {
     _assessmentResultSubject.add(null); // Đặt kết quả về null để reset UI
   }
-
 }
-

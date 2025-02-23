@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter/services.dart';
-import 'package:hanjii/models/word.dart';
-import 'package:hanjii/widgets/flashcard.dart';
+import 'package:luping/models/word.dart';
+import 'package:luping/widgets/flashcard.dart';
 
 class KanjivocabLearnScreen extends StatefulWidget {
   final List<Word> vocabularies;
@@ -38,7 +38,8 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
               Center(
                 child: Text(
                   word.word,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 10),
@@ -49,7 +50,10 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
               const SizedBox(height: 10),
               Text(
                 "Pinyin: ${word.pinyin}",
-                style: const TextStyle(fontSize: 17, fontStyle: FontStyle.italic, color: Colors.grey),
+                style: const TextStyle(
+                    fontSize: 17,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey),
               ),
               if (word.image != null) ...[
                 const SizedBox(height: 15),
@@ -66,7 +70,8 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Đóng", style: TextStyle(color: Colors.blue)),
+                  child:
+                      const Text("Đóng", style: TextStyle(color: Colors.blue)),
                 ),
               ),
             ],
@@ -76,8 +81,6 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +89,8 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('${_currentIndex + 1}/${widget.vocabularies.length}', style: const TextStyle(fontSize: 18)),
+        title: Text('${_currentIndex + 1}/${widget.vocabularies.length}',
+            style: const TextStyle(fontSize: 18)),
         centerTitle: true,
         elevation: 6,
         shadowColor: Colors.black54,
@@ -124,11 +128,11 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                 TextButton.icon(
                   onPressed: _currentIndex > 0
                       ? () {
-                    _pageController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }
+                          _pageController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
                       : null,
                   icon: Icon(
                     Icons.arrow_back,
@@ -151,7 +155,8 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                     style: TextStyle(color: Colors.black),
                   ),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                   ),
@@ -159,20 +164,24 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                 TextButton.icon(
                   onPressed: _currentIndex < widget.vocabularies.length - 1
                       ? () {
-                    _pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }
+                          _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
                       : null,
                   icon: Icon(
                     Icons.arrow_forward,
-                    color: _currentIndex < widget.vocabularies.length - 1 ? Colors.black : Colors.grey,
+                    color: _currentIndex < widget.vocabularies.length - 1
+                        ? Colors.black
+                        : Colors.grey,
                   ),
                   label: Text(
                     "Sau",
                     style: TextStyle(
-                      color: _currentIndex < widget.vocabularies.length - 1 ? Colors.black : Colors.grey,
+                      color: _currentIndex < widget.vocabularies.length - 1
+                          ? Colors.black
+                          : Colors.grey,
                     ),
                   ),
                 ),
