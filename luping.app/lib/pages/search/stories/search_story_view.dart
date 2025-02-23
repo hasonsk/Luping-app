@@ -409,16 +409,27 @@ class _SearchStoryViewState extends State<SearchStoryView> {
               ),
               SizedBox(
                 height: 130,
-                child: Row(
-                  children: (story.mnemonic_v_media ?? [])
-                      .map((url) => Image.network(
-                    url,
-                    height: 100,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox();
-                    },
-                  ))
-                      .toList(),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal, // Cho phép cuộn ngang nếu bị tràn
+                  child: Row(
+                    children: (story.mnemonic_v_media ?? [])
+                        .map((url) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5), // Thêm khoảng cách giữa ảnh
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: 130, // Giới hạn chiều rộng tối đa
+                        ),
+                        child: Image.network(
+                          url,
+                          height: 100,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const SizedBox();
+                          },
+                        ),
+                      ),
+                    ))
+                        .toList(),
+                  ),
                 ),
               ),
               buildNguonGoc(

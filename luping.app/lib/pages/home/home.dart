@@ -195,7 +195,7 @@ class _HomeState extends State<Home> {
                 children: [
                   SizedBox(height: 10),
                   Text(
-                    'HanziiStory',
+                    'Nihao Luping!',
                     style: TextStyle(
                       fontFamily: 'Lobster',
                       color: Colors.white,
@@ -339,7 +339,7 @@ class _HomeState extends State<Home> {
                   ),
                   SizedBox(width: 6),
                   Text(
-                    'Hanzi Story',
+                    'Luping Dict',
                     style: TextStyle(fontSize: 12, color: Colors.blue),
                   ),
                 ],

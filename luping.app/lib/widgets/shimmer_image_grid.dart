@@ -71,8 +71,8 @@ class _ShimmerImageGridState extends State<ShimmerImageGrid> with SingleTickerPr
                     child: Padding(
                       padding: const EdgeInsets.all(6.0),
                       child: Container(
-                        width: 41,
-                        height: 41,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                         ),

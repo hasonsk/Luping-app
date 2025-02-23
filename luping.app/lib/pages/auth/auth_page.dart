@@ -41,7 +41,7 @@ class _AuthPageState extends State<AuthPage> {
                   Image.asset('assets/logo.png', height: 130, width: 130),
                   const SizedBox(height: 5),
                   const Text(
-                    'HanziiStory',
+                    'Luping',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.green),
                   ),
                   const SizedBox(height: 30),

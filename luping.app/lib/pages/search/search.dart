@@ -7,6 +7,7 @@ import 'package:luping/models/sentence.dart';
 import 'package:luping/pages/search/develop_announce_screen.dart';
 import 'package:luping/pages/search/drawingboard.dart';
 import 'package:luping/pages/search/search_image_view.dart';
+import 'package:luping/pages/search/search_loading_widget.dart';
 import 'package:luping/pages/search/search_lobby_view.dart';
 import 'package:luping/pages/search/search_sentence_view.dart';
 import 'dart:async';
@@ -538,9 +539,17 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   Widget buildStoriesView() {
     if (hanziData.isEmpty) {
-      _updateData(_controller.text, 1);
+
+      _updateData(_controller.text, 1).then((_) {
+        setState(() {
+          isLoading = false; // Tắt loading khi dữ liệu đã tải xong
+        });
+      });
     }
-    return SearchStoryView(list: hanziData);
+
+    return isLoading
+        ? const Center(child: SearchLoadingWidget()) // Hiển thị loading
+        : SearchStoryView(list: hanziData); // Hiển thị dữ liệu khi đã có
   }
 
   Widget buildSentencesView() {
@@ -561,21 +570,23 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   // Hàm này được gọi khi người dùng thay đổi nội dung TextField
   void _onSearchTextChanged(String newQuery) {
-    // Hủy bỏ Timer cũ nếu người dùng tiếp tục gõ
     if (_debounceTimer != null) {
       _debounceTimer!.cancel();
     }
 
-    // Tạo một Timer mới, sau thời gian debounce (300ms), gửi request
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      // Kiểm tra xem query mới có khác với searchword hiện tại không
       if (newQuery != searchword) {
         setState(() {
-          searchword = newQuery; // Cập nhật searchword mới
+          searchword = newQuery;
+          isLoading = true; // Bắt đầu hiển thị loading
         });
 
-        // Gửi request tìm kiếm tại đây
-        _getData(searchword, _selectedTabIndex.value);
+        // Gửi request tìm kiếm
+        _getData(searchword, _selectedTabIndex.value).then((_) {
+          setState(() {
+            isLoading = false; // Tắt loading sau khi dữ liệu đã tải xong
+          });
+        });
       }
     });
   }
