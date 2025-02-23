@@ -2,7 +2,7 @@ class Word {
   final int id;
   final String word;
   final String? pinyin;
-  final List<String>? meaning;
+  final List<String> meaning;
   final String? hanviet;
   final List<String>? cannghia;
   final List<String>? trainghia;

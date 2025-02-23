@@ -1,19 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-class FlashCard extends StatefulWidget {
-  final String frontText;
-  final String backText;
-  final bool isLearned;
-  final VoidCallback onLearned;
+import '../models/word.dart';
 
-  const FlashCard({
-    super.key,
-    required this.frontText,
-    required this.backText,
-    required this.isLearned,
-    required this.onLearned,
-  });
+class FlashCard extends StatefulWidget {
+  final Word word;
+
+  const FlashCard({super.key, required this.word});
 
   @override
   _FlashCardState createState() => _FlashCardState();
@@ -65,11 +58,11 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
               alignment: Alignment.center,
               index: _animation.value > pi / 2 ? 1 : 0,
               children: [
-                _buildCard(widget.frontText, isFront: true),
+                _buildFrontCard(),
                 Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.rotationY(pi),
-                  child: _buildCard(widget.backText, isFront: false),
+                  child: _buildBackCard(),
                 ),
               ],
             ),
@@ -79,7 +72,54 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
     );
   }
 
-  Widget _buildCard(String text, {bool isFront = false}) {
+  Widget _buildFrontCard() {
+    return _buildCard(
+      child: Center(
+        child: Text(
+          widget.word.word,
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackCard() {
+    return _buildCard(
+      child: Container(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              (widget.word.meaning is List<String>)
+                  ? widget.word.meaning.join(", ")
+                  : widget.word.meaning.toString(),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 10),
+            Text(
+              widget.word.pinyin as String,
+              style: const TextStyle(fontSize: 20, fontStyle: FontStyle.italic, color: Colors.grey),
+            ),
+            if (widget.word.image != null) ...[
+              const SizedBox(height: 15),
+              Image.network(
+                widget.word.image!,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard({required Widget child}) {
     return Container(
       margin: const EdgeInsets.fromLTRB(25, 35, 25, 20),
       padding: const EdgeInsets.all(20),
@@ -95,52 +135,7 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (isFront) ...[
-            const SizedBox(height: 20),
-            const Row(
-              children: [
-                SizedBox(width: 5),
-                Icon(Icons.volume_up_outlined, size: 26, color: Colors.grey),
-                Expanded(child: SizedBox()),
-                Icon(Icons.star_border, size: 26, color: Colors.grey),
-                SizedBox(width: 5),
-              ],
-            ),
-          ],
-          Expanded(
-            child: Center(
-              child: Text(
-                text,
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          if (isFront) ...[
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: widget.onLearned,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: widget.isLearned ? Colors.green : Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
-                side: const BorderSide(color: Colors.grey, width: 1),
-              ),
-              child: Text(
-                "Đã thuộc",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: widget.isLearned ? Colors.white : Colors.green,
-                ),
-              ),
-            ),
-          ],
-          const SizedBox(height: 20),
-        ],
-      ),
+      child: child,
     );
   }
 }

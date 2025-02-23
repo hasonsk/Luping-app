@@ -15,24 +15,10 @@ class KanjivocabLearnScreen extends StatefulWidget {
 class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-  late List<Map<String, dynamic>> flashcards;
 
   @override
   void initState() {
     super.initState();
-    flashcards = widget.vocabularies.map((word) {
-      return {
-        "word": word.word,
-        "meaning": word.shortmeaning,
-        "status": false,
-      };
-    }).toList();
-  }
-
-  void updateStatus(int index) {
-    setState(() {
-      flashcards[index]["status"] = !flashcards[index]["status"];
-    });
   }
 
   @override
@@ -43,14 +29,8 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('${_currentIndex + 1}/${flashcards.length}', style: const TextStyle(fontSize: 18)),
+        title: Text('${_currentIndex + 1}/${widget.vocabularies.length}', style: const TextStyle(fontSize: 18)),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.play_arrow),
-            onPressed: () {},
-          ),
-        ],
         elevation: 6,
         shadowColor: Colors.black54,
         backgroundColor: Colors.white,
@@ -64,7 +44,7 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
           Expanded(
             child: PageView.builder(
               controller: _pageController,
-              itemCount: flashcards.length,
+              itemCount: widget.vocabularies.length,
               onPageChanged: (index) {
                 setState(() {
                   _currentIndex = index;
@@ -73,10 +53,7 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
               itemBuilder: (context, index) {
                 return FlashCard(
                   key: PageStorageKey(index),
-                  frontText: flashcards[index]["word"]!,
-                  backText: flashcards[index]["meaning"]!,
-                  isLearned: flashcards[index]["status"],
-                  onLearned: () => updateStatus(index),
+                  word: widget.vocabularies[index],
                 );
               },
             ),
@@ -89,11 +66,11 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                 TextButton.icon(
                   onPressed: _currentIndex > 0
                       ? () {
-                          _pageController.previousPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        }
+                    _pageController.previousPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
                       : null,
                   icon: Icon(
                     Icons.arrow_back,
@@ -122,22 +99,22 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                   ),
                 ),
                 TextButton.icon(
-                  onPressed: _currentIndex < flashcards.length - 1
+                  onPressed: _currentIndex < widget.vocabularies.length - 1
                       ? () {
-                          _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        }
+                    _pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
                       : null,
                   icon: Icon(
                     Icons.arrow_forward,
-                    color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey,
+                    color: _currentIndex < widget.vocabularies.length - 1 ? Colors.black : Colors.grey,
                   ),
                   label: Text(
                     "Sau",
                     style: TextStyle(
-                      color: _currentIndex < flashcards.length - 1 ? Colors.black : Colors.grey,
+                      color: _currentIndex < widget.vocabularies.length - 1 ? Colors.black : Colors.grey,
                     ),
                   ),
                 ),

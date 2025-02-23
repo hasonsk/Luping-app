@@ -31,11 +31,28 @@ class _QuestionFormState extends State<QuestionForm> {
   }
 
   void _generateOptions() {
-    _options = List.from(widget.allOptions)..shuffle();
-    if (!_options.any((opt) => opt["word"] == widget.question["word"])) {
-      _options[Random().nextInt(_options.length)] = widget.question;
-    }
+    // Lọc ra các từ không phải là đáp án đúng
+    List<Map<String, String>> incorrectOptions = widget.allOptions
+        .where((opt) => opt["word"] != widget.question["word"])
+        .toList();
+
+    // Trộn danh sách lựa chọn sai
+    incorrectOptions.shuffle();
+
+    // Chọn ra 3 lựa chọn sai
+    List<Map<String, String>> selectedOptions = incorrectOptions.take(3).toList();
+
+    // Thêm đáp án đúng vào danh sách
+    selectedOptions.add(widget.question);
+
+    // Trộn lại danh sách để vị trí của đáp án đúng không cố định
+    selectedOptions.shuffle();
+
+    // Gán lại cho _options
+    _options = selectedOptions;
   }
+
+
 
   void _checkAnswer() {
     final isCorrect = _selectedAnswer == widget.question["word"];
