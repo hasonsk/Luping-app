@@ -125,7 +125,7 @@ class VocabularyScreen extends StatelessWidget {
                     ),
                     itemCount: vocabularies.length,
                     itemBuilder: (context, index) {
-                      return _buildVocabularyCard(vocabularies[index], index + 1);
+                      return _buildVocabularyCard(context, vocabularies[index], index + 1);
                     },
                   ),
                 ),
@@ -188,63 +188,184 @@ class VocabularyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVocabularyCard( Word word,int index) {
-    return Stack(
-      children: [
-        Card(
-          color: Colors.white,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                children: [
-                  Expanded(child: SizedBox()),
-                  Text(
-                    word.word,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-
-                  ),
-                  SizedBox(height: 4,),
-                  Text(
-                    word.pinyin ?? '', // Giả sử word.pinyin chứa Pinyin của từ vựng
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600], // Màu xám nhẹ giúp Pinyin rõ ràng nhưng không quá nổi bật
-                      fontStyle: FontStyle.italic, // Làm cho Pinyin trông nhẹ nhàng hơn
+  Widget _buildVocabularyCard(BuildContext context, Word word, int index) {
+    return GestureDetector(
+      onTap: () {
+        showDetailWord(context, index-1); // Truyền context vào đây
+      },
+      child: Stack(
+        children: [
+          Card(
+            color: Colors.white,
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  children: [
+                    const Expanded(child: SizedBox()),
+                    Text(
+                      word.word,
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Expanded(child: SizedBox()),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      word.pinyin ?? '',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const Expanded(child: SizedBox()),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        Positioned(
-          top: 4,
-          left: 4,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.green.shade100, // Màu xanh lá nhạt
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              '${index}',
-              style: TextStyle(
-                color: Colors.green.shade700, // Màu chữ đậm hơn một chút
-                fontWeight: FontWeight.bold,
+          Positioned(
+            top: 4,
+            left: 4,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.green.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '${index}',
+                style: TextStyle(
+                  color: Colors.green.shade700,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
+
+  void showDetailWord(BuildContext context, int startIndex) {
+    PageController pageController = PageController(initialPage: startIndex);
+    ValueNotifier<int> currentIndexNotifier = ValueNotifier<int>(startIndex);
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          height: MediaQuery.of(context).size.height * 0.6, // Chiếm 60% màn hình
+          child: Column(
+            children: [
+              // Tiêu đề hiển thị số trang, dùng ValueListenableBuilder để cập nhật
+              ValueListenableBuilder<int>(
+                valueListenable: currentIndexNotifier,
+                builder: (context, currentIndex, child) {
+                  return Text(
+                    "Từ ${currentIndex + 1}/${vocabularies.length}",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+
+              // PageView chứa từ vựng
+              Expanded(
+                child: PageView.builder(
+                  controller: pageController,
+                  itemCount: vocabularies.length,
+                  onPageChanged: (index) {
+                    currentIndexNotifier.value = index; // Cập nhật index trong ValueNotifier
+                  },
+                  itemBuilder: (context, index) {
+                    Word word = vocabularies[index];
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          word.word,
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Pinyin: ${word.pinyin}",
+                          style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Nghĩa: ${(word.meaning is List<String>) ? word.meaning.join(", ") : word.meaning}",
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        if (word.image != null) ...[
+                          const SizedBox(height: 15),
+                          Image.network(
+                            word.image!,
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          ),
+                        ],
+                      ],
+                    );
+                  },
+                ),
+              ),
+
+              // Nút điều hướng
+              ValueListenableBuilder<int>(
+                valueListenable: currentIndexNotifier,
+                builder: (context, currentIndex, child) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: currentIndex > 0
+                            ? () {
+                          pageController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                            : null,
+                        icon: Icon(Icons.arrow_back,
+                            color: currentIndex > 0 ? Colors.black : Colors.grey),
+                      ),
+                      IconButton(
+                        onPressed: currentIndex < vocabularies.length - 1
+                            ? () {
+                          pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                            : null,
+                        icon: Icon(Icons.arrow_forward,
+                            color: currentIndex < vocabularies.length - 1 ? Colors.black : Colors.grey),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+
 
 }

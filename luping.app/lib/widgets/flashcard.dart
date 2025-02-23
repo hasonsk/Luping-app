@@ -5,8 +5,9 @@ import '../models/word.dart';
 
 class FlashCard extends StatefulWidget {
   final Word word;
+  final int index; // Thêm tham số index để hiển thị
 
-  const FlashCard({super.key, required this.word});
+  const FlashCard({super.key, required this.word, required this.index});
 
   @override
   _FlashCardState createState() => _FlashCardState();
@@ -73,16 +74,41 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
   }
 
   Widget _buildFrontCard() {
-    return _buildCard(
-      child: Center(
-        child: Text(
-          widget.word.word,
-          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
+    return Stack(
+      children: [
+        _buildCard(
+          child: Center(
+            child: Text(
+              widget.word.word,
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
-      ),
+        Positioned(
+          top: 20,
+          left: 15,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.greenAccent.shade100, // Màu xanh lá nhẹ
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '#${widget.index + 1}', // Hiển thị số thứ tự
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ),
+
+      ],
     );
   }
+
 
   Widget _buildBackCard() {
     return _buildCard(
@@ -98,7 +124,6 @@ class _FlashCardState extends State<FlashCard> with SingleTickerProviderStateMix
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
-
             const SizedBox(height: 10),
             Text(
               widget.word.pinyin as String,

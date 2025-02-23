@@ -21,6 +21,63 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
     super.initState();
   }
 
+  void showDetailInfo(BuildContext context, Word word) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  word.word,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Nghĩa: ${(word.meaning is List<String>) ? word.meaning.join(", ") : word.meaning}",
+                style: const TextStyle(fontSize: 17),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Pinyin: ${word.pinyin}",
+                style: const TextStyle(fontSize: 17, fontStyle: FontStyle.italic, color: Colors.grey),
+              ),
+              if (word.image != null) ...[
+                const SizedBox(height: 15),
+                Center(
+                  child: Image.network(
+                    word.image!,
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Đóng", style: TextStyle(color: Colors.blue)),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,6 +111,7 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                 return FlashCard(
                   key: PageStorageKey(index),
                   word: widget.vocabularies[index],
+                  index: index,
                 );
               },
             ),
@@ -85,7 +143,7 @@ class _KanjivocabLearnScreenState extends State<KanjivocabLearnScreen> {
                 ),
                 TextButton.icon(
                   onPressed: () {
-                    // TODO: Xử lý mở màn hình chi tiết
+                    showDetailInfo(context, widget.vocabularies[_currentIndex]);
                   },
                   icon: const Icon(Icons.info_outline, color: Colors.black),
                   label: const Text(
