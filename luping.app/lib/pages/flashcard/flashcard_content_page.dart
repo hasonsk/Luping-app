@@ -58,7 +58,7 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
                 return FlashCard(
                   key: PageStorageKey(index),
                   index: index + 1, // Số thứ tự bắt đầu từ 1
-                  frontText: widget.flashcard.items[index].word!,
+                  frontText: widget.flashcard.items[index].word,
                   backText: widget.flashcard.items[index].shortmeaning,
                 );
               },
@@ -133,7 +133,7 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
   }
 
   void _showSaveDialog(BuildContext context) {
-    final TextEditingController _nameController = TextEditingController();
+    final TextEditingController nameController = TextEditingController();
 
     showDialog(
       context: context,
@@ -141,7 +141,7 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
         return AlertDialog(
           title: const Text('Lưu Flashcard'),
           content: TextField(
-            controller: _nameController,
+            controller: nameController,
             decoration: const InputDecoration(hintText: 'Nhập tên flashcard'),
           ),
           actions: <Widget>[
@@ -156,7 +156,7 @@ class _FlashcardContentPageState extends State<FlashcardContentPage> {
               child: const Text('Lưu'),
               onPressed: () {
               setState(() {
-                widget.flashcard.title = _nameController.text;
+                widget.flashcard.title = nameController.text;
                 flashcards.add(widget.flashcard);
               });
                 Navigator.of(context).pushReplacement(

@@ -570,7 +570,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     }
 
     // Tạo một Timer mới, sau thời gian debounce (300ms), gửi request
-    _debounceTimer = Timer(Duration(milliseconds: 300), () {
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
       // Kiểm tra xem query mới có khác với searchword hiện tại không
       if (newQuery != searchword) {
         setState(() {

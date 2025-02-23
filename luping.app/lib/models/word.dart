@@ -53,7 +53,7 @@ class Word {
       'id': id.toString(),
       'word': word,
       'pinyin': pinyin ?? '',
-      'meaning': meaning?.join(', ') ?? '',
+      'meaning': meaning.join(', '),
       'hanviet': hanviet ?? '',
       'cannghia': cannghia?.join(', ') ?? '',
       'trainghia': trainghia?.join(', ') ?? '',

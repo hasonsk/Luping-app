@@ -5,12 +5,11 @@ import '/models/pronunciation_assessment_result.dart';
 import '/services/pronunciation_assessment_service.dart';
 import '../../../models/lesson.dart';
 import '/services/tts_service.dart';
-import '/services/pronunciation_assessment_service.dart';
 
 class ConversationScreen extends StatefulWidget {
   final Lesson lesson;
 
-  const ConversationScreen({Key? key, required this.lesson}) : super(key: key);
+  const ConversationScreen({super.key, required this.lesson});
 
   @override
   _ConversationScreenState createState() => _ConversationScreenState();
@@ -54,15 +53,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
     final List<String> displayedMessages = messages.sublist(0,
         currentMessageIndex < messages.length ? currentMessageIndex + 1 : messages.length);
 
+    return PopScope(
+      canPop: false, // Prevents default pop behavior
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return; // If pop was already handled, do nothing
 
-    return WillPopScope(
-      onWillPop: () async {
-        return await _showExitDialog(context);
+        bool exit = await _showExitDialog(context);
+        if (exit) {
+          if (context.mounted) Navigator.pop(context);
+        }
       },
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.close, color: Colors.black, size: 20),
+            icon: const Icon(Icons.close, color: Colors.black, size: 20),
             onPressed: () async {
               bool exit = await _showExitDialog(context);
               if (exit) Navigator.pop(context);
@@ -86,10 +90,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
         ),
         body: Column(
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemCount: displayedMessages.length,
                 itemBuilder: (context, index) {
                   bool isUser = index % 2 != 0;
@@ -101,17 +105,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         if (!isUser) _buildAvatar(isUser),
                         Flexible(
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                            margin: EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                            margin: const EdgeInsets.symmetric(horizontal: 8),
                             decoration: BoxDecoration(
                               color: isUser ? Colors.green : Colors.white,
                               borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(18),
-                                topRight: Radius.circular(18),
-                                bottomLeft: isUser ? Radius.circular(18) : Radius.zero,
-                                bottomRight: isUser ? Radius.zero : Radius.circular(18),
+                                topLeft: const Radius.circular(18),
+                                topRight: const Radius.circular(18),
+                                bottomLeft: isUser ? const Radius.circular(18) : Radius.zero,
+                                bottomRight: isUser ? Radius.zero : const Radius.circular(18),
                               ),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
                                   color: Colors.black12,
                                   blurRadius: 6,
@@ -131,7 +135,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 IconButton(
                                   icon: Icon(
                                     Icons.volume_up,
@@ -212,22 +216,22 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             ],
                           ),
                           padding: const EdgeInsets.all(12.0),
-                          child: Icon(Icons.mic, size: 40, color: Colors.white),
+                          child: const Icon(Icons.mic, size: 40, color: Colors.white),
                         ),
                       ),
                     ),
                   ),
-                  Text('Hãy lắng nghe và chọn micro để kiểm tra', style: TextStyle(fontSize: 16)),
-                  SizedBox(height: 20),
+                  const Text('Hãy lắng nghe và chọn micro để kiểm tra', style: TextStyle(fontSize: 16)),
+                  const SizedBox(height: 20),
                 ],
               )
             else
               Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   color: Colors.white,
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black54,
                       blurRadius: 10,
@@ -251,7 +255,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         size: 60,
                         color: Colors.yellow.shade600, // Màu vàng tươi sáng
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
                       Text(
                         'Chúc mừng! Bạn đã hoàn thành bài tập.',
@@ -262,7 +266,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
                       ElevatedButton(
                         onPressed: () {
@@ -273,10 +277,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                           elevation: 5,
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
@@ -311,22 +315,22 @@ class _ConversationScreenState extends State<ConversationScreen> {
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(
+        title: const Text(
           "Xác nhận thoát",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        content: Text(
+        content: const Text(
           "Bạn chắc chắn muốn thoát ứng dụng? Tất cả tiến trình học hiện tại sẽ bị mất nếu bạn thoát.",
           style: TextStyle(fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text("Hủy", style: TextStyle(color: Colors.grey, fontSize: 14)),
+            child: const Text("Hủy", style: TextStyle(color: Colors.grey, fontSize: 14)),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text("Thoát", style: TextStyle(color: Colors.red, fontSize: 14)),
+            child: const Text("Thoát", style: TextStyle(color: Colors.red, fontSize: 14)),
           ),
         ],
       ),
@@ -339,7 +343,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       radius: 20,
       backgroundColor: isUser ? Colors.green : Colors.transparent,
       child: isUser
-          ? Icon(Icons.person, color: Colors.white, size: 24)
+          ? const Icon(Icons.person, color: Colors.white, size: 24)
           : ClipRRect(
         borderRadius: BorderRadius.circular(22),
         child: Image.asset(

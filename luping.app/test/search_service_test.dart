@@ -271,12 +271,12 @@ void main() {
 
       for (var word in wordList) {
         print("Word Details for '${word.word}':");
-        print("Pinyin: ${word?.pinyin}");
-        print("Meaning: ${word?.meaning}");
-        print("HanViet: ${word?.hanviet}");
-        print("Cannghia: ${word?.cannghia}");
-        print("Trainghia: ${word?.trainghia}");
-        print("Image: ${word?.image}");
+        print("Pinyin: ${word.pinyin}");
+        print("Meaning: ${word.meaning}");
+        print("HanViet: ${word.hanviet}");
+        print("Cannghia: ${word.cannghia}");
+        print("Trainghia: ${word.trainghia}");
+        print("Image: ${word.image}");
         print("Short meaning: ${word.shortmeaning}");
         print('');
       }
