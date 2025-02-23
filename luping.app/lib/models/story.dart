@@ -1,17 +1,17 @@
 import 'dart:convert';
 class Story {
   final int id;
-  final String? character;
-  final String? pinyin;
-  final String? hanviet;
-  final String? bothu;
-  final String? lucthu;
-  final String? sonet;
+  final String character;
+  final String pinyin;
+  final String hanviet;
+  final String bothu;
+  final String lucthu;
+  final String sonet;
   final List<String>? bothanhphan;
-  final List<String>? meaning;
-  final String? image;
-  final List<String>? mnemonic_v_seperate;
-  final String? mnemonic_v_content;
+  final List<String> meaning;
+  final String image;
+  final List<String> mnemonic_v_seperate;
+  final String mnemonic_v_content;
   final List<String>? mnemonic_v_media;
   final String? mnemonic_c_content;
   final String? mnemonic_c_media;
@@ -71,7 +71,7 @@ class Story {
       bothanhphan: convertToList(map['bothanhphan']),
       meaning: convertToList(map['meaning']),
       image: map['image'],
-      mnemonic_v_seperate: convertToList(map['mnemonic_v_seperate']), 
+      mnemonic_v_seperate: convertToList(map['mnemonic_v_seperate']),
       mnemonic_v_content: map['mnemonic_v_content'],
       mnemonic_v_media: convertToList(map['mnemonic_v_media']),
       mnemonic_c_content: map['mnemonic_c_content'],

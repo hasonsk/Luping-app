@@ -345,9 +345,11 @@ class SearchService {
         return [];
       }
 
+      final uniqueHanziQuery = hanziQuery.split('').toSet().join('');
+
       // 2. Tạo danh sách các placeholder và các giá trị tương ứng cho truy vấn
-      final placeholders = List.filled(hanziQuery.length, '?').join(',');
-      final characters = hanziQuery.split('');
+      final placeholders = List.filled(uniqueHanziQuery.length, '?').join(',');
+      final characters = uniqueHanziQuery.split('');
 
       // 3. Truy vấn cơ sở dữ liệu, bao gồm trường 'image'
       final results = await db.query(
