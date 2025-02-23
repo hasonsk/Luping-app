@@ -24,11 +24,12 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   final TextEditingController _textController = TextEditingController();
   final List<String> _messages = [];
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _textFieldFocusNode = FocusNode(); // Thêm focus node
+
 
   static const Color primaryColor = Color(0xFF96D962);
   // static const Color botColor = Color(0xFFFAE3D9);
   // static const Color userColor = Color(0xFFC2F0C2);
-  static const List<String> botEmojis = ["🤖", "😊", "🎉", "💡"];
 
   bool _isLoading = false; // Thêm biến để hiển thị loading indicator
 
@@ -63,7 +64,6 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
       _logger.i("Chatbot phản hồi: $botReply"); // In phản hồi từ chatbot
 
       setState(() {
-        _messages.add("${botEmojis[Random().nextInt(botEmojis.length)]} $botReply");
         _isLoading = false; // Kết thúc trạng thái loading
       });
     } catch (e) {
@@ -87,9 +87,22 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Chỉ unfocus nếu không phải đang ở TextField
+    if (!_textFieldFocusNode.hasFocus) {
+      Future.delayed(Duration.zero, () {
+        FocusScope.of(context).unfocus();
+      });
+    }
+  }
+
+
+  @override
   void dispose() {
     _textController.dispose();
     _scrollController.dispose();
+    _textFieldFocusNode.dispose(); // Hủy focus node
     super.dispose();
   }
 
@@ -129,6 +142,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                   children: [
                     Expanded(
                       child: TextField(
+                        focusNode: _textFieldFocusNode, // Gán focus node
                         controller: _textController,
                         onEditingComplete: _sendMessage,
                         decoration: InputDecoration(
