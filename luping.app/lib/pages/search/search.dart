@@ -10,7 +10,7 @@ import 'package:hanjii/pages/search/search_image_view.dart';
 import 'package:hanjii/pages/search/search_lobby_view.dart';
 import 'package:hanjii/pages/search/search_sentence_view.dart';
 import 'dart:async';
-import 'package:hanjii/pages/search/search_story_view.dart';
+import 'package:hanjii/pages/search/stories/search_story_view.dart';
 import 'package:hanjii/pages/search/search_triangle_icon.dart';
 import 'package:hanjii/pages/search/search_word_view.dart';
 import 'package:hanjii/services/search_service.dart';
