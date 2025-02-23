@@ -190,7 +190,7 @@ class _WordInfoState extends State<WordInfo> {
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: word.meaning!.asMap().entries.map((entry) {
+                                children: word.meaning.asMap().entries.map((entry) {
                                   int index = entry.key;
                                   String meaning = entry.value;
                                   return Padding(

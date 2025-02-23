@@ -125,7 +125,7 @@ class _PronunciationAssessmentWidgetState extends State<PronunciationAssessmentW
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        SizedBox(height: 30),
+        const SizedBox(height: 30),
         const Text(
           'Hãy đọc to:',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),

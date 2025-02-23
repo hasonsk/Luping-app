@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
+import 'package:logger/logger.dart';
+
 import 'chatbot_screen_appbar.dart';
 import 'chatbot_screen_bottomsheet.dart';
 import 'package:hanjii/services/chatbot_service.dart';
@@ -10,24 +12,25 @@ import 'package:hanjii/models/chat_session.dart';
 class ChatBotScreen extends StatefulWidget {
   final ChatbotService chatbotService;
 
-  ChatBotScreen({Key? key, required this.chatbotService}) : super(key: key);
+  const ChatBotScreen({super.key, required this.chatbotService});
   @override
   _ChatBotScreenState createState() => _ChatBotScreenState();
 }
 
 class _ChatBotScreenState extends State<ChatBotScreen> {
+  static final Logger _logger = Logger();
+
   final Map<int, bool> _translationVisibility = {};
   final TextEditingController _textController = TextEditingController();
   final List<String> _messages = [];
   final ScrollController _scrollController = ScrollController();
 
   static const Color primaryColor = Color(0xFF96D962);
-  static const Color botColor = Color(0xFFFAE3D9);
-  static const Color userColor = Color(0xFFC2F0C2);
+  // static const Color botColor = Color(0xFFFAE3D9);
+  // static const Color userColor = Color(0xFFC2F0C2);
   static const List<String> botEmojis = ["🤖", "😊", "🎉", "💡"];
 
   bool _isLoading = false; // Thêm biến để hiển thị loading indicator
-
 
   @override
   void initState() {
@@ -43,7 +46,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     final userMessage = _textController.text.trim();
     if (userMessage.isEmpty) return; // Không gửi tin nhắn trống
 
-    print("Người dùng gửi: $userMessage"); // In tin nhắn của người dùng
+    _logger.i("Người dùng gửi: $userMessage"); // In tin nhắn của người dùng
 
     setState(() {
       _messages.add(userMessage); // Thêm tin nhắn người dùng vào danh sách
@@ -57,14 +60,14 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
       // Gửi tin nhắn đến chatbot và nhận phản hồi
       final botReply = await widget.chatbotService.fetchChatResponse(userMessage: userMessage);
 
-      print("Chatbot phản hồi: $botReply"); // In phản hồi từ chatbot
+      _logger.i("Chatbot phản hồi: $botReply"); // In phản hồi từ chatbot
 
       setState(() {
         _messages.add("${botEmojis[Random().nextInt(botEmojis.length)]} $botReply");
         _isLoading = false; // Kết thúc trạng thái loading
       });
     } catch (e) {
-      print("Lỗi khi gọi chatbotService: $e"); // In lỗi nếu có vấn đề xảy ra
+      _logger.e("Lỗi khi gọi chatbotService: $e"); // In lỗi nếu có vấn đề xảy ra
       setState(() => _isLoading = false);
     }
 
