@@ -5,6 +5,7 @@ import '/models/pronunciation_assessment_result.dart';
 import '/services/pronunciation_assessment_service.dart';
 import '../../../models/lesson.dart';
 import '/services/tts_service.dart';
+import '/services/pronunciation_assessment_service.dart';
 
 class ConversationScreen extends StatefulWidget {
   final Lesson lesson;
@@ -16,8 +17,6 @@ class ConversationScreen extends StatefulWidget {
 }
 
 class _ConversationScreenState extends State<ConversationScreen> {
-  int userScore = 0; // Biến lưu điểm số của người dùng
-  int wrongAnswers = 0; // Biến lưu trữ số lỗi sai (ví dụ)
 
   // Danh sách tất cả tin nhắn
   final List<String> messages = [
@@ -52,7 +51,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     // Lấy danh sách các tin nhắn cần hiển thị (từ đầu đến currentMessageIndex)
-    final List<String> displayedMessages = messages.sublist(0, currentMessageIndex + 1);
+    final List<String> displayedMessages = messages.sublist(0,
+        currentMessageIndex < messages.length ? currentMessageIndex + 1 : messages.length);
+
 
     return WillPopScope(
       onWillPop: () async {
@@ -86,7 +87,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
         body: Column(
           children: [
             SizedBox(height: 10),
-            // Danh sách tin nhắn
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 12),
@@ -137,7 +137,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     Icons.volume_up,
                                     color: isUser ? Colors.white : Colors.black54,
                                   ),
-                                  onPressed: () => _speakText(displayedMessages[index]), // Phát âm thanh cho cả user và bot
+                                  onPressed: () => _speakText(displayedMessages[index]),
                                 ),
                               ],
                             ),
@@ -150,61 +150,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 },
               ),
             ),
-            // Nút để hiển thị tin nhắn tiếp theo (chỉ hiển thị nếu còn tin nhắn)
-            if (currentMessageIndex < messages.length - 1)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: ElevatedButton(
-                  onPressed: showNextMessage,
-                  child: Text('Tin nhắn tiếp theo'),
-                ),
-              ),
-            // Phần Micro + Điểm
-            Text('Hãy nghe và chọn micro để kiểm tra',style: TextStyle(fontSize: 16),),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
+
+            // Kiểm tra điều kiện để hiển thị phần micro hoặc thông báo hoàn thành
+            if (currentMessageIndex < messages.length)
+              Column(
                 children: [
-                  // Số lỗi sai bên trái
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 6,
-                            offset: Offset(2, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.error, color: Colors.white, size: 24),
-                          SizedBox(width: 6),
-                          Text(
-                            '$wrongAnswers',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Micro ở giữa
-                  Expanded(
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
                     child: Center(
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           String textToAssess = messages[currentMessageIndex];
+                          final assessmentService = PronunciationAssessmentService();
 
-                          showModalBottomSheet(
+                          bool? isAssessmentComplete = await showModalBottomSheet<bool>(
                             context: context,
                             isScrollControlled: true,
                             shape: const RoundedRectangleBorder(
@@ -217,20 +176,29 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                   child: Container(
                                     constraints: const BoxConstraints(maxWidth: 600),
                                     padding: const EdgeInsets.all(16),
-                                    child: StatefulBuilder(
-                                      builder: (context, setState) {
-                                        return PronunciationAssessmentWidget(textToPronounce: textToAssess);
-                                      },
+                                    child: PronunciationAssessmentWidget(
+                                      textToPronounce: textToAssess,
+                                      assessmentService: assessmentService,
                                     ),
                                   ),
                                 ),
                               );
                             },
-                          ).whenComplete(() {
-                            debugPrint("Đóng BottomSheet - Xóa tài nguyên");
-                          });
-                        },
+                          );
 
+                          if (isAssessmentComplete == true) {
+                            setState(() {
+                              if (currentMessageIndex < messages.length - 1) {
+                                showNextMessage();
+                              } else {
+                                // Nếu đã đạt tin nhắn cuối, cập nhật lại giao diện
+                                currentMessageIndex = messages.length;
+                                // Dispose service sau khi tin nhắn cuối cùng được thực hiện
+                                assessmentService.dispose();
+                              }
+                            });
+                          }
+                        },
                         child: Container(
                           decoration: const BoxDecoration(
                             color: Colors.green,
@@ -243,52 +211,97 @@ class _ConversationScreenState extends State<ConversationScreen> {
                               ),
                             ],
                           ),
-                          child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 10),
-                            padding: const EdgeInsets.all(12.0),
-                            child: Icon(Icons.mic, size: 40, color: Colors.white),
-                          ),
+                          padding: const EdgeInsets.all(12.0),
+                          child: Icon(Icons.mic, size: 40, color: Colors.white),
                         ),
                       ),
                     ),
                   ),
-                  // Điểm số bên phải
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 6,
-                            offset: Offset(2, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.star, color: Colors.white, size: 24),
-                          SizedBox(width: 6),
-                          Text(
-                            "$userScore",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  Text('Hãy lắng nghe và chọn micro để kiểm tra', style: TextStyle(fontSize: 16)),
+                  SizedBox(height: 20),
                 ],
-              ),
-            ),
+              )
+            else
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: InkWell(
+                  onTap: () {
+                    // Cập nhật giá trị hoặc thực hiện hành động khi nhấn
+                  },
+                  onHover: (isHovering) {
+                    // Chỉnh sửa hiệu ứng khi hover (nếu cần)
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Thêm icon đáng yêu và màu sắc tươi sáng
+                      Icon(
+                        Icons.emoji_events, // Icon chiến thắng
+                        size: 60,
+                        color: Colors.yellow.shade600, // Màu vàng tươi sáng
+                      ),
+                      SizedBox(height: 20),
+
+                      Text(
+                        'Chúc mừng! Bạn đã hoàn thành bài tập.',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blue.shade700, // Màu xanh dương dễ chịu
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 20),
+
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,  // Nền màu xanh dễ thương
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                          elevation: 5,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.arrow_back, // Icon mũi tên quay lại
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Quay lại',
+                              style: TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+
+
+
+
           ],
-        ),
+        )
       ),
     );
   }

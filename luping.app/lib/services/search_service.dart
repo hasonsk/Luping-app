@@ -219,7 +219,7 @@ class SearchService {
     }
   }
 
-  Future<List<Sentence>?> getSentence(String searchWord) async {
+  Future<List<Sentence>> getSentence(String searchWord) async {
     try {
       final db = await _db;
 
@@ -381,21 +381,29 @@ class SearchService {
   Future<Story?> getStoryDetails(String character) async {
     try {
       final db = await _db;
+      print("🔍 Đang tìm kiếm story với character: $character");
+
       final results = await db.query(
         'Storys',
-        columns: ['id', 'character', 'pinyin', 'hanviet', 'meaning', 'image'],
+        columns: null,
         where: 'character = ?',
         whereArgs: [character],
       );
+
       if (results.isNotEmpty) {
-        return Story.fromMap(results.first);
+        final story = Story.fromMap(results.first);
+        print("✅ Story tìm thấy: ${story.character}, ${story.pinyin}, ${story.mnemonic_c_media}");
+        return story;
       }
+
+      print("⚠️ Không tìm thấy story nào cho character: $character");
       return null;
     } catch (e) {
-      logger.e("Error in getStoryDetails: $e");
+      logger.e("❌ Lỗi trong getStoryDetails: $e");
       return null;
     }
   }
+
 
   Future<List<Word>?> fetchWordList(List<String> wordList) async {
     print(wordList);

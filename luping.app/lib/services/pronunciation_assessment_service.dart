@@ -151,10 +151,18 @@ class PronunciationAssessmentService {
     _filePath = null;
   }
 
+
+
   Future<void> cleanup() async {
     if (_recordingStateSubject.value == RecordingState.recording) {
       await stopRecording();
     }
     dispose();
   }
+
+  void resetAssessment() {
+    _assessmentResultSubject.add(null); // Đặt kết quả về null để reset UI
+  }
+
 }
+

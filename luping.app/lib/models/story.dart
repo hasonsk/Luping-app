@@ -1,3 +1,4 @@
+import 'dart:convert';
 class Story {
   final int id;
   final String? character;
@@ -16,7 +17,7 @@ class Story {
   final String? mnemonic_c_media;
   final String? mnemonic_k_content;
   final String? mnemonic_k_media;
-  final String? mp3;
+  final String mp3;
 
   Story({
     required this.id,
@@ -45,7 +46,16 @@ class Story {
       if (value == null) return [];
       if (value is List) return List<String>.from(value);
       if (value is String) {
-        return value.split(',').map((e) => e.trim()).toList();
+        try {
+          // Kiểm tra xem có phải chuỗi JSON không
+          final decoded = jsonDecode(value);
+          if (decoded is List) {
+            return List<String>.from(decoded.map((e) => e.toString().trim()));
+          }
+        } catch (_) {
+          // Nếu không phải JSON, thì tách bằng dấu phẩy như cũ
+          return value.split(',').map((e) => e.trim()).toList();
+        }
       }
       return [];
     }

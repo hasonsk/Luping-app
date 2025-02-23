@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:hanjii/models/hint_story.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../../models/hint_character.dart';
+import '../../models/story.dart';
+import '../../services/search_service.dart'; // Import service để gọi getStoryDetails()
 
 class SearchStoryView extends StatefulWidget {
   final List<HintStory> list;
@@ -16,6 +19,8 @@ class SearchStoryView extends StatefulWidget {
 class _SearchStoryViewState extends State<SearchStoryView> {
   late ScrollController _scrollController;
   late Map<int, bool> _selectedCards;
+  Story? _selectedStory; // Lưu trữ câu chuyện được chọn
+  bool _isLoading = false; // Trạng thái loading khi lấy dữ liệu
 
   @override
   void initState() {
@@ -30,6 +35,34 @@ class _SearchStoryViewState extends State<SearchStoryView> {
     super.dispose();
   }
 
+  void _onCardTap(int index, String character) async {
+    SystemChannels.textInput.invokeMethod('TextInput.hide'); // Ẩn bàn phím
+    print(character);
+    setState(() {
+      _selectedCards = {index: true}; // Chỉ hiển thị một thẻ chi tiết
+      _isLoading = true;
+      _selectedStory = null;
+    });
+
+    // Gọi API để lấy chi tiết
+    Story? story = await SearchService().getStoryDetails(character);
+
+    setState(() {
+      _isLoading = false;
+      _selectedStory = story;
+    });
+  }
+
+  void _playSound(String audioUrl) async {
+    final player = AudioPlayer();
+    try {
+      await player.play(UrlSource(audioUrl));
+    } catch (e) {
+      debugPrint('Lỗi khi phát âm thanh: $e');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -39,19 +72,21 @@ class _SearchStoryViewState extends State<SearchStoryView> {
             controller: _scrollController,
             itemCount: widget.list.length,
             itemBuilder: (context, index) {
-              if (_selectedCards[index] == true) {
-                return buildCardDetailHan();
-              }
-
               final item = widget.list[index];
 
+              if (_selectedCards[index] == true) {
+                return _isLoading
+                    ? Padding(
+                      padding: const EdgeInsets.all(.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    ) // Hiển thị loading khi gọi API
+                    : _selectedStory != null
+                    ? buildCardDetailHan(_selectedStory!) // Hiển thị chi tiết khi có dữ liệu
+                    : const Center(child: Text("Không tìm thấy dữ liệu"));
+              }
+
               return InkWell(
-                onTap: () {
-                  SystemChannels.textInput.invokeMethod('TextInput.hide');
-                  setState(() {
-                    _selectedCards[index] = true;
-                  });
-                },
+                onTap: () => _onCardTap(index, item.character),
                 child: Card(
                   color: Colors.white,
                   margin: const EdgeInsets.fromLTRB(8, 0, 8, 4),
@@ -98,7 +133,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                               ],
                             ),
                             Text(
-                              item.meaning[0],
+                              item.meaning.join(', '),
                               style: const TextStyle(fontSize: 14, color: Colors.black),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
@@ -110,19 +145,19 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           top: 0,
                           bottom: 0,
                           child: Container(
-                            width: 100, // Chiều rộng của ảnh
-                            height: double.infinity, // Đảm bảo ảnh có chiều cao bằng với card
+                            width: 100,
+                            height: double.infinity,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Colors.grey.shade400, // Màu sắc của border
-                                width: 0.5, // Độ dày của border
+                                color: Colors.grey.shade400,
+                                width: 0.5,
                               ),
                             ),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(4), // Bo góc cho ảnh nếu muốn
+                              borderRadius: BorderRadius.circular(4),
                               child: Image.network(
                                 item.image,
-                                fit: BoxFit.contain, // Đảm bảo ảnh không bị biến dạng
+                                fit: BoxFit.contain,
                               ),
                             ),
                           ),
@@ -137,10 +172,10 @@ class _SearchStoryViewState extends State<SearchStoryView> {
         ),
       ],
     );
-
   }
 
-  Card buildCardDetailHan() {
+
+  Card buildCardDetailHan(Story story) {
     return Card(
       color: Colors.white,
       margin: const EdgeInsets.fromLTRB(8, 0, 8, 4),
@@ -154,9 +189,28 @@ class _SearchStoryViewState extends State<SearchStoryView> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
+                  // SizedBox(
+                  //   height: 100,
+                  //   child: Image.asset('assets/charactertest.png'),
+                  // ),
+                  Container(
+                    width: 100,
                     height: 100,
-                    child: Image.asset('assets/charactertest.png'),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/tian_black.png'), // Đặt đường dẫn ảnh
+                        fit: BoxFit.cover, // Căn chỉnh ảnh nền (cover, contain, fill,...)
+                      ),
+                      border: Border.all(color: Colors.grey, width: 0.5), // Viền xung quanh
+                      borderRadius: BorderRadius.circular(8), // Bo góc nếu cần
+                    ),
+                    padding: EdgeInsets.all(8), // Tạo khoảng cách với viền
+                    child: Center(
+                      child: Text(
+                        '${story.character}',
+                        style: TextStyle(fontSize: 60, color: Colors.green.shade400),
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     width: 20,
@@ -169,7 +223,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           height: 5,
                         ),
                         Text(
-                          'Bộ : nhân 人',
+                          'Bộ : ${story.bothu}',
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -179,7 +233,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           height: 5,
                         ),
                         Text(
-                          'Lục thư : hình thanh & hội ý',
+                          'Lục thư : ${story.lucthu}',
                           style: TextStyle(
                               fontSize: 13.5,
                               fontWeight: FontWeight.w500,
@@ -189,7 +243,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           height: 5,
                         ),
                         Text(
-                          'Bính âm : nǐ ',
+                          'Bính âm : ${story.pinyin} ',
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -199,7 +253,7 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           height: 5,
                         ),
                         Text(
-                          'Số nét : 7 ',
+                          'Số nét : ${story.sonet} ',
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -208,10 +262,13 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                       ],
                     ),
                   ),
-                  Icon(
-                    Icons.volume_up_outlined,
-                    color: Colors.grey[500],
-                    size: 20,
+                  IconButton(
+                    onPressed: () => _playSound(story.mp3),
+                    icon: Icon(
+                      Icons.volume_up_outlined,
+                      color: Colors.grey[500],
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(
                     width: 5,
@@ -224,51 +281,71 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Bộ thành phần:',
-                        style: TextStyle(
+                      if ((story.bothanhphan ?? []).isNotEmpty) ...[
+                        Text(
+                          'Bộ thành phần:',
+                          style: TextStyle(
                             fontSize: 12.5,
                             fontWeight: FontWeight.w500,
                             color: Colors.grey[600],
                             decoration: TextDecoration.underline,
-                            decorationColor: Colors.grey),
+                            decorationColor: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                      ],
+                      Column(
+                        children: (story.bothanhphan ?? []) // Nếu null, thay bằng danh sách rỗng
+                            .asMap()
+                            .map((index, value) => MapEntry(index, buildTProw(index + 1, value)))
+                            .values
+                            .toList(),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      buildTProw(1, 'thủ 扌'),
-                      buildTProw(2, 'qua 戈'),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 1),
-                            child: Text(
-                              'Ý nghĩa:',
-                              style: TextStyle(
+                      const SizedBox(height: 20),
+                      Container(
+                        margin: EdgeInsets.only(right: 100),
+                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 100), // Giới hạn chiều rộng tối đa
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 1),
+                              child: Text(
+                                'Ý nghĩa:',
+                                style: TextStyle(
                                   fontSize: 12.5,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.grey[600],
                                   decoration: TextDecoration.underline,
-                                  decorationColor: Colors.grey),
+                                  decorationColor: Colors.grey,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          buildTProw(1, 'Tôi'),
-                          buildTProw(2, 'Ta'),
-                        ],
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 0.5),
+                              child: Wrap(
+                                spacing: 8, // Khoảng cách giữa các phần tử
+                                runSpacing: 4, // Khoảng cách giữa các dòng khi xuống dòng
+                                children: (story.meaning ?? [])
+                                    .asMap()
+                                    .map((index, value) => MapEntry(index, buildTProwMean(index + 1, value)))
+                                    .values
+                                    .toList(),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+
                     ],
                   ),
                   Positioned(
                       bottom: 0,
                       right: 0,
                       child: Container(
+                        height: 80,
+                        width: 80,
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: Colors.grey, // Màu viền
@@ -278,15 +355,15 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                           BorderRadius.circular(4.0), // Bo góc viền
                         ),
                         child: ClipRRect(
-                          borderRadius:
-                          BorderRadius.circular(8.0), // Bo góc cho ảnh
-                          child: const Image(
-                            image: NetworkImage(
-                              'https://luping.com.vn/word_media/Luping_minhhoa_webp/%E6%88%91.webp',
-                            ),
+                          borderRadius: BorderRadius.circular(8.0), // Bo góc cho ảnh
+                          child: Image.network(
+                            story.image ?? '', // Tránh lỗi nếu image là null
                             width: 60,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const SizedBox(); // Ẩn ảnh nếu lỗi
+                            },
                           ),
-                        ),
+                        )
                       ))
                 ],
               ),
@@ -306,79 +383,82 @@ class _SearchStoryViewState extends State<SearchStoryView> {
               const SizedBox(
                 height: 15,
               ),
-              Row(
-                children: [
-                  const Text('('),
-                  const SizedBox(width: 5),
-                  Text(
-                    '我',
-                    style: TextStyle(color: Colors.blue[600]),
-                  ),
-                  const SizedBox(width: 3),
-                  const Text('='),
-                  const SizedBox(width: 3),
-                  Text('丿', style: TextStyle(color: Colors.blue[600])),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  const Text('+'),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  Text('扌', style: TextStyle(color: Colors.blue[600])),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  const Text('+'),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  Text('戈', style: TextStyle(color: Colors.blue[600])),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  const Text(')'),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
+              // Row(
+              //   children: [
+              //     const Text('('),
+              //     const SizedBox(width: 5),
+              //     Text(
+              //       '我',
+              //       style: TextStyle(color: Colors.blue[600]),
+              //     ),
+              //     const SizedBox(width: 3),
+              //     const Text('='),
+              //     const SizedBox(width: 3),
+              //     Text('丿', style: TextStyle(color: Colors.blue[600])),
+              //     const SizedBox(
+              //       width: 3,
+              //     ),
+              //     const Text('+'),
+              //     const SizedBox(
+              //       width: 3,
+              //     ),
+              //     Text('扌', style: TextStyle(color: Colors.blue[600])),
+              //     const SizedBox(
+              //       width: 3,
+              //     ),
+              //     const Text('+'),
+              //     const SizedBox(
+              //       width: 3,
+              //     ),
+              //     Text('戈', style: TextStyle(color: Colors.blue[600])),
+              //     const SizedBox(
+              //       width: 5,
+              //     ),
+              //     const Text(')'),
+              //   ],
+              // ),
+              // const SizedBox(
+              //   height: 15,
+              // ),
               Container(
-                  color: Colors.grey[100],
-                  child: const Text(
-                    '"TÔI" là người đầu đội mũ (丿) tay (扌) cầm giáo (戈).',
-                    style: TextStyle(fontSize: 13, color: Colors.black),
-                  )),
+                color: Colors.grey[100],
+                padding: EdgeInsets.all(8.0),
+                child: Html(
+                  data: '<span style="font-size: 12.5px;">${story.mnemonic_v_content}</span>',
+                  style: {
+                    "span": Style(
+                      fontSize: FontSize(12.5),
+                      color: Colors.black,
+                    ),
+                  },
+                ),
+              ),
               SizedBox(
-                  height: 130,
-                  child: Image.network(
-                      'https://luping.com.vn/word_media/Luping_joychinese_gif/joychinese%E6%88%91.gif')),
+                height: 130,
+                child: Row(
+                  children: (story.mnemonic_v_media ?? []) // Nếu null, thay bằng danh sách rỗng
+                      .map((url) => Image.network(
+                    url,
+                    height: 100, // Điều chỉnh kích thước ảnh
+                    errorBuilder: (context, error, stackTrace) {
+                      return const SizedBox(); // Ẩn nếu ảnh lỗi
+                    },
+                  ))
+                      .toList(),
+                ),
+              ),
               buildNguonGoc(
                   'Trung',
-                  '我 nguyên nghĩa là một loại vũ khí, có tay cầm dài và lưỡi sắc ba cạnh. Nhưng từ thời kỳ cổ, nó đã được mượn để biểu thị đại từ nhân xưng ngôi thứ nhất thường là tự xưng của dân Yin Shang, như "ta thụ niên", "ta phá Quan" và những cái khác. Nguyên nghĩa đã không còn tồn tại từ lâu',
-                  ['assets/我_nguongoc.png']),
+                  '${story.mnemonic_c_content}',
+                  ['https://luping.com.vn/word_media/nguongoc_result/${story.mnemonic_c_media}']),
               buildNguonGoc(
                   'Hàn',
-                  'Từ "我" có nghĩa là "ta". Hình ảnh của từ "我" được vẽ giống như một cây giáo có lưỡi dao hình răng cưa. Điều này cũng giống như cây thương ba mũi mà Đường Tăng đã mang theo trong "Tây du ký". Mặc dù từ "我" được vẽ như một cây thương ba mũi, nhưng nó đã được sử dụng từ sớm như một đại từ nhân xưng ngôi thứ nhất có nghĩa là "ta". Ngay cả trong thời kỳ Ân Thương, khi chữ giáp cốt được tạo ra, từ "我" đã được sử dụng với nghĩa "ta", cho thấy ý nghĩa ban đầu của nó đã không được sử dụng từ rất sớm. Tuy nhiên, không có giải thích rõ ràng về lý do tại sao "我" lại có nghĩa là "ta". Chỉ có suy đoán rằng nó có nghĩa là "ta" hoặc "chúng ta" vì đã cùng nhau cầm vũ khí và chiến đấu. Trong chữ Hán, có những chữ như 余 (ta dư), 吾 (ta ngô), 朕 (ta trẫm) vốn không liên quan đến "ta" nhưng theo thời gian đã được sử dụng để chỉ bản thân, vì vậy "我" cũng có thể là một trong những ví dụ như vậy.',
-                  ['assets/我_naver.png']),
+                  story.mnemonic_k_content ?? '',
+                story.mnemonic_k_media != null ? [story.mnemonic_k_media!] : []),
               buildNguonGoc(
                   'Anh',
-                  '我 ban đầu có ý nghĩa là "rìu chiến có gai", và thường giữ ý nghĩa này '
-                      'khi được sử dụng như một thành phần ký tự. Khi được sử dụng như một ký tự đầy đủ, nó có nghĩa là "Tôi" '
-                      'hoặc "mình".<br><br>'
-                      '<b>Rìu chiến có gai </b>: Bốn nét đầu tiên là lưỡi rìu có gai, nét thứ năm là cán, nét thứ sáu là tay cầm, '
-                      'nét thứ bảy là tua. <br>'
-                      'Thường thì vũ khí Trung Quốc có một tua màu đỏ từ lông ngựa. Tua có ba chức năng: nó thể hiện '
-                      'tình trạng của quân lính tinh nhuệ, nó giúp làm mờ tầm nhìn của đối thủ và nó ngăn chặn sự chảy máu xuống '
-                      'cán.<br><br>'
-                      '<b>Tôi </b>: Khi một người cầm vũ khí trong tay, anh ta thể hiện quyền lực của mình. Điều này truyền đạt cảm giác "Tôi": '
-                      'sự quan trọng của một người.',
+                  '',
                   [
-                    'assets/我_column.png',
-                    'assets/我_nguongoca_1.png',
-                    'assets/我_nguongoca_2.png',
-                    'assets/我_nguongoca_4.png',
-                    'assets/我_nguongoca_3.png'
                   ]),
             ],
           ),
@@ -434,47 +514,104 @@ class _SearchStoryViewState extends State<SearchStoryView> {
     );
   }
 
-  Column buildNguonGoc(String country, String content, List imageUrls) {
+  Padding buildTProwMean(int idx, String nghia) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Text('$idx)',
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[700])),
+          ),
+          const SizedBox(width: 7),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 1),
+            child: Text(nghia, style: const TextStyle(fontSize: 14)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildNguonGoc(String country, String content, List<String> imageUrls) {
+    if (content.trim().isEmpty && imageUrls.isEmpty) {
+      return const SizedBox(); // Trả về SizedBox() nếu không có dữ liệu
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Nguồn gốc ($country):',
           style: TextStyle(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[600],
-              decoration: TextDecoration.underline,
-              decorationColor: Colors.grey),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: imageUrls.map((url) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 2.0), // Add padding between images
-                child: Image(
-                  image: AssetImage(url),
-                  height: 130,
-                ),
-              );
-            }).toList(),
+            fontSize: 12.5,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[600],
+            decoration: TextDecoration.underline,
+            decorationColor: Colors.grey,
           ),
         ),
-        const SizedBox(
-          height: 20,
-        ),
-        MyExpandableContainer(content: content),
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
+
+        // Chỉ hiển thị nếu danh sách imageUrls không rỗng
+        if (imageUrls.isNotEmpty)
+          Column(
+            children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: imageUrls.map((url) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: Image.network(
+                        url,
+                        height: 130,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return SizedBox(
+                            height: 130,
+                            width: 130,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                    (loadingProgress.expectedTotalBytes ?? 1)
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) => SizedBox(
+                          height: 130,
+                          width: 130,
+                          child: Center(
+                            child: Icon(Icons.broken_image, color: Colors.red, size: 40),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+
+        // Chỉ hiển thị nếu content không rỗng
+        if (content.trim().isNotEmpty) ...[
+          MyExpandableContainer(content: content),
+          const SizedBox(height: 20),
+        ],
       ],
     );
   }
+
+
 }
 
 

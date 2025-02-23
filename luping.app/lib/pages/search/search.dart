@@ -4,6 +4,7 @@ import 'package:hanjii/models/hint_character.dart';
 import 'package:hanjii/data/database_helper.dart';
 import 'package:hanjii/models/hint_story.dart';
 import 'package:hanjii/models/sentence.dart';
+import 'package:hanjii/pages/search/develop_announce_screen.dart';
 import 'package:hanjii/pages/search/drawingboard.dart';
 import 'package:hanjii/pages/search/search_image_view.dart';
 import 'package:hanjii/pages/search/search_lobby_view.dart';
@@ -180,38 +181,50 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
     switch (index) {
       case 0:
+        setState(() {
+          wordData = [];
+          hanziData = [];
+          sentenceData = [];
+          imageData = [];
+        });
         var result = await _searchService.hintSearch(text);
         setState(() {
           wordData = result;
-          hanziData = [];
-          sentenceData = [];
-          imageData = [];
         });
         break;
       case 1:
-        var result = await _searchService.getStoryHint(text);
         setState(() {
           wordData = [];
-          hanziData = result;
+          hanziData = [];
           sentenceData = [];
           imageData = [];
+        });
+        var result = await _searchService.getStoryHint(text);
+        setState(() {
+          hanziData = result;
         });
         break;
       case 2:
-        var result = await _searchService.getSentence(text);
-        setState(() {
-          wordData = [];
-          hanziData = [];
-          sentenceData = result ?? [];
-          imageData = [];
-        });
-        break;
-      case 3:
-        var result = await _searchService.getImage(text, 0);
         setState(() {
           wordData = [];
           hanziData = [];
           sentenceData = [];
+          imageData = [];
+        });
+        var result = await _searchService.getSentence(text);
+        setState(() {
+          sentenceData = result;
+        });
+        break;
+      case 3:
+        setState(() {
+          wordData = [];
+          hanziData = [];
+          sentenceData = [];
+          imageData = [];
+        });
+        var result = await _searchService.getImage(text, 0);
+        setState(() {
           imageData = result ?? []; // Nếu result là null, đặt imageData = []
         });
         break;
@@ -225,41 +238,51 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   Future<void> _updateData(String? text, int index) async {
     if (text == null || text.trim().isEmpty) return; // Nếu text rỗng, không làm gì
 
-    switch (index) {
-      case 0:
-        if (wordData.isEmpty) {
-          var result = await _searchService.hintSearch(text);
-          setState(() {
-            wordData = result;
-          });
-        }
-        break;
-      case 1:
-        if (hanziData.isEmpty) {
-          var result = await _searchService.getStoryHint(text);
-          setState(() {
-            hanziData = result;
-          });
-        }
-        break;
-      case 2:
-        if (sentenceData.isEmpty) {
-          var result = await _searchService.getSentence(text);
-          setState(() {
-            sentenceData = result ?? [];
-          });
-        }
-        break;
-      case 3:
-        if (imageData.isEmpty) {
-          var result = await _searchService.getImage(text, 0);
-          setState(() {
-            imageData = result ?? [];
-          });
-        }
-        break;
-      default:
-        print("Index không hợp lệ: $index");
+    setState(() {
+      isLoading = true; // Bắt đầu tải dữ liệu
+    });
+
+    try {
+      switch (index) {
+        case 0:
+          if (wordData.isEmpty) {
+            var result = await _searchService.hintSearch(text);
+            setState(() {
+              wordData = result;
+            });
+          }
+          break;
+        case 1:
+          if (hanziData.isEmpty) {
+            var result = await _searchService.getStoryHint(text);
+            setState(() {
+              hanziData = result;
+            });
+          }
+          break;
+        case 2:
+          if (sentenceData.isEmpty) {
+            var result = await _searchService.getSentence(text);
+            setState(() {
+              sentenceData = result;
+            });
+          }
+          break;
+        case 3:
+          if (imageData.isEmpty) {
+            var result = await _searchService.getImage(text, 0);
+            setState(() {
+              imageData = result ?? [];
+            });
+          }
+          break;
+        default:
+          print("Index không hợp lệ: $index");
+      }
+    } finally {
+      setState(() {
+        isLoading = false; // Kết thúc tải dữ liệu
+      });
     }
   }
 
@@ -292,6 +315,12 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   void _clearText() {
     _controller.clear();
+    setState(() {
+      wordData = [];
+      hanziData = [];
+      sentenceData = [];
+      imageData = [];
+    });
   }
 
   @override
@@ -498,13 +527,15 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   }
 
   Widget buildWordsView() {
-    if (_controller.text.isEmpty) {
-      return const SearchLobbyView(); // Gọi hàm xây dựng giao diện sảnh chờ
-    }
-    if(wordData.isEmpty){
-      _updateData(_controller.text, 0);
-    }
-    return SearchWordView(list: wordData);
+    // if (_controller.text.isEmpty) {
+    //   return const SearchLobbyView(); // Gọi hàm xây dựng giao diện sảnh chờ
+    // }
+    // if(wordData.isEmpty){
+    //   _updateData(_controller.text, 0);
+    // }
+    // return SearchWordView(list: wordData);
+    return DevelopAnnounceScreen();
+
   }
 
   Widget buildStoriesView() {
@@ -516,16 +547,18 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   Widget buildSentencesView() {
     if(sentenceData.isEmpty){
-      _updateData(_controller.text, 2);
+      // _updateData(_controller.text, 2);
     }
-    return SearchSentencesView(list: sentenceData);
+    // return SearchSentencesView(list: sentenceData);
+    return DevelopAnnounceScreen();
   }
 
   Widget buildImagesView() {
-    if(sentenceData.isEmpty){
-      _updateData(_controller.text, 3);
-    }
-    return SearchImageView(list : imageData);
+    // if(sentenceData.isEmpty){
+    //   _updateData(_controller.text, 3);
+    // }
+    // return SearchImageView(list : imageData);
+    return DevelopAnnounceScreen();
   }
 
 
