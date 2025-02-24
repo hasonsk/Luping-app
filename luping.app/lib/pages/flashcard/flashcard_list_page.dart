@@ -13,7 +13,7 @@ class FlashcardListPage extends StatelessWidget {
   void _navigateToFlashcardPage(BuildContext context, Flashcard flashcard) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FlashcardContentPage()),
+      MaterialPageRoute(builder: (context) => FlashcardContentPage(flashcard: flashcard)),
     );
   }
 
@@ -192,10 +192,10 @@ class FlashcardListPage extends StatelessWidget {
                               ],
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                            child: Center(
+                            child: const Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   Icon(Icons.add_circle_outline, color: Colors.blueGrey, size: 28),
                                   SizedBox(height: 6),
                                   Text("Mới", style: TextStyle(fontSize: 13, color: Colors.black87)),

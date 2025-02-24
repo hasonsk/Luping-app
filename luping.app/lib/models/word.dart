@@ -1,14 +1,13 @@
-// word.dart
 class Word {
   final int id;
-  final String? word;
+  final String word;
   final String? pinyin;
-  final List<String>? meaning;
+  final List<String> meaning;
   final String? hanviet;
   final List<String>? cannghia;
   final List<String>? trainghia;
   final String? image;
-  final String? shortMeaning; // Đổi tên tham số thành shortMeaning
+  final String shortmeaning;
   final String? hskLevel;
 
   Word({
@@ -20,7 +19,7 @@ class Word {
     required this.cannghia,
     required this.trainghia,
     required this.image,
-    required this.shortMeaning, // Đổi tên tham số thành shortMeaning
+    required this.shortmeaning,
     required this.hskLevel,
   });
 
@@ -44,8 +43,23 @@ class Word {
       cannghia: convertToList(map['cannghia']),
       trainghia: convertToList(map['trainghia']),
       image: map['image'],
-      shortMeaning: map['shortMeaning'],
+      shortmeaning: map['shortmeaning'] ?? '',
       hskLevel: map['hskLevel'],
     );
+  }
+
+  Map<String, String> toMap() {
+    return {
+      'id': id.toString(),
+      'word': word,
+      'pinyin': pinyin ?? '',
+      'meaning': meaning.join(', '),
+      'hanviet': hanviet ?? '',
+      'cannghia': cannghia?.join(', ') ?? '',
+      'trainghia': trainghia?.join(', ') ?? '',
+      'image': image ?? '',
+      'shortmeaning': shortmeaning,
+      'hskLevel': hskLevel ?? '',
+    };
   }
 }

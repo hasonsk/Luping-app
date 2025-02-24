@@ -1,6 +1,6 @@
-import 'package:hanjii/models/hint_story.dart';
-import 'package:hanjii/models/story.dart';
-import 'package:hanjii/models/word.dart';
+import 'package:luping/models/hint_story.dart';
+import 'package:luping/models/story.dart';
+import 'package:luping/models/word.dart';
 import 'package:logger/logger.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -50,18 +50,18 @@ class SearchService {
       // Mỗi trường nếu khớp chính xác với chuỗi tìm kiếm không khoảng trắng sẽ nhận bonus cao
       final String exactBonusClause = """
       (
-        CASE WHEN REPLACE(word, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyinQuery, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
+        CASE WHEN REPLACE(word, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
+        CASE WHEN REPLACE(pinyinQuery, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
+        CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
         CASE WHEN REPLACE(hanviet, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END
       )
       """;
 
       final String partialBonusClause = """
       (
-        CASE WHEN REPLACE(word, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyinQuery, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
+        CASE WHEN REPLACE(word, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
+        CASE WHEN REPLACE(pinyinQuery, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
+        CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
         CASE WHEN REPLACE(hanviet, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END
       )
       """;
@@ -73,32 +73,32 @@ class SearchService {
       // - Substring match: nếu trường chứa token, điểm số thấp nhất
       final List<String> scoreParts = tokens.map((token) => """
       (
-        CASE 
-          WHEN REPLACE(word, '​', '') = '$token' THEN 20 
-          WHEN REPLACE(word, '​', '') LIKE '$token%' THEN 15 
-          WHEN REPLACE(word, '​', '') LIKE '%$token%' THEN 10 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(word, '​', '') = '$token' THEN 20
+          WHEN REPLACE(word, '​', '') LIKE '$token%' THEN 15
+          WHEN REPLACE(word, '​', '') LIKE '%$token%' THEN 10
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(pinyinQuery, '​', '') = '$token' THEN 16 
-          WHEN REPLACE(pinyinQuery, '​', '') LIKE '$token%' THEN 12 
-          WHEN REPLACE(pinyinQuery, '​', '') LIKE '%$token%' THEN 8 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(pinyinQuery, '​', '') = '$token' THEN 16
+          WHEN REPLACE(pinyinQuery, '​', '') LIKE '$token%' THEN 12
+          WHEN REPLACE(pinyinQuery, '​', '') LIKE '%$token%' THEN 8
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(meaning, '​', '') = '$token' THEN 12 
-          WHEN REPLACE(meaning, '​', '') LIKE '$token%' THEN 9 
-          WHEN REPLACE(meaning, '​', '') LIKE '%$token%' THEN 6 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(meaning, '​', '') = '$token' THEN 12
+          WHEN REPLACE(meaning, '​', '') LIKE '$token%' THEN 9
+          WHEN REPLACE(meaning, '​', '') LIKE '%$token%' THEN 6
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(hanviet, '​', '') = '$token' THEN 10 
-          WHEN REPLACE(hanviet, '​', '') LIKE '$token%' THEN 7 
-          WHEN REPLACE(hanviet, '​', '') LIKE '%$token%' THEN 5 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(hanviet, '​', '') = '$token' THEN 10
+          WHEN REPLACE(hanviet, '​', '') LIKE '$token%' THEN 7
+          WHEN REPLACE(hanviet, '​', '') LIKE '%$token%' THEN 5
+          ELSE 0
         END
       )
       """).toList();
@@ -123,11 +123,11 @@ class SearchService {
 
       // 5. Tạo câu truy vấn SQL với proper formatting
       final String sql = """
-      SELECT 
+      SELECT
         *,
         $totalScoreClause AS relevance
       FROM Words
-      WHERE 
+      WHERE
         $whereClause
       ORDER BY relevance DESC
       LIMIT $MAX_RESULTS
@@ -166,40 +166,55 @@ class SearchService {
     }
   }
 
-  Future<Map?> getImage(String input, int offset) async {
+  Future<List<String>?> getImage(String input, int offset) async {
     /*
-      Fetch images from Google Image via Google Custom Search API
-    :param: input: search query
-    :param: offset: starting search index
-    ;return: list of results as Map
-    */
+    Fetch images from Google Image via Google Custom Search API
+    and return a list of image URLs.
+  */
 
-    // JSON object to send as query parameters
-    final Map<String, dynamic> queryParams = {
+    // Lấy API Key & CSE ID, kiểm tra null
+    final apiKey = dotenv.env['API_KEY'] ?? "";
+    final cseId = dotenv.env['CSE_ID'] ?? "";
+    if (apiKey.isEmpty || cseId.isEmpty) {
+      throw Exception("API_KEY hoặc CSE_ID chưa được cấu hình!");
+    }
+
+    // Tham số truy vấn API
+    final Map<String, String> queryParams = {
       "q": input,
-      "num": 9,
-      "start": offset,
+      "num": "9",
+      "start": offset.toString(),
       "imgSize": "medium",
       "searchType": "image",
-      "key": dotenv.env['API_KEY'],
-      "cx": dotenv.env['CSE_ID']
+      "key": apiKey,
+      "cx": cseId
     };
 
-    // Convert queryParams to URI format
-    final uri = Uri.https(
-        'https://www.googleapis.com', '/customsearch/v1', queryParams);
+    // Tạo URI chính xác
+    final uri =
+        Uri.https('www.googleapis.com', '/customsearch/v1', queryParams);
 
     try {
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['items'];
+
+        if (data.containsKey('items')) {
+          // Lọc ra danh sách link hình ảnh từ kết quả API
+          List<String> imageLinks =
+              List<String>.from(data['items'].map((item) => item['link']));
+
+          return imageLinks;
+        } else {
+          logger.w("Không tìm thấy hình ảnh nào.");
+          return [];
+        }
       } else {
-        throw Exception('Failed to fetch data: ${response.statusCode}');
+        throw Exception('Lỗi API: ${response.statusCode}');
       }
     } catch (e) {
-      logger.e("Error in getImage: $e");
+      logger.e("Lỗi trong getImage: $e");
       return null;
     }
   }
@@ -228,18 +243,18 @@ class SearchService {
       // Mỗi trường nếu khớp chính xác với chuỗi tìm kiếm không khoảng trắng sẽ nhận bonus cao
       final String exactBonusClause = """
       (
-        CASE WHEN REPLACE(sentence, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyin, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
-        CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END + 
+        CASE WHEN REPLACE(sentence, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
+        CASE WHEN REPLACE(pinyin, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
+        CASE WHEN REPLACE(meaning, '​', ' ') = '$normalizedQuery' THEN 100 ELSE 0 END +
         CASE WHEN REPLACE(searchquery, '​', ' ') = '$normalizedQuery' THEN 150 ELSE 0 END
       )
       """;
 
       final String partialBonusClause = """
       (
-        CASE WHEN REPLACE(sentence, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(pinyin, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
-        CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END + 
+        CASE WHEN REPLACE(sentence, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
+        CASE WHEN REPLACE(pinyin, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
+        CASE WHEN REPLACE(meaning, '​', ' ') LIKE '%$normalizedQuery%' THEN 50 ELSE 0 END +
         CASE WHEN REPLACE(searchquery, '​', ' ') LIKE '%$normalizedQuery%' THEN 100 ELSE 0 END
       )
       """;
@@ -251,32 +266,32 @@ class SearchService {
       // - Substring match: nếu trường chứa token, điểm số thấp nhất
       final List<String> scoreParts = tokens.map((token) => """
       (
-        CASE 
-          WHEN REPLACE(sentence, '​', '') = '$token' THEN 20 
-          WHEN REPLACE(sentence, '​', '') LIKE '$token%' THEN 15 
-          WHEN REPLACE(sentence, '​', '') LIKE '%$token%' THEN 10 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(sentence, '​', '') = '$token' THEN 20
+          WHEN REPLACE(sentence, '​', '') LIKE '$token%' THEN 15
+          WHEN REPLACE(sentence, '​', '') LIKE '%$token%' THEN 10
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(pinyin, '​', '') = '$token' THEN 16 
-          WHEN REPLACE(pinyin, '​', '') LIKE '$token%' THEN 12 
-          WHEN REPLACE(pinyin, '​', '') LIKE '%$token%' THEN 8 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(pinyin, '​', '') = '$token' THEN 16
+          WHEN REPLACE(pinyin, '​', '') LIKE '$token%' THEN 12
+          WHEN REPLACE(pinyin, '​', '') LIKE '%$token%' THEN 8
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(meaning, '​', '') = '$token' THEN 12 
-          WHEN REPLACE(meaning, '​', '') LIKE '$token%' THEN 9 
-          WHEN REPLACE(meaning, '​', '') LIKE '%$token%' THEN 6 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(meaning, '​', '') = '$token' THEN 12
+          WHEN REPLACE(meaning, '​', '') LIKE '$token%' THEN 9
+          WHEN REPLACE(meaning, '​', '') LIKE '%$token%' THEN 6
+          ELSE 0
         END
         +
-        CASE 
-          WHEN REPLACE(searchquery, '​', '') = '$token' THEN 30 
-          WHEN REPLACE(searchquery, '​', '') LIKE '$token%' THEN 25 
-          WHEN REPLACE(searchquery, '​', '') LIKE '%$token%' THEN 20 
-          ELSE 0 
+        CASE
+          WHEN REPLACE(searchquery, '​', '') = '$token' THEN 30
+          WHEN REPLACE(searchquery, '​', '') LIKE '$token%' THEN 25
+          WHEN REPLACE(searchquery, '​', '') LIKE '%$token%' THEN 20
+          ELSE 0
         END
       )
       """).toList();
@@ -291,7 +306,7 @@ class SearchService {
       final List<String> conditions = [];
       for (final token in tokens) {
         conditions.addAll([
-          """REPLACE(search, '​', '') LIKE '%$token%'""",
+          """REPLACE(searchquery, '​', '') LIKE '%$token%'""",
           """REPLACE(pinyin, '​', '') LIKE '%$token%'""",
           """REPLACE(meaning, '​', '') LIKE '%$token%'""",
           """REPLACE(searchquery, '​', '') LIKE '%$token%'"""
@@ -301,11 +316,11 @@ class SearchService {
 
       // 5. Tạo câu truy vấn SQL với proper formatting
       final String sql = """
-      SELECT 
+      SELECT
         *,
         $totalScoreClause AS relevance
       FROM Sentences
-      WHERE 
+      WHERE
         $whereClause
       ORDER BY relevance DESC
       LIMIT $MAX_RESULTS
@@ -330,14 +345,23 @@ class SearchService {
         return [];
       }
 
-      // 2. Tạo danh sách các placeholder và các giá trị tương ứng cho truy vấn
-      final placeholders = List.filled(hanziQuery.length, '?').join(',');
-      final characters = hanziQuery.split('');
+      final uniqueHanziQuery = hanziQuery.split('').toSet().join('');
 
-      // 3. Truy vấn cơ sở dữ liệu
+      // 2. Tạo danh sách các placeholder và các giá trị tương ứng cho truy vấn
+      final placeholders = List.filled(uniqueHanziQuery.length, '?').join(',');
+      final characters = uniqueHanziQuery.split('');
+
+      // 3. Truy vấn cơ sở dữ liệu, bao gồm trường 'image'
       final results = await db.query(
         'Storys',
-        columns: ['id', 'character', 'pinyin', 'hanviet', 'meaning'],
+        columns: [
+          'id',
+          'character',
+          'pinyin',
+          'hanviet',
+          'meaning',
+          'image'
+        ], // Cập nhật ở đây
         where: 'character IN ($placeholders)',
         whereArgs: characters,
       );
@@ -363,25 +387,72 @@ class SearchService {
     }
   }
 
-  // New function to get story detail by character
-  Future<Story?> getStoryDetail(String character) async {
+  Future<Story?> getStoryDetails(String character) async {
     try {
       final db = await _db;
-      final result = await db.query(
+      print("🔍 Đang tìm kiếm story với character: $character");
+
+      final results = await db.query(
         'Storys',
+        columns: null,
         where: 'character = ?',
         whereArgs: [character],
-        limit: 1,
       );
 
-      if (result.isNotEmpty) {
-        return Story.fromMap(result.first);
-      } else {
-        return null;
+      if (results.isNotEmpty) {
+        final story = Story.fromMap(results.first);
+        print(
+            "✅ Story tìm thấy: ${story.character}, ${story.pinyin}, ${story.mnemonic_c_media}");
+        return story;
       }
-    } catch (e) {
-      logger.e('Error in getStoryDetail: $e');
+
+      print("⚠️ Không tìm thấy story nào cho character: $character");
       return null;
+    } catch (e) {
+      logger.e("❌ Lỗi trong getStoryDetails: $e");
+      return null;
+    }
+  }
+
+  Future<List<Word>?> fetchWordList(List<String> wordList) async {
+    print(wordList);
+    try {
+      final db = await _db;
+
+      // sw
+      // 1. Chuẩn hóa input: loại bỏ ZWSP và khoảng trắng thừa
+      String normalizeText(String text) {
+        return text
+            .replaceAll('\u200B', '')
+            .replaceAll(RegExp(r'\s+'), ' ')
+            .trim();
+      }
+
+      if (wordList.isEmpty) throw Exception('Empty wordList');
+
+      for (int i = 0; i < wordList.length; i++) {
+        wordList[i] = normalizeText(wordList[i]);
+      }
+
+      String generateWhereClause(List<String> wordList) {
+        String formattedWords = wordList.map((word) => "'$word'").join(', ');
+        return "WHERE word IN ($formattedWords)";
+      }
+
+      final String whereClause = generateWhereClause(wordList);
+
+      final String sql = """
+      SELECT
+        *
+      FROM Words $whereClause
+      """;
+
+      // 6. Thực thi truy vấn
+      final List<Map<String, dynamic>> results = await db.rawQuery(sql);
+      return results.map((row) => Word.fromMap(row)).toList();
+    } catch (e) {
+      logger.e('Error occurred while fetching word list: $e');
+      return [];
     }
   }
 }

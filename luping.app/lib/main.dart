@@ -3,18 +3,17 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:get/get.dart'; // Import GetX
-import 'package:hanjii/data/database_helper.dart';
+import 'package:get/get.dart';
+import 'package:luping/data/database_helper.dart';
+import 'package:luping/services/chatbot_service.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'pages/loading.dart';
-// import 'pages/authpage.dart';
 import 'pages/auth/auth_page.dart';
 import 'pages/character.dart';
 import 'pages/word.dart';
 import 'pages/note.dart';
 import 'pages/gamescreen.dart';
-import 'pages/mainscreen.dart';
+import 'pages/main_screen.dart';
 
 import 'models/chat_message.dart';
 import 'models/chat_session.dart';
@@ -45,9 +44,16 @@ void main() async {
 
   // Initialize Hive.
   await Hive.initFlutter();
-  // Register the ChatMessage adapter.
-  Hive.registerAdapter(ChatMessageAdapter());
-  Hive.registerAdapter(ChatSessionAdapter());
+
+  if (!Hive.isAdapterRegistered(0)) {
+    Hive.registerAdapter(ChatMessageAdapter());
+  }
+  if (!Hive.isAdapterRegistered(1)) {
+    Hive.registerAdapter(ChatSessionAdapter());
+  }
+
+  // Khởi tạo Hive box cho chat session
+  await ChatbotService().initHive();
 
   // Khởi chạy ứng dụng
   runApp(const MyApp());
@@ -71,8 +77,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const Loading()), // Đổi trang khởi đầu thành Loading
-        GetPage(name: '/main', page: () => const MainScreen()), // Đăng ký MainScreen
+        GetPage(
+            name: '/',
+            page: () => const Loading()), // Đổi trang khởi đầu thành Loading
+        GetPage(
+            name: '/main',
+            page: () => const MainScreen()), // Đăng ký MainScreen
         GetPage(name: '/authpage', page: () => const AuthPage()),
         // GetPage(name: '/search', page: () => const Search()),
         GetPage(name: '/note', page: () => const Note()),

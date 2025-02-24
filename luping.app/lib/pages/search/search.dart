@@ -1,12 +1,20 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:hanjii/models/hint_character.dart';
-import 'package:hanjii/data/database_helper.dart';
-import 'package:hanjii/pages/search/search_lobby_view.dart';
+import 'package:luping/models/hint_character.dart';
+import 'package:luping/data/database_helper.dart';
+import 'package:luping/models/hint_story.dart';
+import 'package:luping/models/sentence.dart';
+import 'package:luping/pages/search/develop_announce_screen.dart';
+import 'package:luping/pages/search/drawingboard.dart';
+import 'package:luping/pages/search/search_image_view.dart';
+import 'package:luping/pages/search/search_loading_widget.dart';
+import 'package:luping/pages/search/search_lobby_view.dart';
+import 'package:luping/pages/search/search_sentence_view.dart';
 import 'dart:async';
-import 'package:hanjii/pages/search/search_story_view.dart';
-import 'package:hanjii/pages/search/search_word_view.dart';
-import 'package:hanjii/services/search_service.dart';
+import 'package:luping/pages/search/stories/search_story_view.dart';
+import 'package:luping/pages/search/search_triangle_icon.dart';
+import 'package:luping/pages/search/search_word_view.dart';
+import 'package:luping/services/search_service.dart';
 import 'handwriting.dart'; // Import lớp Handwriting
 
 class Search extends StatefulWidget {
@@ -25,45 +33,48 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
-  static const primaryColor = Color(0xFF96D962);
+  // Import Search Service
+  final SearchService _searchService = SearchService();
+
+  // Color variable
+  static const primaryColor = Color(0xFF96D962); // Màu chủ đề
   static const bodyColor = Color(0xFFF2F2F7); // Màu nền của body
+
+  // Điều khiển text-field && Tab
   final TextEditingController _controller =
       TextEditingController(); // Điều khiển nội dung của TextField
   final FocusNode _focusNode = FocusNode();
-  final SearchService _searchService = SearchService();
-  bool isLoading = false; // Biến trạng thái cho loading
-  int _selectedTabIndex = 3;
   late TabController _tabController;
   late PageController _pageController; // Thêm PageController
+
+  bool isLoading = false; // Biến trạng thái cho loading
+
+  String searchword = ''; // Biến lưu query hiện tại
   String _previousText = '';
-  final Map<String, List<HintCharacter>> _searchCache = {};
+
   bool _isTabTapped = false; // Biến để theo dõi khi tab được nhấn
-  Timer? _debounce;
-  final ScrollController _scrollController =
-      ScrollController(); // Controller cho ScrollView
+  Timer? _debounceTimer; // Biến lưu Timer để thực hiện debounce
+
   bool isFocused = false;
   bool isCardReplaced = false; // Biến để theo dõi trạng thái thay thế thẻ
   Map<int, bool> selectedCards = {};
+
+  // Parameter Quay lại
   bool _isBackPressed = false;
+
+  // Parameter
+  late ValueNotifier<int> _selectedTabIndex;
+
+  // Data field
   List<HintCharacter> wordData = [];
-  List<HintCharacter> hanziData = [
-    HintCharacter(
-      hanzi: '我',
-      pinyin: 'wǒ',
-      hanViet: 'Ngã',
-      shortMeaning: 'Tôi',
-    ),
-    HintCharacter(
-      hanzi: '们',
-      pinyin: 'men',
-      hanViet: 'Môn',
-      shortMeaning: 'chúng',
-    ),
-  ];
+  List<HintStory> hanziData = [];
+  List<Sentence> sentenceData = [];
+  List<String> imageData = [];
+
 // Setter cho _selectedTabIndex để đồng bộ TabBar và PageView
   set selectedTabIndex(int index) {
     setState(() {
-      _selectedTabIndex = index; // Cập nhật chỉ số tab
+      _selectedTabIndex.value = index; // Cập nhật chỉ số tab
       _tabController.animateTo(index); // Cập nhật TabBar
       _pageController.jumpToPage(index); // Cập nhật PageView
     });
@@ -72,37 +83,21 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _selectedTabIndex =
+    _selectedTabIndex = ValueNotifier<int>(widget.sharedIndex);
+    _selectedTabIndex.value =
         widget.sharedIndex; // Gán giá trị ban đầu từ sharedIndex
     _tabController = TabController(length: 4, vsync: this);
     _pageController = PageController(); // in initState()
 
     // Khi khởi tạo, đồng bộ TabBar và PageView theo _selectedTabIndex
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _tabController.animateTo(_selectedTabIndex); // Chọn tab tương ứng index
-      _pageController
-          .jumpToPage(_selectedTabIndex); // Hiển thị trang tương ứng index
+      _tabController
+          .animateTo(_selectedTabIndex.value); // Chọn tab tương ứng index
+      _pageController.jumpToPage(
+          _selectedTabIndex.value); // Hiển thị trang tương ứng index
       // Kiểm tra nếu pageIndex = 1 thì focus vào TextField
       if (widget.pageIndex == 1) {
         FocusScope.of(context).requestFocus(_focusNode);
-      }
-    });
-
-    _controller.addListener(() {
-      if (_debounce?.isActive ?? false) _debounce!.cancel();
-      _debounce = Timer(const Duration(milliseconds: 100), () {
-        String text = _controller.text;
-        if (text != _previousText) {
-          _previousText = text;
-          _getData(text);
-        }
-      });
-    });
-
-    _scrollController.addListener(() {
-      // Ẩn bàn phím khi cuộn
-      if (_scrollController.hasClients) {
-        FocusScope.of(context).unfocus();
       }
     });
 
@@ -111,7 +106,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       if (_tabController.indexIsChanging) {
         _isTabTapped = true; // Tab được nhấn
         setState(() {
-          _selectedTabIndex =
+          _selectedTabIndex.value =
               _tabController.index; // Cập nhật tab đang được chọn
         });
         _pageController.animateToPage(
@@ -128,7 +123,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         final page = _pageController.page?.round();
         if (page != null && page != _tabController.index) {
           setState(() {
-            _selectedTabIndex = page; // Cập nhật tab đang được chọn
+            _selectedTabIndex.value = page; // Cập nhật tab đang được chọn
           });
           _tabController.animateTo(page);
         }
@@ -142,9 +137,11 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     // Cập nhật _selectedTabIndex nếu widget.sharedIndex thay đổi
     if (oldWidget.sharedIndex != widget.sharedIndex) {
       setState(() {
-        _selectedTabIndex = widget.sharedIndex; // Cập nhật từ sharedIndex
-        _tabController.animateTo(_selectedTabIndex); // Cập nhật TabBar
-        _pageController.jumpToPage(_selectedTabIndex); // Cập nhật PageView
+        _selectedTabIndex =
+            ValueNotifier<int>(widget.sharedIndex); // Cập nhật từ sharedIndex
+        _tabController.animateTo(_selectedTabIndex.value); // Cập nhật TabBar
+        _pageController
+            .jumpToPage(_selectedTabIndex.value); // Cập nhật PageView
       });
     }
 
@@ -163,46 +160,130 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _tabController.dispose();
     _focusNode.dispose();
-    _scrollController.dispose();
     _pageController.dispose(); // Dispose page controller
+    _selectedTabIndex.dispose();
     super.dispose();
   }
 
-  Future<void> _getData(String text) async {
-    if (text.isEmpty) {
+  // Xử lý dữ liệu mình tab cho lần đầu
+  Future<void> _getData(String? text, int index) async {
+    if (text == null || text.trim().isEmpty) {
+      // Nếu text null hoặc rỗng, đặt tất cả dữ liệu về danh sách rỗng
       setState(() {
         wordData = [];
-        isLoading = false;
+        hanziData = [];
+        sentenceData = [];
+        imageData = [];
       });
-      return;
+      return; // Thoát khỏi hàm, không gọi API
     }
 
-    setState(() {
-      isLoading = true;
-    });
-
-    if (_searchCache.containsKey(text)) {
-      setState(() {
-        wordData = _searchCache[text]!;
-        isLoading = false;
-      });
-    } else {
-      try {
-        List<HintCharacter> results = await _searchService.hintSearch(text);
-        setState(() {
-          wordData = results;
-          _searchCache[text] = results;
-          isLoading = false;
-        });
-      } catch (e) {
+    switch (index) {
+      case 0:
         setState(() {
           wordData = [];
-          isLoading = false;
+          hanziData = [];
+          sentenceData = [];
+          imageData = [];
         });
+        var result = await _searchService.hintSearch(text);
+        setState(() {
+          wordData = result;
+        });
+        break;
+      case 1:
+        setState(() {
+          wordData = [];
+          hanziData = [];
+          sentenceData = [];
+          imageData = [];
+        });
+        var result = await _searchService.getStoryHint(text);
+        setState(() {
+          hanziData = result;
+        });
+        break;
+      case 2:
+        setState(() {
+          wordData = [];
+          hanziData = [];
+          sentenceData = [];
+          imageData = [];
+        });
+        var result = await _searchService.getSentence(text);
+        setState(() {
+          sentenceData = result;
+        });
+        break;
+      case 3:
+        setState(() {
+          wordData = [];
+          hanziData = [];
+          sentenceData = [];
+          imageData = [];
+        });
+        var result = await _searchService.getImage(text, 0);
+        setState(() {
+          imageData = result ?? []; // Nếu result là null, đặt imageData = []
+        });
+        break;
+      default:
+        print("Index không hợp lệ: $index");
+    }
+  }
+
+  // Cập nhât dữ liệu khi người dùng đổi tab
+  Future<void> _updateData(String? text, int index) async {
+    if (text == null || text.trim().isEmpty)
+      return; // Nếu text rỗng, không làm gì
+
+    setState(() {
+      isLoading = true; // Bắt đầu tải dữ liệu
+    });
+
+    try {
+      switch (index) {
+        case 0:
+          if (wordData.isEmpty) {
+            var result = await _searchService.hintSearch(text);
+            setState(() {
+              wordData = result;
+            });
+          }
+          break;
+        case 1:
+          if (hanziData.isEmpty) {
+            var result = await _searchService.getStoryHint(text);
+            setState(() {
+              hanziData = result;
+            });
+          }
+          break;
+        case 2:
+          if (sentenceData.isEmpty) {
+            var result = await _searchService.getSentence(text);
+            setState(() {
+              sentenceData = result;
+            });
+          }
+          break;
+        case 3:
+          if (imageData.isEmpty) {
+            var result = await _searchService.getImage(text, 0);
+            setState(() {
+              imageData = result ?? [];
+            });
+          }
+          break;
+        default:
+          print("Index không hợp lệ: $index");
       }
+    } finally {
+      setState(() {
+        isLoading = false; // Kết thúc tải dữ liệu
+      });
     }
   }
 
@@ -234,6 +315,12 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   void _clearText() {
     _controller.clear();
+    setState(() {
+      wordData = [];
+      hanziData = [];
+      sentenceData = [];
+      imageData = [];
+    });
   }
 
   @override
@@ -278,6 +365,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                               autofocus: false,
                               focusNode: _focusNode,
                               controller: _controller,
+                              onChanged: _onSearchTextChanged,
                               style: const TextStyle(
                                   fontSize: 15.0), // Kiểu chữ cho text nhập vào
                               cursorColor: Colors.grey,
@@ -427,7 +515,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                     buildWordsView(),
                     buildStoriesView(),
                     buildSentencesView(),
-                    buildSentencesView(),
+                    buildImagesView(),
                   ],
                 ),
               ),
@@ -439,232 +527,67 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   }
 
   Widget buildWordsView() {
-    if (_controller.text.isEmpty) {
-      return SearchLobbyView(); // Gọi hàm xây dựng giao diện sảnh chờ
-    }
-
-    if (isLoading) {
-      if (isFocused) {
-        return const Center(
-            child: Image(
-          image: AssetImage('assets/loading_green.gif'),
-          height: 90,
-        ));
-      } else {
-        return const Padding(
-          padding: EdgeInsets.only(bottom: 150),
-          child: Center(
-              child: Image(
-            image: AssetImage('assets/loading_green.gif'),
-            height: 100,
-          )),
-        );
-      }
-    }
-
-    if (wordData.isEmpty) {
-      return const Center(child: Text('Không có dữ liệu'));
-    }
-
-    return SearchWordView(list: wordData);
+    // if (_controller.text.isEmpty) {
+    //   return const SearchLobbyView(); // Gọi hàm xây dựng giao diện sảnh chờ
+    // }
+    // if(wordData.isEmpty){
+    //   _updateData(_controller.text, 0);
+    // }
+    // return SearchWordView(list: wordData);
+    return DevelopAnnounceScreen();
   }
 
   Widget buildStoriesView() {
-    return SearchStoryView(list : hanziData);
+    if (hanziData.isEmpty) {
+
+      _updateData(_controller.text, 1).then((_) {
+        setState(() {
+          isLoading = false; // Tắt loading khi dữ liệu đã tải xong
+        });
+      });
+    }
+
+    return isLoading
+        ? const Center(child: SearchLoadingWidget()) // Hiển thị loading
+        : SearchStoryView(list: hanziData); // Hiển thị dữ liệu khi đã có
   }
 
   Widget buildSentencesView() {
-    return const Center(child: Text('Sentences Content'));
-  }
-}
-
-class TriangleIndicator extends Decoration {
-  final Color color;
-
-  const TriangleIndicator({required this.color});
-
-  @override
-  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
-    return _TrianglePainter(color: color);
-  }
-}
-
-class _TrianglePainter extends BoxPainter {
-  final Color color;
-
-  _TrianglePainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
-    final Paint paint = Paint()..color = color;
-
-    final Rect rect = offset & configuration.size!;
-
-    // Chiều cao và chiều rộng cố định cho tam giác
-    const double triangleHeight = 8.0;
-    const double triangleWidth = 20.0;
-
-    // Tính toán vị trí tam giác sao cho nó nằm ở giữa theo chiều ngang
-    final double triangleStartX = rect.left + (rect.width - triangleWidth) / 2;
-    final Path path = Path()
-      ..moveTo(triangleStartX, rect.bottom) // Bắt đầu từ bên trái của tam giác
-      ..lineTo(triangleStartX + triangleWidth / 2,
-          rect.bottom - triangleHeight) // Đỉnh tam giác ở giữa
-      ..lineTo(triangleStartX + triangleWidth,
-          rect.bottom) // Kết thúc bên phải của tam giác
-      ..close(); // Đóng tam giác
-
-    canvas.drawPath(path, paint);
-  }
-}
-
-class DrawingBoard extends StatefulWidget {
-  const DrawingBoard({super.key});
-
-  @override
-  _DrawingBoardState createState() => _DrawingBoardState();
-}
-
-class _DrawingBoardState extends State<DrawingBoard> {
-  final List<Offset?> _points = [];
-  String _recognizedResult = "";
-  late Handwriting _handwriting; // Khai báo đối tượng Handwriting
-
-  @override
-  void initState() {
-    super.initState();
-    _handwriting = Handwriting(width: 300, height: 200);
+    if(sentenceData.isEmpty){
+      // _updateData(_controller.text, 2);
+    }
+    // return SearchSentencesView(list: sentenceData);
+    return DevelopAnnounceScreen();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        const Text(
-          "Vẽ ký tự tiếng Trung ở đây",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Expanded(
-          child: GestureDetector(
-            onPanUpdate: (details) {
-              setState(() {
-                _points.add(details.localPosition);
-              });
-            },
-            onPanEnd: (details) {
-              _points.add(null); // Đánh dấu kết thúc vẽ
-            },
-            child: CustomPaint(
-              size: Size.infinite,
-              painter: DrawingPainter(_points),
-            ),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            _recognizeHandwriting();
-          },
-          child: const Text("Nhận diện"),
-        ),
-        const SizedBox(height: 20),
-        Text(
-          "Kết quả nhận diện: $_recognizedResult",
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
+  Widget buildImagesView() {
+    // if(sentenceData.isEmpty){
+    //   _updateData(_controller.text, 3);
+    // }
+    // return SearchImageView(list : imageData);
+    return DevelopAnnounceScreen();
   }
 
-  void _recognizeHandwriting() {
-    List<List<List<int>>> rawTrace =
-        _convertPointsToTrace(_points); // Đổi kiểu biến ở đây
-    print("Trace: $rawTrace"); // In tọa độ ra console
-
-    // Chuyển đổi rawTrace sang định dạng đúng cho phương thức recognize
-    List<List<int>> trace = [];
-
-    for (var stroke in rawTrace) {
-      // Chỉ thêm x và y vào trace
-      if (stroke.length == 2) {
-        trace.add(stroke[0]); // X coordinates
-        trace.add(stroke[1]); // Y coordinates
-      }
+  // Hàm này được gọi khi người dùng thay đổi nội dung TextField
+  void _onSearchTextChanged(String newQuery) {
+    if (_debounceTimer != null) {
+      _debounceTimer!.cancel();
     }
 
-    var options = {
-      'language': 'zh_TW',
-      'numOfReturn': 5,
-      'numOfWords': 2,
-    };
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      if (newQuery != searchword) {
+        setState(() {
+          searchword = newQuery;
+          isLoading = true; // Bắt đầu hiển thị loading
+        });
 
-    _handwriting.recognize(
-      trace,
-      options,
-      (results, error) {
-        if (error != null) {
+        // Gửi request tìm kiếm
+        _getData(searchword, _selectedTabIndex.value).then((_) {
           setState(() {
-            _recognizedResult = "Error: ${error.toString()}";
+            isLoading = false; // Tắt loading sau khi dữ liệu đã tải xong
           });
-        } else {
-          setState(() {
-            _recognizedResult = results?.toString() ?? "No result";
-          });
-        }
-      },
-    );
-  }
-
-  List<List<List<int>>> _convertPointsToTrace(List<Offset?> points) {
-    List<List<List<int>>> trace = [];
-    List<int> xCoords = [];
-    List<int> yCoords = [];
-
-    for (var point in points) {
-      if (point != null) {
-        // Thêm tọa độ vào danh sách
-        xCoords.add(point.dx.toInt());
-        yCoords.add(point.dy.toInt());
-      } else {
-        // Khi gặp null, có thể đã kết thúc một stroke
-        if (xCoords.isNotEmpty && yCoords.isNotEmpty) {
-          // Thêm stroke vào trace
-          trace.add([xCoords, yCoords]);
-          // Reset danh sách tọa độ cho stroke tiếp theo
-          xCoords = [];
-          yCoords = [];
-        }
+        });
       }
-    }
-
-    // Nếu còn tọa độ trong xCoords và yCoords, thêm stroke cuối cùng
-    if (xCoords.isNotEmpty && yCoords.isNotEmpty) {
-      trace.add([xCoords, yCoords]);
-    }
-
-    return trace; // Trả về danh sách các strokes
+    });
   }
-}
-
-class DrawingPainter extends CustomPainter {
-  final List<Offset?> points;
-
-  DrawingPainter(this.points);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 4.0;
-
-    for (int i = 0; i < points.length - 1; i++) {
-      if (points[i] != null && points[i + 1] != null) {
-        canvas.drawLine(points[i]!, points[i + 1]!, paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(DrawingPainter oldDelegate) => true;
 }

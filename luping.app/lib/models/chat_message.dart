@@ -8,18 +8,25 @@ class ChatMessage extends HiveObject {
   final String sender; // "User" or "AI"
 
   @HiveField(1)
-  final String message;
+  final String sentence;
 
   @HiveField(2)
+  final String pinyin;
+
+  @HiveField(3)
+  final String meaningVN;
+
+  @HiveField(4)
   final DateTime timestamp;
 
   ChatMessage({
     required this.sender,
-    required this.message,
+    required this.sentence,
+    required this.pinyin,
+    required this.meaningVN,
     required this.timestamp,
   });
 
-  /// Convert the message to the API format.
-  /// For example: "[User] Hello"
-  String toApiFormat() => "[$sender] $message";
+  String toApiFormat() =>
+      "[$sender] $sentence"; // Changed from message to sentence
 }

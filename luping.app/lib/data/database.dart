@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hanjii/models/hint_character.dart';  // Import lớp hintCharacter
+import 'package:luping/models/hint_character.dart'; // Import lớp hintCharacter
 
 class DatabaseService {
-  final CollectionReference characterCollection = FirebaseFirestore.instance.collection('characters');
+  final CollectionReference characterCollection =
+      FirebaseFirestore.instance.collection('characters');
 
   // Method to search for documents where 'Hanzi' field contains any of the given characters
   Future<List<HintCharacter>> hintSearch(List<String> characters) async {
@@ -15,7 +16,7 @@ class DatabaseService {
       characterCollection
           .where('Hanzi', isGreaterThanOrEqualTo: characters.join(''))
           .where('Hanzi', isLessThan: '${characters.join('')}\uf8ff')
-          .limit(10)  // Limit the number of documents returned
+          .limit(10) // Limit the number of documents returned
     ];
 
     // Perform the combined query
@@ -24,7 +25,7 @@ class DatabaseService {
       QuerySnapshot querySnapshot = await query.get();
       allDocs.addAll(querySnapshot.docs);
       if (allDocs.length >= 10) {
-        break;  // Stop querying if we have reached the limit of 10 documents
+        break; // Stop querying if we have reached the limit of 10 documents
       }
     }
 
@@ -38,7 +39,7 @@ class DatabaseService {
       String hanViet = '';
       if (hanVietField is List) {
         if (hanVietField.isNotEmpty) {
-          hanViet = hanVietField.last;  // Get the last element of the list
+          hanViet = hanVietField.last; // Get the last element of the list
         }
       } else {
         hanViet = hanVietField ?? '';
@@ -48,10 +49,10 @@ class DatabaseService {
         hanzi: data['Hanzi'] ?? '',
         pinyin: data['Pinyin'] ?? '',
         hanViet: hanViet,
-        shortMeaning: data['ShortMeaning'] ?? '',
+        shortmeaning: data['shortmeaning'] ?? '',
       ));
       if (resultSet.length >= 10) {
-        break;  // Stop processing if we have reached the limit of 10 documents
+        break; // Stop processing if we have reached the limit of 10 documents
       }
     }
 

@@ -25,7 +25,7 @@ class BookPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(right: 25),
             child: Text(
-              book.title,
+              book.bookName,
               style: const TextStyle(fontSize: 17),
             ),
           ),
@@ -33,6 +33,7 @@ class BookPage extends StatelessWidget {
       ),
       body: Stack(
         children: [
+          _buildBackgroundDecorations(),
           SingleChildScrollView(
             child: Container(
               color: Colors.white,
@@ -44,7 +45,7 @@ class BookPage extends StatelessWidget {
                   _buildSectionTitle(Icons.list, 'Mục lục : (${book.lessons.length} bài học)'),
                   const SizedBox(height: 10),
                   _buildProgressSection(0, book.lessons.length),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   ...book.lessons.map((lesson) => LessonItem(lesson: lesson)).toList(),
                 ],
               ),
@@ -60,6 +61,33 @@ class BookPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBackgroundDecorations() {
+    return Positioned.fill(
+      child: Stack(
+        children: [
+          _buildCuteShape(left: 50, top: 100, size: 80, color: Colors.pinkAccent, icon: Icons.favorite),
+          _buildCuteShape(right: 30, top: 200, size: 90, color: Colors.blueAccent, icon: Icons.cloud),
+          _buildCuteShape(left: 20, bottom: 150, size: 70, color: Colors.yellow, icon: Icons.star),
+          _buildCuteShape(right: 60, bottom: 60, size: 100, color: Colors.purpleAccent, icon: Icons.bubble_chart),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCuteShape({double? left, double? right, double? top, double? bottom, required double size, required Color color, required IconData icon}) {
+    return Positioned(
+      left: left,
+      right: right,
+      top: top,
+      bottom: bottom,
+      child: Icon(
+        icon,
+        size: size,
+        color: color.withOpacity(0.3),
       ),
     );
   }

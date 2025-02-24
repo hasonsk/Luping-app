@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:luping/models/word.dart';
 import 'flashcard_item.dart';
 
 class Flashcard {
   final String id;
-  final String title;
   final DateTime createdAt;
   final String ownerId;
-  final List<FlashcardItem> items;
+  final List<Word> items;
   final bool isPublic;
+  String title;
 
   Flashcard({
     required this.id,
@@ -16,15 +17,5 @@ class Flashcard {
     required this.ownerId,
     required this.items,
     this.isPublic = false, // Mặc định là riêng tư
-  });
-}
-
-class FlashcardItem {
-  final String question;
-  final String answer;
-
-  FlashcardItem({
-    required this.question,
-    required this.answer,
   });
 }

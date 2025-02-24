@@ -193,7 +193,7 @@ class _CharacterState extends State<Character> {
                                 Positioned(
                                   top: 0,
                                   right: 0,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 50,
                                     child: Column(children: [
                                       GestureDetector(
@@ -201,7 +201,7 @@ class _CharacterState extends State<Character> {
                                           _showImagePreview(context,
                                               'https://luping.com.vn/word_media/Luping_minhhoa_webp/%E6%88%91.webp');
                                         },
-                                        child: Container(
+                                        child: SizedBox(
                                           height: 50,
                                           child: Image.network(
                                               'https://luping.com.vn/word_media/Luping_minhhoa_webp/%E6%88%91.webp'),
@@ -300,14 +300,14 @@ class _CharacterState extends State<Character> {
                     const SizedBox(
                       height: 5,
                     ),
-                    Row(
+                    const Row(
                       children: [
-                        const SizedBox(width: 10),
+                        SizedBox(width: 10),
                         Expanded(
-                          child: Container(
+                          child: SizedBox(
                             height:
                                 120, // Đặt chiều cao cố định cho phần chứa hình ảnh
-                            child: const SingleChildScrollView(
+                            child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: [
@@ -324,7 +324,7 @@ class _CharacterState extends State<Character> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 30)
+                        SizedBox(width: 30)
                       ],
                     ),
                     const SizedBox(
@@ -447,7 +447,7 @@ class _CharacterState extends State<Character> {
                         padding:
                             const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                         child: const Text(
-                          '我 nguyên nghĩa là một loại vũ khí, có tay cầm dài và lưỡi sắc ba cạnh. Nhưng từ thời kỳ cổ, nó đã được mượn để biểu thị đại từ nhân xưng ngôi thứ nhất thường là tự xưng của dân Yin Shang, như \"ta thụ niên\", \"ta phá Quan\" và những cái khác. Nguyên nghĩa đã không còn tồn tại từ lâu',
+                          '我 nguyên nghĩa là một loại vũ khí, có tay cầm dài và lưỡi sắc ba cạnh. Nhưng từ thời kỳ cổ, nó đã được mượn để biểu thị đại từ nhân xưng ngôi thứ nhất thường là tự xưng của dân Yin Shang, như "ta thụ niên", "ta phá Quan" và những cái khác. Nguyên nghĩa đã không còn tồn tại từ lâu',
                           style: TextStyle(fontSize: 12),
                         ),
                       ),
@@ -871,6 +871,8 @@ class TextWithBorder extends StatelessWidget {
 }
 
 class CustomExpansionTile extends StatefulWidget {
+  const CustomExpansionTile({super.key});
+
   @override
   _CustomExpansionTileState createState() => _CustomExpansionTileState();
 }
@@ -934,7 +936,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
                       },
                       // scrollPhysics: NeverScrollableScrollPhysics(),
                     ),
-                    items: [const chitietView(), const tughepView(), const lienquanView()],
+                    items: const [chitietView(), tughepView(), lienquanView()],
                   ),
                 ),
                 Positioned(

@@ -1,6 +1,8 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hanjii/data/database_helper.dart';
-import 'package:hanjii/services/search_service.dart';
+import 'package:luping/data/database_helper.dart';
+import 'package:luping/services/search_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
@@ -26,8 +28,10 @@ void main() {
 
       // Debug print
       print('\n=== Results for "ni hao" search ===');
-      results.forEach((hint) => print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}'));
+      for (var hint in results) {
+        print(
+            'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
+      }
       print('Total results: ${results.length}\n');
 
       expect(results, isNotEmpty,
@@ -45,8 +49,10 @@ void main() {
 
       // Debug print
       print('\n=== Results for "你" search ===');
-      results.forEach((hint) => print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}'));
+      for (var hint in results) {
+        print(
+            'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
+      }
       print('Total results: ${results.length}\n');
 
       expect(results, isNotEmpty,
@@ -64,8 +70,10 @@ void main() {
 
       // Debug print
       print('\n=== Results for "hao" search ===');
-      results.forEach((hint) => print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}'));
+      for (var hint in results) {
+        print(
+            'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
+      }
       print('Total results: ${results.length}\n');
 
       expect(results, isNotEmpty,
@@ -81,8 +89,10 @@ void main() {
 
       // Debug print
       print('\n=== Results for "xin chào" search ===');
-      results.forEach((hint) => print(
-          'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortMeaning}'));
+      for (var hint in results) {
+        print(
+            'Hanzi: ${hint.hanzi}, Pinyin: ${hint.pinyin}, HanViet: ${hint.hanViet}, Meaning: ${hint.shortmeaning}');
+      }
       print('Total results: ${results.length}\n');
 
       expect(results, isNotEmpty,
@@ -107,7 +117,7 @@ void main() {
       final word = await searchService.getWord('你好');
 
       print(
-          'Word: ${word?.word}, Pinyin: ${word?.pinyin}, HanViet: ${word?.hanviet}, Meaning: ${word?.meaning}, ShortMeaning: ${word?.shortMeaning}');
+          'Word: ${word?.word}, Pinyin: ${word?.pinyin}, HanViet: ${word?.hanviet}, Meaning: ${word?.meaning}, shortmeaning: ${word?.shortmeaning}');
 
       expect(word, isNotNull, reason: "Không tìm thấy từ '你好'");
       expect(word?.word, equals('你好'));
@@ -208,7 +218,7 @@ void main() {
 
   group('Test getStoryDetail', () {
     test('Get story detail for "你" should return correct data', () async {
-      final story = await searchService.getStoryDetail('你');
+      final story = await searchService.getStoryDetails('你');
 
       print("Story Details for '你':");
       print("Character: ${story?.character}");
@@ -238,15 +248,52 @@ void main() {
 
     test('Get story detail for non-existent character should return null',
         () async {
-      final story = await searchService.getStoryDetail('龘'); // A rare character
+      final story =
+          await searchService.getStoryDetails('龘'); // A rare character
       expect(story, isNull,
           reason: 'Should return null for non-existent story');
     });
 
     test('Get story detail with empty string should return null', () async {
-      final story = await searchService.getStoryDetail('');
+      final story = await searchService.getStoryDetails('');
       expect(story, isNull,
           reason: "Should return null for empty string input");
+    });
+  });
+
+  group('Test fetchWordList', () {
+    test('Get WordList for "焵, 涙" should return correct data', () async {
+      final wordList = await searchService.fetchWordList(['焵', 'abc']);
+
+      if (wordList == null) {
+        print('wordList empty');
+        return;
+      }
+
+      for (var word in wordList) {
+        print("Word Details for '${word.word}':");
+        print("Pinyin: ${word.pinyin}");
+        print("Meaning: ${word.meaning}");
+        print("HanViet: ${word.hanviet}");
+        print("Cannghia: ${word.cannghia}");
+        print("Trainghia: ${word.trainghia}");
+        print("Image: ${word.image}");
+        print("Short meaning: ${word.shortmeaning}");
+        print('');
+      }
+    });
+
+    test('Get WordList for "luping" should return null', () async {
+      final wordList = await searchService.fetchWordList(['luping']);
+
+      if (wordList == null) {
+        print('wordList empty');
+        return;
+      }
+
+      for (var word in wordList) {
+        print("Word Details for '${word.word}':");
+      }
     });
   });
 }
