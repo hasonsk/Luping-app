@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  static const String baseUrl = "http://10.0.2.2:3001/api";
+  static final String serverBaseUrl = dotenv.env['SERVER_BASE_URL'] ?? '';
 
   Future<User?> createUser(String email, String password) async {
     try {
@@ -42,7 +43,8 @@ class AuthService {
 
   static Future<bool> signUp(String email, String password, String fullName) async {
     return await _handleBackendRequest(
-      endpoint: "$baseUrl/users/register",
+      endpoint: "$serverBaseUrl/users/register",
+      method: 'POST',
       body: {
         "email": email,
         "password": password,
@@ -57,7 +59,8 @@ class AuthService {
 
   static Future<bool> login(String email, String password) async {
     return await _handleBackendRequest(
-      endpoint: "$baseUrl/users/login",
+      endpoint: "$serverBaseUrl/users/login",
+      method: 'POST',
       body: {
         "email": email,
         "password": password,
@@ -69,7 +72,7 @@ class AuthService {
 
   static Future<bool> logout() async {
     return await _handleBackendRequest(
-      endpoint: "$baseUrl/users/logout",
+      endpoint: "$serverBaseUrl/users/logout",
       method: 'POST',
       successMessage: "Logout successful on backend",
       errorMessage: "Logout failed on backend"
