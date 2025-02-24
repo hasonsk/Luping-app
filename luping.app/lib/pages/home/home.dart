@@ -311,7 +311,7 @@ class _HomeState extends State<Home> {
             const Text('Các chức năng khác', style: TextStyle(fontSize: 15)),
             const SizedBox(height: 20),
             _buildSectionTitle(
-                'HSK', Colors.green, 'assets/twobird_ic (1).png'),
+                'HSK/ Từ vựng', Colors.green, 'assets/twobird_ic (1).png'),
             const SizedBox(height: 15),
             const ShimmerImageGrid(),
             const SizedBox(height: 15),
