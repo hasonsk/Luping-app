@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:luping/models/sentence.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class SearchSentencesView extends StatelessWidget {
   final List<Sentence> list;
@@ -15,7 +18,7 @@ class SearchSentencesView extends StatelessWidget {
             itemCount: list.length,
             itemBuilder: (context, index) {
               final item = list[index];
-              return _buildSentenceCard(item);
+              return _buildSentenceCard(index, item);
             },
           ),
         ),
@@ -23,19 +26,18 @@ class SearchSentencesView extends StatelessWidget {
     );
   }
 
-  Widget _buildSentenceCard(Sentence item) {
+  Widget _buildSentenceCard(int index, Sentence item) {
     return Card(
       color: Colors.white,
       margin: const EdgeInsets.fromLTRB(8, 0, 8, 4),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.fromLTRB(10, 0, 0, 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSentenceRow(item.sentences),
-            const SizedBox(height: 4),
+            _buildSentenceRow(index, item.sentence),
             _buildPinyinText(item.pinyin),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             _buildMeaningText(item.meaning),
           ],
         ),
@@ -43,35 +45,43 @@ class SearchSentencesView extends StatelessWidget {
     );
   }
 
-  Widget _buildSentenceRow(String sentence) {
+
+
+  Widget _buildSentenceRow(int index, String sentence) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Text(
-            sentence,
-            style: const TextStyle(fontSize: 18, color: Colors.red),
+          child: Html(
+            data: sentence, // Render HTML thay vì hiển thị thô
+            style: {
+              "body": Style(fontSize: FontSize(17)), // Điều chỉnh font size
+            },
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: 10,),
         const Icon(Icons.volume_up_outlined, size: 20, color: Colors.grey),
+        const SizedBox(width: 10),
       ],
     );
   }
 
   Widget _buildPinyinText(String pinyin) {
     return Text(
-      pinyin,
-      style: const TextStyle(fontSize: 14, color: Colors.orange),
+      '| ${pinyin} |',
+      style: const TextStyle(
+        fontSize: 14,
+        color: Colors.grey,
+        fontStyle: FontStyle.italic, // Chuyển sang chữ nghiêng
+      ),
     );
   }
+
 
   Widget _buildMeaningText(String meaning) {
     return Text(
       meaning,
-      style: const TextStyle(fontSize: 14, color: Colors.black),
-      overflow: TextOverflow.ellipsis,
-      maxLines: 2,
+      style: const TextStyle(fontSize: 15, color: Colors.black87),
     );
   }
 }
