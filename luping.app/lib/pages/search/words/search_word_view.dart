@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../models/hint_character.dart';
+import '../../../models/hint_character.dart';
 
 class SearchWordView extends StatefulWidget {
   final List<HintCharacter> list;

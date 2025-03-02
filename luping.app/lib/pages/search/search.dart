@@ -1,19 +1,18 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:luping/models/hint_character.dart';
 import 'package:luping/data/database_helper.dart';
 import 'package:luping/models/hint_story.dart';
 import 'package:luping/models/sentence.dart';
-import 'package:luping/pages/search/develop_announce_screen.dart';
 import 'package:luping/pages/search/drawingboard.dart';
-import 'package:luping/pages/search/search_image_view.dart';
-import 'package:luping/pages/search/search_loading_widget.dart';
-import 'package:luping/pages/search/search_lobby_view.dart';
-import 'package:luping/pages/search/search_sentence_view.dart';
-import 'dart:async';
+import 'package:luping/pages/search/images/search_image_view.dart';
+import 'package:luping/pages/search/utilities/search_loading_widget.dart';
+import 'package:luping/pages/search/lobby/search_lobby_view.dart';
+import 'package:luping/pages/search/sentences/search_sentence_view.dart';
 import 'package:luping/pages/search/stories/search_story_view.dart';
-import 'package:luping/pages/search/search_triangle_icon.dart';
-import 'package:luping/pages/search/search_word_view.dart';
+import 'package:luping/pages/search/utilities/search_triangle_icon.dart';
+import 'package:luping/pages/search/words/search_word_view.dart';
 import 'package:luping/services/search_service.dart';
 import 'handwriting.dart'; // Import lớp Handwriting
 
@@ -50,7 +49,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   bool isLoading = false; // Biến trạng thái cho loading
 
   String searchword = ''; // Biến lưu query hiện tại
-  String _previousText = '';
+  List<bool> hasTriedFetching = [false, false, false, false];
 
   bool _isTabTapped = false; // Biến để theo dõi khi tab được nhấn
   Timer? _debounceTimer; // Biến lưu Timer để thực hiện debounce
@@ -236,8 +235,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   // Cập nhât dữ liệu khi người dùng đổi tab
   Future<void> _updateData(String? text, int index) async {
-    if (text == null || text.trim().isEmpty)
-      return; // Nếu text rỗng, không làm gì
+    if (text == null || text.trim().isEmpty) return; // Nếu text rỗng, không làm gì
 
     setState(() {
       isLoading = true; // Bắt đầu tải dữ liệu
@@ -246,7 +244,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     try {
       switch (index) {
         case 0:
-          if (wordData.isEmpty) {
+          if (wordData.isEmpty && !hasTriedFetching[0]) {
+            hasTriedFetching[0] = true; // Đánh dấu đã thử tìm kiếm
             var result = await _searchService.hintSearch(text);
             setState(() {
               wordData = result;
@@ -254,7 +253,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           }
           break;
         case 1:
-          if (hanziData.isEmpty) {
+          if (hanziData.isEmpty && !hasTriedFetching[1]) {
+            hasTriedFetching[1] = true;
             var result = await _searchService.getStoryHint(text);
             setState(() {
               hanziData = result;
@@ -262,7 +262,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           }
           break;
         case 2:
-          if (sentenceData.isEmpty) {
+          if (sentenceData.isEmpty && !hasTriedFetching[2]) {
+            hasTriedFetching[2] = true;
             var result = await _searchService.getSentence(text);
             setState(() {
               sentenceData = result;
@@ -270,7 +271,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           }
           break;
         case 3:
-          if (imageData.isEmpty) {
+          if (imageData.isEmpty && !hasTriedFetching[3]) {
+            hasTriedFetching[3] = true;
             var result = await _searchService.getImage(text, 0);
             setState(() {
               imageData = result ?? [];
@@ -286,6 +288,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       });
     }
   }
+
 
   Future<bool> _onWillPop() async {
     // Nếu TextField đang focus, bỏ focus và không thoát ứng dụng
@@ -527,45 +530,51 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   }
 
   Widget buildWordsView() {
-    // if (_controller.text.isEmpty) {
-    //   return const SearchLobbyView(); // Gọi hàm xây dựng giao diện sảnh chờ
-    // }
-    // if(wordData.isEmpty){
-    //   _updateData(_controller.text, 0);
-    // }
-    // return SearchWordView(list: wordData);
-    return DevelopAnnounceScreen();
+    if (_controller.text.isEmpty) {
+      return const SearchLobbyView(type: 'word',); // Gọi hàm xây dựng giao diện sảnh chờ
+    }
+    if(wordData.isEmpty){
+      _updateData(_controller.text, 0);
+    }
+    return SearchWordView(list: wordData);
+    // return DevelopAnnounceScreen();
   }
 
   Widget buildStoriesView() {
-    if (hanziData.isEmpty) {
-
-      _updateData(_controller.text, 1).then((_) {
-        setState(() {
-          isLoading = false; // Tắt loading khi dữ liệu đã tải xong
-        });
-      });
-    }
+    // if (hanziData.isEmpty) {
+    //   _updateData(_controller.text, 1).then((_) {
+    //     setState(() {
+    //       isLoading = false; // Tắt loading khi dữ liệu đã tải xong
+    //       hasTriedFetching[1] = false; // Đánh dấu đã thử tìm kiếm
+    //     });
+    //   });
+    // }
 
     return isLoading
-        ? const Center(child: SearchLoadingWidget()) // Hiển thị loading
-        : SearchStoryView(list: hanziData); // Hiển thị dữ liệu khi đã có
+        ? const Center(child: SearchLoadingWidget())
+        : hanziData.isEmpty
+        ? _controller.text.isEmpty
+        ? SearchLobbyView(type: 'story',) // Khi chưa nhập gì
+        : const Center(child: Text("Không tìm thấy dữ liệu")) // Khi đã nhập nhưng không có kết quả
+        : SearchStoryView(list: hanziData);
+
   }
+
 
   Widget buildSentencesView() {
     if(sentenceData.isEmpty){
-      // _updateData(_controller.text, 2);
+      _updateData(_controller.text, 2);
     }
-    // return SearchSentencesView(list: sentenceData);
-    return DevelopAnnounceScreen();
+    return SearchSentencesView(list: sentenceData);
+    // return DevelopAnnounceScreen();
   }
 
   Widget buildImagesView() {
-    // if(sentenceData.isEmpty){
-    //   _updateData(_controller.text, 3);
-    // }
-    // return SearchImageView(list : imageData);
-    return DevelopAnnounceScreen();
+    if(sentenceData.isEmpty){
+      _updateData(_controller.text, 3);
+    }
+    return SearchImageView(list : imageData);
+    // return DevelopAnnounceScreen();
   }
 
   // Hàm này được gọi khi người dùng thay đổi nội dung TextField

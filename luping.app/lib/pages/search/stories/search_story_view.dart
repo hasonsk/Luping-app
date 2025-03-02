@@ -112,30 +112,40 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                             Row(
                               children: [
                                 Container(
-                                  constraints: BoxConstraints(
-                                    maxWidth: MediaQuery.of(context).size.width * 0.5,
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                    image: const DecorationImage(
+                                      image: AssetImage('assets/tian_black.png'),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    border: Border.all(color: Colors.grey, width: 0.5),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: Text(
-                                    item.character,
-                                    style: const TextStyle(fontSize: 30, color: Colors.red),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                                  child: Center(
+                                    child: Text(
+                                      item.character,
+                                      style: const TextStyle(fontSize: 34, color: Colors.green),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 15),
                                 Expanded(
-                                  child: Column(
+                                  child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        item.hanviet,
+                                        '[ ${item.hanviet} ]'.toUpperCase(),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                         style: const TextStyle(fontSize: 14, color: Colors.purple),
                                       ),
+                                      SizedBox(width: 10,),
                                       Text(
-                                        item.pinyin,
-                                        style: const TextStyle(fontSize: 14, color: Colors.orange),
+                                        '| ${item.pinyin} |',
+                                        style: const TextStyle(fontSize: 14, color: Colors.deepOrange),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                       ),
@@ -144,11 +154,16 @@ class _SearchStoryViewState extends State<SearchStoryView> {
                                 ),
                               ],
                             ),
-                            Text(
-                              item.meaning.join(', '),
-                              style: const TextStyle(fontSize: 14, color: Colors.black),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
+                            SizedBox(height: 10,),
+                            Container(
+                              color: Colors.grey.shade200,
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              child: Text(
+                                item.meaning.join(', ').toLowerCase(), // Chuyển nội dung thành chữ thường
+                                style: const TextStyle(fontSize: 14, color: Colors.black),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
                             ),
                           ],
                         ),
@@ -198,93 +213,88 @@ class _SearchStoryViewState extends State<SearchStoryView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Stack(
                 children: [
-                  // SizedBox(
-                  //   height: 100,
-                  //   child: Image.asset('assets/charactertest.png'),
-                  // ),
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage('assets/tian_black.png'),
-                        fit: BoxFit.cover,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          image: const DecorationImage(
+                            image: AssetImage('assets/tian_black.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          border: Border.all(color: Colors.grey, width: 0.5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: Center(
+                          child: Text(
+                            '${story.character}',
+                            style: TextStyle(fontSize: 60, color: Colors.green.shade400),
+                          ),
+                        ),
                       ),
-                      border: Border.all(color: Colors.grey, width: 0.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: Center(
-                      child: Text(
-                        '${story.character}',
-                        style: TextStyle(fontSize: 60, color: Colors.green.shade400),
+                      const SizedBox(width: 20),
+
+                      // Nội dung
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 5),
+                            Text(
+                              'Bộ : ${story.bothu}',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[700]),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              'Lục thư : ${story.lucthu}',
+                              style: TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[700]),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              'Bính âm : ${story.pinyin} ',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[700]),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              'Số nét : ${story.sonet} ',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[700]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Icon nằm trên góc phải của Stack
+                  Positioned(
+                    top: -5,
+                    right: 0,
+                    child: IconButton(
+                      onPressed: () => _playSound(story.mp3),
+                      icon: Icon(
+                        Icons.volume_up_outlined,
+                        color: Colors.grey[500],
+                        size: 24,
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Bộ : ${story.bothu}',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[700]),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Lục thư : ${story.lucthu}',
-                          style: TextStyle(
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[700]),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Bính âm : ${story.pinyin} ',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[700]),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Số nét : ${story.sonet} ',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[700]),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => _playSound(story.mp3),
-                    icon: Icon(
-                      Icons.volume_up_outlined,
-                      color: Colors.grey[500],
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  )
                 ],
               ),
               const Divider(),

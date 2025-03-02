@@ -236,7 +236,7 @@ class SearchService {
 
       // Tách query thành các token, loại bỏ token rỗng
       final tokens =
-          normalizedQuery.split(" ").where((t) => t.isNotEmpty).toList();
+      normalizedQuery.split(" ").where((t) => t.isNotEmpty).toList();
       if (tokens.isEmpty) return [];
 
       // 2. Tạo bonus exact match cho từng trường
@@ -327,7 +327,20 @@ class SearchService {
       """;
       // 6. Thực thi truy vấn
       final List<Map<String, dynamic>> results = await db.rawQuery(sql);
-      return results.map((row) => Sentence.fromMap(row)).toList();
+
+// Tạo một danh sách mới chứa các bản sao của dữ liệu, có thể chỉnh sửa
+      final List<Map<String, dynamic>> modifiedResults = results.map((row) {
+        final newRow = Map<String, dynamic>.from(row); // Sao chép dữ liệu để tránh lỗi read-only
+        if (newRow["sentence"] != null) {
+          newRow["sentence"] = newRow["sentence"]
+              .toString()
+              .replaceAll(searchWord, "<mark>$searchWord</mark>");
+        }
+        return newRow;
+      }).toList();
+
+      return modifiedResults.map((row) => Sentence.fromMap(row)).toList();
+
     } catch (e) {
       logger.e('Error occurred while retrieving sentence: $e');
       return [];
@@ -337,48 +350,46 @@ class SearchService {
   Future<List<HintStory>> getStoryHint(String query) async {
     try {
       final db = await _db;
-      // 1. Lọc bỏ các ký tự không phải chữ Hán
+      print("Truy vấn đầu vào: $query");
+
       final hanziQuery =
-          query.replaceAll(RegExp(r'[^\p{Script=Han}]', unicode: true), '');
+      query.replaceAll(RegExp(r'[^\p{Script=Han}]', unicode: true), '');
+      print("Chuỗi sau khi lọc ký tự không phải chữ Hán: $hanziQuery");
 
       if (hanziQuery.isEmpty) {
+        print("Không có ký tự Hán nào hợp lệ.");
         return [];
       }
 
-      final uniqueHanziQuery = hanziQuery.split('').toSet().join('');
+      // Duy trì thứ tự xuất hiện của ký tự thay vì dùng `toSet()`
+      final characters = hanziQuery.split('');
+      final placeholders = List.filled(characters.length, '?').join(',');
 
-      // 2. Tạo danh sách các placeholder và các giá trị tương ứng cho truy vấn
-      final placeholders = List.filled(uniqueHanziQuery.length, '?').join(',');
-      final characters = uniqueHanziQuery.split('');
+      print("Placeholders: $placeholders");
+      print("Danh sách ký tự truyền vào truy vấn: $characters");
 
-      // 3. Truy vấn cơ sở dữ liệu, bao gồm trường 'image'
       final results = await db.query(
         'Storys',
-        columns: [
-          'id',
-          'character',
-          'pinyin',
-          'hanviet',
-          'meaning',
-          'image'
-        ], // Cập nhật ở đây
+        columns: ['id', 'character', 'pinyin', 'hanviet', 'meaning', 'image'],
         where: 'character IN ($placeholders)',
         whereArgs: characters,
       );
 
-      // 4. Tạo danh sách HintStory
-      final List<HintStory> hintStories = [];
-      for (final char in characters) {
-        // Tìm story có character khớp với ký tự hiện tại
-        final storyMap = results.firstWhere(
-          (map) => map['character'] == char,
-          orElse: () => {}, // Return empty map if no match
-        );
+      print("Kết quả truy vấn từ database: $results");
 
-        if (storyMap.isNotEmpty) {
-          hintStories.add(HintStory.fromMap(storyMap));
-        }
+      if (results.isEmpty) {
+        print("Không tìm thấy dữ liệu trong database.");
+        return [];
       }
+
+      List<HintStory> hintStories = results.map((map) => HintStory.fromMap(map)).toList();
+
+      // 🌟 Sắp xếp lại kết quả theo đúng thứ tự trong `hanziQuery`
+      hintStories.sort((a, b) {
+        return characters.indexOf(a.character) - characters.indexOf(b.character);
+      });
+
+      print("Danh sách HintStory sau khi sắp xếp: $hintStories");
 
       return hintStories;
     } catch (e) {
@@ -386,6 +397,8 @@ class SearchService {
       return [];
     }
   }
+
+
 
   Future<Story?> getStoryDetails(String character) async {
     try {

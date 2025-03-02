@@ -18,7 +18,7 @@ class _BannerSliderState extends State<BannerSlider> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(milliseconds: 500 ), () {
       setState(() {
         _isLoading = false;
       });
