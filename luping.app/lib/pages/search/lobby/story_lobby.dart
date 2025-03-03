@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
-class StoryLobby extends StatelessWidget {
+class StoryLobby extends StatefulWidget {
   const StoryLobby({super.key});
+
+  @override
+  State<StoryLobby> createState() => _StoryLobbyState();
+}
+
+class _StoryLobbyState extends State<StoryLobby> {
+  bool _showAllHistory = false;
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +23,13 @@ class StoryLobby extends StatelessWidget {
               imagePath: "logo.png", // Icon lịch sử tìm kiếm
               child: _buildHistoryList(),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             _buildCard(
               title: "Gợi ý tìm kiếm",
               imagePath: "hanzi_xiong.png", // Icon lịch sử tìm kiếm
               child: _buildSuggestions(),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             _buildCard(
               title: "Hán tự theo cấp độ",
               imagePath: "hanzi_ma.png", // Icon lịch sử tìm kiếm
@@ -74,14 +81,30 @@ class StoryLobby extends StatelessWidget {
     );
   }
 
-
   Widget _buildHistoryList() {
     List<String> history = ['我', '你们', '豪', '大夏'];
+    List<String> displayHistory = _showAllHistory ? history : history.take(3).toList();
 
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: history.map((text) => _buildHistoryChip(text)).toList(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: displayHistory.map((text) => _buildHistoryChip(text)).toList(),
+        ),
+        if (history.length > 3)
+          Center(
+            child: TextButton(
+              onPressed: () {
+                setState(() {
+                  _showAllHistory = !_showAllHistory;
+                });
+              },
+              child: Text(_showAllHistory ? "Ẩn bớt" : "Xem thêm"),
+            ),
+          ),
+      ],
     );
   }
 
@@ -109,7 +132,7 @@ class StoryLobby extends StatelessWidget {
             Expanded(
               child: Text(
                 text,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey[800]),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.grey[700]),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -126,7 +149,6 @@ class StoryLobby extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildSuggestions() {
     List<String> suggestions = ["你", "谢", "见", "语", "听", "文"];
@@ -158,6 +180,7 @@ class StoryLobby extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildVocabularyLevels() {
     List<Map<String, String>> levels = [
@@ -202,7 +225,5 @@ class StoryLobby extends StatelessWidget {
       onTap: () {},
     );
   }
-
-
 
 }

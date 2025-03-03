@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
-class WordLobby extends StatelessWidget {
+class WordLobby extends StatefulWidget {
   const WordLobby({super.key});
+
+  @override
+  State<WordLobby> createState() => _WordLobbyState();
+}
+
+class _WordLobbyState extends State<WordLobby> {
+  bool _showAllHistory = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +24,13 @@ class WordLobby extends StatelessWidget {
               imagePath: "animal_tiger.png", // Icon lịch sử tìm kiếm
               child: _buildHistoryList(),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             _buildCard(
               title: "Gợi ý tìm kiếm",
               imagePath: "animal_chon.png", // Icon lịch sử tìm kiếm
               child: _buildSuggestions(),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             _buildCard(
               title: "Từ vựng theo cấp độ",
               imagePath: "animal_pig.png", // Icon lịch sử tìm kiếm
@@ -76,12 +84,29 @@ class WordLobby extends StatelessWidget {
 
 
   Widget _buildHistoryList() {
-    List<String> history = ['我们', '你们', '豪门'];
+    List<String> history = ['我们', '你们', '豪门', '你们'];
+    List<String> displayHistory = _showAllHistory ? history : history.take(3).toList();
 
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: history.map((text) => _buildHistoryChip(text)).toList(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: displayHistory.map((text) => _buildHistoryChip(text)).toList(),
+        ),
+        if (history.length > 3)
+          Center(
+            child: TextButton(
+              onPressed: () {
+                setState(() {
+                  _showAllHistory = !_showAllHistory;
+                });
+              },
+              child: Text(_showAllHistory ? "Ẩn bớt" : "Xem thêm"),
+            ),
+          ),
+      ],
     );
   }
 
@@ -109,7 +134,7 @@ class WordLobby extends StatelessWidget {
             Expanded(
               child: Text(
                 text,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey[800]),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.grey[800]),
                 overflow: TextOverflow.ellipsis,
               ),
             ),

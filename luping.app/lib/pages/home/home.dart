@@ -186,11 +186,11 @@ class _HomeState extends State<Home> {
       ),
       child: Column(
         children: [
-          const Row(
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(width: 25),
-              Column(
+              const SizedBox(width: 25),
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 10),
@@ -213,13 +213,20 @@ class _HomeState extends State<Home> {
                   ),
                 ],
               ),
-              Expanded(child: SizedBox()),
-              CircleAvatar(
+              const Expanded(child: SizedBox()),
+              Padding(
+                padding: const EdgeInsets.only( top: 40.0),
+                child: SizedBox(
+                  height: 40, // Giới hạn chiều cao GIF
+                  child: Image.asset('assets/chick.gif', fit: BoxFit.contain),
+                ),
+              ),
+              const CircleAvatar(
                 radius: 40,
                 backgroundImage: AssetImage('assets/logo.png'),
                 backgroundColor: Colors.white,
               ),
-              SizedBox(width: 35),
+              const SizedBox(width: 35),
             ],
           ),
           _buildSearchContainer(),
